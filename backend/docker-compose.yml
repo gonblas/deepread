@@ -1,0 +1,27 @@
+services:
+  #backend:
+  #  build: backend
+  #  ports:
+  #    - "8080:8080"
+  #  depends_on:
+  #    - db
+  # frontend:
+  #   build: frontend
+  #   ports:
+  #     - "3000:3000"
+
+  db:
+    container_name: pgdb
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=book_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
