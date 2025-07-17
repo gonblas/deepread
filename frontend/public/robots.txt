@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+sitemap: https://elles.com/sitemap-file.xml
