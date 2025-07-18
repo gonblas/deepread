@@ -29,7 +29,7 @@ public class AuthService {
         log.info("Registrando usuario: {}", request);
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token);
     }
 
@@ -39,7 +39,7 @@ public class AuthService {
         );
 
         UserEntity user = userRepository.findByEmail(request.email()).orElseThrow();
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token);
     }
 }
