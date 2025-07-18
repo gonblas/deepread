@@ -1,4 +1,3 @@
 package gblas.books.backend.dto;
 
-public record AuthResponse() {
-}
+public record AuthResponse(String token) {}

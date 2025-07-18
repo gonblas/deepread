@@ -11,7 +11,7 @@ public class BackendApplication {
 
     @GetMapping
     public String index() {
-        return "LA CONCHA DE TU MADRE ALL BOYS";
+        return "Bocaa";
     }
 
     public static void main(String[] args) {
