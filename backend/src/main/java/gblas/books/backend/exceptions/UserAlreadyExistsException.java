@@ -1,11 +1,11 @@
 package gblas.books.backend.exceptions;
 
-public class CustomerAlreadyExistsException extends RuntimeException {
+public class UserAlreadyExistsException extends RuntimeException {
     private String message;
 
-    public CustomerAlreadyExistsException() {}
+    public UserAlreadyExistsException() {}
 
-    public CustomerAlreadyExistsException(String message) {
+    public UserAlreadyExistsException(String message) {
         super(message);
         this.message = message;
     }

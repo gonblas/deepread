@@ -1,3 +1,5 @@
 package gblas.books.backend.dto;
 
-public record DeleteAccountRequest(String password) { }
+import jakarta.validation.constraints.NotNull;
+
+public record DeleteAccountRequest(@NotNull String password) { }
