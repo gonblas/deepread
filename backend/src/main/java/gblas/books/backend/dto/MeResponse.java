@@ -1,4 +1,6 @@
 package gblas.books.backend.dto;
 
-public record MeResponse(String email) {
+import gblas.books.backend.validation.ValidEmail;
+
+public record MeResponse(@ValidEmail String email) {
 }

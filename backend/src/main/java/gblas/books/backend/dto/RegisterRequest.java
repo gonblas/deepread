@@ -1,6 +1,11 @@
 package gblas.books.backend.dto;
 
-import jakarta.validation.constraints.NotNull;
+import gblas.books.backend.validation.ValidEmail;
+import gblas.books.backend.validation.ValidPassword;
+import gblas.books.backend.validation.ValidUsername;
 
-public record RegisterRequest(@NotNull String email, @NotNull String password, @NotNull String username) {
-}
+public record RegisterRequest(
+        @ValidEmail String email,
+        @ValidPassword String password,
+        @ValidUsername String username
+) { }
