@@ -24,7 +24,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         UserEntity user = new UserEntity();
         user.setEmail(request.email());
-        user.setHashed_password(passwordEncoder.encode(request.password()));
+        user.setHashedPassword(passwordEncoder.encode(request.password()));
         user.setUsername(request.username());
         if(userRepository.findByEmail(request.email()).isPresent()) {
             throw new UserAlreadyExistsException("Email " + request.email() + " already exists.");

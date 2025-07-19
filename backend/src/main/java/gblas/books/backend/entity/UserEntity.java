@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +30,11 @@ public class UserEntity implements UserDetails {
     private String email;
 
     @Column(nullable = false, name="password")
-    private String hashed_password;
+    private String hashedPassword;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookEntity> books = new ArrayList<>();
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -37,7 +42,7 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
-    public String getPassword() { return hashed_password; }
+    public String getPassword() { return hashedPassword; }
 
     @Override
     public String getUsername() {

@@ -25,7 +25,7 @@ public class UserRepositoryTest {
         testUser = new UserEntity();
         testUser.setEmail("example@xyz.com");
         testUser.setUsername("example");
-        testUser.setHashed_password("this_is_an_example");
+        testUser.setHashedPassword("this_is_an_example");
         userRepository.save(testUser);
     }
 
