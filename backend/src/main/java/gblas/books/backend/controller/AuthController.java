@@ -1,15 +1,14 @@
 package gblas.books.backend.controller;
 
-import gblas.books.backend.dto.AuthResponse;
-import gblas.books.backend.dto.LoginRequest;
-import gblas.books.backend.dto.MeResponse;
-import gblas.books.backend.dto.RegisterRequest;
+import gblas.books.backend.dto.*;
 import gblas.books.backend.service.AuthService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -30,6 +29,11 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(Authentication auth) {
         return ResponseEntity.ok(new MeResponse(auth.getName()));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<MeResponse> delete(Authentication auth) {
+        return ResponseEntity.ok(authService.deleteAccount(auth));
     }
 }
 

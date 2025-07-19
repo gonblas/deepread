@@ -1,4 +1,3 @@
 package gblas.books.backend.dto;
 
-public record DeleteAccountRequest() {
-}
+public record DeleteAccountRequest(String password) { }

@@ -1,4 +1,4 @@
 package gblas.books.backend.dto;
 
-public record MeResponse(String username) {
+public record MeResponse(String email) {
 }
