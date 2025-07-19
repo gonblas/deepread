@@ -44,11 +44,13 @@ public class AuthService {
         return new AuthResponse(token);
     }
 
-    public MeResponse deleteAccount(Authentication authentication) {
+    public MeResponse deleteAccount(DeleteAccountRequest request, Authentication authentication) {
         String email = authentication.getName();
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        log.info("Delete account with email {}", email);
-        log.info("Delete user {}", user.getUsername());
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, request.password())
+        );
 
         userRepository.delete(user);
         return new MeResponse(user.getUsername());

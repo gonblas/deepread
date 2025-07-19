@@ -32,8 +32,8 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<MeResponse> delete(Authentication auth) {
-        return ResponseEntity.ok(authService.deleteAccount(auth));
+    public ResponseEntity<MeResponse> delete(@RequestBody DeleteAccountRequest request, Authentication auth) {
+        return ResponseEntity.ok(authService.deleteAccount(request, auth));
     }
 }
 
