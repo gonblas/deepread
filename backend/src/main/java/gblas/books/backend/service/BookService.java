@@ -6,32 +6,25 @@ import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.BookEntity.*;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.exceptions.NotFoundException;
-import gblas.books.backend.exceptions.UserAlreadyExistsException;
 import gblas.books.backend.mapper.BookMapper;
 import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-
-
-    public BookService(BookRepository bookRepository, UserRepository userRepository) {
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
-    }
 
     public Page<BookResponse> getBooks(String email, Pageable pageable, List<BookGenre> genres) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow();

@@ -24,8 +24,8 @@ public class ChapterEntity {
     @Column(nullable = false)
     private String title;
 
-    @Lob
-    @Column(name = "summary", columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.EAGER)
+    @Column(name = "summary", length = 10000)
     private String summary;
 
     @ManyToOne(optional = false)
