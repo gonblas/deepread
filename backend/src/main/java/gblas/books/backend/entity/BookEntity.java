@@ -25,14 +25,14 @@ public class BookEntity {
     private UserEntity owner;
 
     private String title;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> authors = new ArrayList<>();
 
     private String description;
-    private BookGenre genre;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChapterEntity> chapters = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre")
+    private BookGenre genre;
 
     public enum BookGenre {
         ADVENTURE,

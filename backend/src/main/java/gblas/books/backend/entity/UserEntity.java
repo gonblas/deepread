@@ -32,10 +32,6 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, name="password")
     private String hashedPassword;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookEntity> books = new ArrayList<>();
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

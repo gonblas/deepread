@@ -31,8 +31,5 @@ public class ChapterEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "book_id")
     private BookEntity book;
-
-    @OneToOne(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private QuizEntity quiz;
 }
 
