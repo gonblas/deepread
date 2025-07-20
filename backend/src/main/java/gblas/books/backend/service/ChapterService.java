@@ -14,7 +14,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -38,7 +40,7 @@ public class ChapterService {
         ChapterEntity chapterEntity = chapterRepository.findByBookAndNumber(book, chapterRequest.number());
 
         if(chapterEntity != null ) {
-            throw new ResourceAlreadyExistsException("Chapter already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Chapter number already exists for this book");
         }
         ChapterEntity newChapterEntity = new ChapterEntity();
         newChapterEntity.setBook(book);
