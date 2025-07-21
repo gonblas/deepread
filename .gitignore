@@ -1,0 +1,7 @@
+/ENTITIES
+QuestionEvaluator.java
+QuestionEvaluatorFactory.java
+QuizAttemptEntity.java
+QuizService.java
+TrueOrFalseQuestionEvaluator.java
+MultipleChoiceQuestionEvaluator.java

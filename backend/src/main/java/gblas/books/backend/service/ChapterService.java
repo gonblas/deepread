@@ -5,12 +5,10 @@ import gblas.books.backend.dto.ChapterResponse;
 import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.ChapterEntity;
 import gblas.books.backend.exceptions.NotFoundException;
-import gblas.books.backend.exceptions.ResourceAlreadyExistsException;
 import gblas.books.backend.mapper.ChapterMapper;
 import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChapterService {
 
-    private UserRepository userRepository;
     private ChapterRepository chapterRepository;
     private BookRepository bookRepository;
 

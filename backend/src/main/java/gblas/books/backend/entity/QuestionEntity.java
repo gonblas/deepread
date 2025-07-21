@@ -12,20 +12,28 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "question_type")
+public abstract class QuestionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
     private UUID id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "quiz_id")
-    private QuizEntity quiz;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private QuestionType type;
 
     @Column(nullable = false)
-    private String questionStatement;
+    private String prompt;
 
-    @Column(nullable = false)
-    private String answer;
+    @Column(nullable = true)
+    private String explanation;
 
+    public enum QuestionType {
+        TRUE_FALSE,
+        MULTIPLE_CHOICE,
+        OPEN
+    }
 }
+
