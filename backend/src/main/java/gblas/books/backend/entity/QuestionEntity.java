@@ -32,7 +32,6 @@ public abstract class QuestionEntity {
 
     public enum QuestionType {
         TRUE_FALSE,
-        MULTIPLE_CHOICE,
         OPEN
     }
 }

@@ -31,7 +31,5 @@ public interface QuizRepository extends CrudRepository<QuizEntity, UUID> {
     WHERE b.id = :bookId
     """)
     Page<QuizEntity> findAllQuizzesByBookId(UUID bookId, Pageable pageable);
-
-    Page<QuizEntity> findByChapter(ChapterEntity chapter, Pageable pageable);
 }
 

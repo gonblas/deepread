@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record QuizRequest(
-        @NotBlank UUID id,
-        ChapterEntity chapter,
-        @ValidChapterNumber int number,
-        List<QuestionEntity> question
+        List<QuestionRequest> questions
 ) { }
 

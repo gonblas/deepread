@@ -4,12 +4,10 @@ import gblas.books.backend.entity.QuestionEntity;
 
 import java.util.UUID;
 
-public record OpenQuestionResponse(
-        UUID id,
+public record TrueOrFalseQuestionRequest(
         QuestionEntity.QuestionType question_type,
         String prompt,
         String explanation,
-        String expectedAnswer
-) implements QuestionResponse {
-
+        boolean isAnswerTrue
+) implements QuestionRequest {
 }
