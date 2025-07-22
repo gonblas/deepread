@@ -46,16 +46,12 @@ public class AuthService {
         return new AuthResponse(token);
     }
 
-    public MeResponse deleteAccount(DeleteAccountRequest request, Authentication authentication) {
-        String email = authentication.getName();
-        UserEntity user = userRepository.findByEmail(email).orElseThrow();
-
+    public void deleteAccount(DeleteAccountRequest request, UserEntity user) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, request.password())
+                new UsernamePasswordAuthenticationToken(user.getEmail(), request.password())
         );
 
         userRepository.delete(user);
-        return new MeResponse(user.getUsername());
     }
 }
 

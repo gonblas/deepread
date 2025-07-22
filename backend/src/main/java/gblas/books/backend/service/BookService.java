@@ -27,8 +27,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
-    public Page<BookResponse> getBooks(String email, Pageable pageable, List<BookGenre> genres) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow();
+    public Page<BookResponse> getBooks(UserEntity user, Pageable pageable, List<BookGenre> genres) {
         Page<BookEntity> books_page;
         if (genres == null || genres.isEmpty()) {
             books_page = bookRepository.findByOwner(user, pageable);
@@ -38,22 +37,18 @@ public class BookService {
         return books_page.map(BookMapper::dtoFrom);
     }
 
-    public BookResponse addBook(String email, BookRequest bookRequest) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow();
-
+    public BookResponse addBook(UserEntity user, BookRequest bookRequest) {
         BookEntity bookEntity = new BookEntity();
         bookEntity.setOwner(user);
         return getBookResponse(bookRequest, bookEntity);
     }
 
-    public void deleteBook(String email, UUID bookId) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+    public void deleteBook(UserEntity user, UUID bookId) {
         BookEntity bookEntity = bookRepository.findByOwnerAndId(user, bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         bookRepository.delete(bookEntity);
     }
 
-    public BookResponse updateBook(String email, UUID bookId, BookRequest bookRequest) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+    public BookResponse updateBook(UserEntity user, UUID bookId, BookRequest bookRequest) {
         BookEntity bookEntity = bookRepository.findByOwnerAndId(user, bookId).orElseThrow(() -> new NotFoundException("Book not found"));
 
         return getBookResponse(bookRequest, bookEntity);
@@ -68,7 +63,6 @@ public class BookService {
             bookEntity.setAuthors(new ArrayList<>());
         }
         bookEntity.setGenre(bookRequest.genre());
-        log.info("Libro actualizado: {}", bookEntity.toString());
         bookRepository.save(bookEntity);
         return BookMapper.dtoFrom(bookEntity);
     }

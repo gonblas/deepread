@@ -1,13 +1,14 @@
 package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.*;
+import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -36,8 +37,8 @@ public class AuthController {
 
     @DeleteMapping(path = "/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@Valid @RequestBody DeleteAccountRequest request, Authentication auth) {
-        authService.deleteAccount(request, auth);
+    public void delete(@Valid @RequestBody DeleteAccountRequest request, @AuthenticationPrincipal UserEntity user) {
+        authService.deleteAccount(request, user);
     }
 }
 
