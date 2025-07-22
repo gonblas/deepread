@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,9 +64,11 @@ public class BookService {
         bookEntity.setDescription(bookRequest.description());
         if(bookRequest.authors()  != null && !bookRequest.authors().isEmpty()) {
             bookEntity.setAuthors(bookRequest.authors());
+        } else {
+            bookEntity.setAuthors(new ArrayList<>());
         }
         bookEntity.setGenre(bookRequest.genre());
-
+        log.info("Libro actualizado: {}", bookEntity.toString());
         bookRepository.save(bookEntity);
         return BookMapper.dtoFrom(bookEntity);
     }

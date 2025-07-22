@@ -19,26 +19,25 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(path = "/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
+        return authService.register(request);
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 
     @GetMapping(path = "/me")
-    public ResponseEntity<MeResponse> me(Authentication auth) {
-        return ResponseEntity.ok(new MeResponse(auth.getName()));
+    public MeResponse me(Authentication auth) {
+        return new MeResponse(auth.getName());
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<MeResponse> delete(@Valid @RequestBody DeleteAccountRequest request, Authentication auth) {
-        return ResponseEntity.ok(authService.deleteAccount(request, auth));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@Valid @RequestBody DeleteAccountRequest request, Authentication auth) {
+        authService.deleteAccount(request, auth);
     }
 }
 

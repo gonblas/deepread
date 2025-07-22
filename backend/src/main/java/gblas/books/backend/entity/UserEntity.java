@@ -45,6 +45,9 @@ public class UserEntity implements UserDetails {
         return this.getEmail();
     }
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BookEntity> books;
+
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,20 +33,19 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookResponse> addBook(@Valid @RequestBody BookRequest bookRequest, Principal principal) {
-        BookResponse book = bookService.addBook(principal.getName(), bookRequest);
-        return ResponseEntity.ok(book);
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookResponse addBook(@Valid @RequestBody BookRequest bookRequest, Principal principal) {
+        return bookService.addBook(principal.getName(), bookRequest);
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<?> deleteBook(@PathVariable UUID bookId, Principal principal) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBook(@PathVariable UUID bookId, Principal principal) {
         bookService.deleteBook(principal.getName(), bookId);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookResponse> updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, Principal principal) {
-        BookResponse book = bookService.updateBook(principal.getName(), bookId, bookRequest);
-        return ResponseEntity.ok(book);
+    public BookResponse updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, Principal principal) {
+        return bookService.updateBook(principal.getName(), bookId, bookRequest);
     }
 }
