@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "question_type", // <- OJO: debe existir a nivel JSON
+        property = "question_type",
         visible = true
 )
 @JsonSubTypes({

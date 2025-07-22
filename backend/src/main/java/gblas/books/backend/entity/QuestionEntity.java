@@ -30,6 +30,10 @@ public abstract class QuestionEntity {
     @Column(nullable = true)
     private String explanation;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private QuizEntity quiz;
+
     public enum QuestionType {
         TRUE_FALSE,
         OPEN

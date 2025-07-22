@@ -22,7 +22,7 @@ public class QuestionService {
             throw new IllegalArgumentException("Question type wrong: " + request.question_type());
         }
 
-        return strategy.createQuestion(request);
+        return strategy.createQuestion(request, quiz);
     }
 
 }

@@ -34,6 +34,9 @@ public class BookEntity {
     @Column(name = "genre")
     private BookGenre genre;
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChapterEntity> chapters = new ArrayList<>();
+
     public enum BookGenre {
         ADVENTURE,
         SCIENCE_FICTION,
