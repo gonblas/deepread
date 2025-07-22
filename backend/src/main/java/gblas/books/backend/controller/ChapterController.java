@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
@@ -18,26 +19,24 @@ public class ChapterController {
     private ChapterService chapterService;
 
     @GetMapping
-    public ResponseEntity<Page<ChapterResponse>> getChapters(@Valid @PathVariable UUID bookId, Pageable pageable) {
-        Page<ChapterResponse> chapters = chapterService.getChapters(bookId, pageable);
-        return ResponseEntity.ok(chapters);
+    public Page<ChapterResponse> getChapters(@Valid @PathVariable UUID bookId, Pageable pageable) {
+        return chapterService.getChapters(bookId, pageable);
     }
 
     @PostMapping
-    public ResponseEntity<ChapterResponse> createChapter(@Valid @PathVariable UUID bookId, @Valid @RequestBody ChapterRequest chapterRequest) {
-        ChapterResponse chapter = chapterService.addChapter(bookId, chapterRequest);
-        return ResponseEntity.ok(chapter);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ChapterResponse createChapter(@Valid @PathVariable UUID bookId, @Valid @RequestBody ChapterRequest chapterRequest) {
+        return chapterService.addChapter(bookId, chapterRequest);
     }
 
     @DeleteMapping("/{chapterId}")
-    public ResponseEntity<?> deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
         chapterService.deleteChapter(bookId, chapterId);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{chapterId}")
-    public ResponseEntity<ChapterResponse> updateChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
-        ChapterResponse chapter = chapterService.updateChapter(bookId, chapterId, chapterRequest);
-        return ResponseEntity.ok(chapter);
+    public ChapterResponse updateChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
+        return chapterService.updateChapter(bookId, chapterId, chapterRequest);
     }
 }
