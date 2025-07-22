@@ -10,5 +10,5 @@ import java.util.UUID;
 public record QuizResponse(
         @NotBlank UUID id,
         @NotBlank ChapterResponse chapter,
-        List<QuestionResponse> question
+        List<QuestionResponse> questions
 ) { }

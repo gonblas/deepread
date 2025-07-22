@@ -18,7 +18,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping(path = "/register", produces = "application/json")
+    @PostMapping(path = "/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
         return ResponseEntity
@@ -26,17 +26,17 @@ public class AuthController {
                 .body(response);
     }
 
-    @PostMapping(path = "/login", produces = "application/json")
+    @PostMapping(path = "/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @GetMapping(path = "/me", produces = "application/json")
+    @GetMapping(path = "/me")
     public ResponseEntity<MeResponse> me(Authentication auth) {
         return ResponseEntity.ok(new MeResponse(auth.getName()));
     }
 
-    @DeleteMapping(path = "/delete", produces = "application/json")
+    @DeleteMapping(path = "/delete")
     public ResponseEntity<MeResponse> delete(@Valid @RequestBody DeleteAccountRequest request, Authentication auth) {
         return ResponseEntity.ok(authService.deleteAccount(request, auth));
     }
