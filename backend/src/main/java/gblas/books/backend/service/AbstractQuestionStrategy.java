@@ -7,7 +7,7 @@ import gblas.books.backend.entity.QuizEntity;
 public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity> implements QuestionStrategy {
 
     @Override
-    public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
+    public QuestionEntity createQuestion(QuestionRequest request) {
         if (!requestType().isInstance(request)) {
             throw new IllegalArgumentException("Invalid request type for " + getType() + " question");
         }
@@ -15,7 +15,6 @@ public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q exte
         T typedRequest = requestType().cast(request);
         Q question = createTypedQuestion(typedRequest);
 
-        question.setQuiz(quiz);
         question.setExplanation(typedRequest.explanation());
         question.setType(getType());
         question.setPrompt(typedRequest.prompt());

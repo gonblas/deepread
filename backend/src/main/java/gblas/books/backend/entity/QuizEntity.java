@@ -25,7 +25,7 @@ public class QuizEntity {
     @JoinColumn(name = "chapter_id", nullable = false, unique = true)
     private ChapterEntity chapter;
 
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionEntity> questions;
 }
 

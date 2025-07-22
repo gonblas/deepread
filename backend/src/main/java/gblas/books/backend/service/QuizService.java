@@ -96,14 +96,14 @@ public class QuizService {
 //    }
 
     private QuizResponse getQuizResponse(QuizRequest quizRequest, QuizEntity quiz) {
+        quizRepository.save(quiz);
         List<QuestionEntity> questions = quizRequest.questions().stream()
                 .map(request -> {
-                    return questionService.createQuestion(request, quiz);
+                    return questionService.createQuestion(request);
                 })
                 .toList();
 
         quiz.setQuestions(questions);
-        quizRepository.save(quiz);
         return QuizMapper.dtoFrom(quiz);
     }
 
