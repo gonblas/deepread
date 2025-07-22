@@ -8,20 +8,23 @@ import gblas.books.backend.entity.QuizEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpenQuestionStrategy implements QuestionStrategy {
+public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionRequest, OpenQuestionEntity> {
 
     @Override
-    public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        if (!(request instanceof OpenQuestionRequest openQuestionRequest)) {
-            throw new IllegalArgumentException("Invalid request type for TRUE_FALSE question");
-        }
+    protected OpenQuestionEntity createTypedQuestion(OpenQuestionRequest request) {
         OpenQuestionEntity question = new OpenQuestionEntity();
-        question.setQuiz(quiz);
-        question.setExpectedAnswer(openQuestionRequest.expectedAnswer());
-        question.setExplanation(openQuestionRequest.explanation());
-        question.setType(QuestionEntity.QuestionType.OPEN);
-        question.setPrompt(openQuestionRequest.prompt());
-
+        question.setExpectedAnswer(request.expectedAnswer());
         return question;
     }
+
+    @Override
+    protected Class<OpenQuestionRequest> requestType() {
+        return OpenQuestionRequest.class;
+    }
+
+    @Override
+    protected QuestionEntity.QuestionType getType() {
+        return QuestionEntity.QuestionType.OPEN;
+    }
 }
+

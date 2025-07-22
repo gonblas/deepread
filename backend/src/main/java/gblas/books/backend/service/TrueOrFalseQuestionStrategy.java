@@ -8,20 +8,23 @@ import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrueOrFalseQuestionStrategy implements QuestionStrategy {
+public class TrueOrFalseQuestionStrategy extends AbstractQuestionStrategy<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity> {
 
     @Override
-    public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        if (!(request instanceof TrueOrFalseQuestionRequest trueOrFalseQuestionRequest)) {
-            throw new IllegalArgumentException("Invalid request type for TRUE_FALSE question");
-        }
+    protected TrueOrFalseQuestionEntity createTypedQuestion(TrueOrFalseQuestionRequest request) {
         TrueOrFalseQuestionEntity question = new TrueOrFalseQuestionEntity();
-        question.setQuiz(quiz);
-        question.setIsAnswerTrue(trueOrFalseQuestionRequest.isAnswerTrue());
-        question.setExplanation(trueOrFalseQuestionRequest.explanation());
-        question.setType(QuestionEntity.QuestionType.TRUE_FALSE);
-        question.setPrompt(trueOrFalseQuestionRequest.prompt());
-
+        question.setIsAnswerTrue(request.isAnswerTrue());
         return question;
     }
+
+    @Override
+    protected Class<TrueOrFalseQuestionRequest> requestType() {
+        return TrueOrFalseQuestionRequest.class;
+    }
+
+    @Override
+    protected QuestionEntity.QuestionType getType() {
+        return QuestionEntity.QuestionType.TRUE_FALSE;
+    }
 }
+
