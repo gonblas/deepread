@@ -68,8 +68,7 @@ public class QuizService {
         }
 
         QuizEntity newQuizEntity = new QuizEntity();
-        newQuizEntity.setChapter(chapterEntity);
-        chapterEntity.setQuiz(newQuizEntity);
+        chapterEntity.setQuizBidirectional(newQuizEntity);
         return getQuizResponse(quizRequest, newQuizEntity);
     }
 
@@ -82,24 +81,11 @@ public class QuizService {
             throw new NotFoundException("Chapter does not belong to this book");
         }
 
-        // 🔥 Rompemos la relación en ambos lados
-        chapterEntity.setQuiz(null); // <-- clave
-        quizEntity.setChapter(null); // <-- opcional, por seguridad extra
+        chapterEntity.setQuiz(null);
+        quizEntity.setChapter(null);
 
         quizRepository.delete(quizEntity);
     }
-
-
-//    public QuizResponse updateQuiz(UUID bookId, UUID chapterId, ChapterRequest chapterRequest) {
-//        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-//        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-//
-//        if(chapterEntity == null ) {
-//            throw new NotFoundException("Chapter not found");
-//        }
-//
-//        return getChapterResponse(chapterRequest, chapterEntity);
-//    }
 
     private QuizResponse getQuizResponse(QuizRequest quizRequest, QuizEntity quiz) {
         quizRepository.save(quiz);

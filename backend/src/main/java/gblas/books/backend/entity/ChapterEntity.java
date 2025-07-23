@@ -35,5 +35,13 @@ public class ChapterEntity {
     @OneToOne(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private QuizEntity quiz;
 
+    public void setQuizBidirectional(QuizEntity quiz) {
+        this.quiz = quiz;
+        if (quiz != null && quiz.getChapter() != this) {
+            quiz.setChapter(this);
+        }
+    }
+
+
 }
 
