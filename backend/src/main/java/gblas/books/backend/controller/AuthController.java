@@ -2,6 +2,7 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.*;
 import gblas.books.backend.entity.UserEntity;
+import gblas.books.backend.mapper.UserMapper;
 import gblas.books.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,8 @@ public class AuthController {
     }
 
     @GetMapping(path = "/me")
-    public MeResponse me(Authentication auth) {
-        return new MeResponse(auth.getName());
+    public UserResponse me(@AuthenticationPrincipal UserEntity user) {
+        return UserMapper.INSTANCE.toDto(user);
     }
 
     @DeleteMapping(path = "/delete")

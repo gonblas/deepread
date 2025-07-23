@@ -40,11 +40,6 @@ public class UserEntity implements UserDetails {
     @Override
     public String getPassword() { return hashedPassword; }
 
-    @Override
-    public String getUsername() {
-        return this.getEmail();
-    }
-
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BookEntity> books;
 

@@ -25,12 +25,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class QuizService {
 
-    private UserRepository userRepository;
-    private BookRepository bookRepository;
-    private ChapterRepository chapterRepository;
-    private QuizRepository quizRepository;
-    private QuestionService questionService;
-    private QuizMapper quizMapper;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final ChapterRepository chapterRepository;
+    private final QuizRepository quizRepository;
+    private final QuestionService questionService;
+    private final QuizMapper quizMapper;
 
     public Page<QuizResponse> getAllQuizzesFromUser(String email, Pageable pageable) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
