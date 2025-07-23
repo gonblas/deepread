@@ -2,8 +2,11 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.BookResponse;
 import gblas.books.backend.dto.BookRequest;
+import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.BookEntity.*;
+import gblas.books.backend.entity.ChapterEntity;
 import gblas.books.backend.entity.UserEntity;
+import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.service.BookService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BookController {
 
+    private final BookRepository bookRepository;
     private BookService bookService;
 
     @GetMapping
@@ -50,4 +53,26 @@ public class BookController {
     public BookResponse updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
         return bookService.updateBook(user, bookId, bookRequest);
     }
+
+    @PostMapping("/test")
+    public void getBooks(@AuthenticationPrincipal UserEntity user) {
+        bookRepository.deleteAll();
+        BookEntity book = new BookEntity();
+        book.setTitle("Titulo de libro con capitulos agregados");
+        book.setOwner(user);
+        ChapterEntity c1 = new ChapterEntity();
+        c1.setTitle("Titulo del c1");
+        c1.setBook(book);
+
+        ChapterEntity c2 = new ChapterEntity();
+        c2.setTitle("Titulo del c2");
+        c2.setBook(book);
+
+        book.getChapters().add(c1);
+        book.getChapters().add(c2);
+
+        bookRepository.save(book);
+    }
+
+
 }

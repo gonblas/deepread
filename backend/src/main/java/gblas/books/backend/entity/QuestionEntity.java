@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name = "question_type")
 public abstract class QuestionEntity {
     @Id
@@ -30,9 +30,9 @@ public abstract class QuestionEntity {
     @Column(nullable = true)
     private String explanation;
 
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "quiz_id", nullable = false)
-//    private QuizEntity quiz;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private QuizEntity quiz;
 
     public enum QuestionType {
         TRUE_FALSE,

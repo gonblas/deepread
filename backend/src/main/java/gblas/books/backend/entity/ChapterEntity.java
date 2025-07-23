@@ -28,11 +28,12 @@ public class ChapterEntity {
     @Column(name = "summary", length = 10000)
     private String summary;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "book_id")
     private BookEntity book;
 
-    @OneToOne(mappedBy = "chapter", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private QuizEntity quiz;
+
 }
 

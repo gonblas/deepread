@@ -26,7 +26,6 @@ public class BookEntity {
 
     private String title;
 
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "book_authors",
@@ -41,7 +40,7 @@ public class BookEntity {
     @Column(name = "genre")
     private BookGenre genre;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChapterEntity> chapters = new ArrayList<>();
 
     public enum BookGenre {
