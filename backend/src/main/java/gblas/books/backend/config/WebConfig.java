@@ -22,4 +22,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .ignoreAcceptHeader(true)
                 .defaultContentType(MediaType.APPLICATION_JSON);
     }
+
 }

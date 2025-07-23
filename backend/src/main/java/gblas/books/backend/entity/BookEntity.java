@@ -25,7 +25,14 @@ public class BookEntity {
     private UserEntity owner;
 
     private String title;
+
+
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "book_authors",
+            joinColumns = @JoinColumn(name = "book_id")
+    )
+    @Column(name = "author_name")
     private List<String> authors = new ArrayList<>();
 
     private String description;
