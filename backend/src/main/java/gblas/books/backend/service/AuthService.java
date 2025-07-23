@@ -3,6 +3,7 @@ package gblas.books.backend.service;
 import gblas.books.backend.dto.*;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.exceptions.UserAlreadyExistsException;
+import gblas.books.backend.mapper.UserMapper;
 import gblas.books.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,13 +23,11 @@ public class AuthService {
     @Autowired private AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
-        UserEntity user = new UserEntity();
-        user.setEmail(request.email());
-        user.setHashedPassword(passwordEncoder.encode(request.password()));
-        user.setUsername(request.username());
         if(userRepository.findByEmail(request.email()).isPresent()) {
             throw new UserAlreadyExistsException("Email " + request.email() + " already exists.");
         }
+        UserEntity user = UserMapper.INSTANCE.toEntity(request, passwordEncoder);
+        log.info("Registering user with password {}", user.getHashedPassword());
         userRepository.save(user);
 
         String token = jwtService.generateToken(user.getEmail());
