@@ -2,17 +2,24 @@ package gblas.books.backend.mapper;
 
 import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.QuizEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class QuizMapper {
-    public static QuizResponse dtoFrom(QuizEntity quiz) {
+
+    private final QuestionMapper questionMapper;
+
+    public QuizResponse dtoFrom(QuizEntity quiz) {
         return new QuizResponse(
                 quiz.getId(),
                 ChapterMapper.dtoFrom(quiz.getChapter()),
                 quiz.getQuestions()
                         .stream()
-                        .map(QuestionMapper::dtoFrom)
+                        .map(questionMapper::dtoFrom)
                         .collect(Collectors.toList())
         );
     }

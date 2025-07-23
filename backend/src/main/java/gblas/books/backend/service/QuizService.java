@@ -4,6 +4,7 @@ import gblas.books.backend.dto.QuizRequest;
 import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.exceptions.NotFoundException;
+import gblas.books.backend.mapper.QuestionMapper;
 import gblas.books.backend.mapper.QuizMapper;
 import gblas.books.backend.repository.*;
 import gblas.books.backend.service.question.QuestionService;
@@ -29,26 +30,26 @@ public class QuizService {
     private ChapterRepository chapterRepository;
     private QuizRepository quizRepository;
     private QuestionService questionService;
-    private QuestionRepository questionRepository;
+    private QuizMapper quizMapper;
 
     public Page<QuizResponse> getAllQuizzesFromUser(String email, Pageable pageable) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
 
-        return quizzes_page.map(QuizMapper::dtoFrom);
+        return quizzes_page.map(quizMapper::dtoFrom);
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);
 
-        return quizzes_page.map(QuizMapper::dtoFrom);
+        return quizzes_page.map(quizMapper::dtoFrom);
     }
 
     public QuizResponse getQuizFromChapter(UUID bookId, UUID chapterId) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        return QuizMapper.dtoFrom(quiz);
+        return quizMapper.dtoFrom(quiz);
     }
 
     public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
@@ -91,9 +92,9 @@ public class QuizService {
                     return questionService.createQuestion(request, quiz);
                 })
                 .toList();
-        log.debug("Created quiz response: {}", quiz);
+
         quiz.setQuestions(questions);
-        return QuizMapper.dtoFrom(quiz);
+        return quizMapper.dtoFrom(quiz);
     }
 
 }

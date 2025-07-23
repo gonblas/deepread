@@ -1,10 +1,12 @@
 package gblas.books.backend.service.question;
 
 import gblas.books.backend.dto.QuestionRequest;
+import gblas.books.backend.dto.QuestionResponse;
 import gblas.books.backend.entity.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 
-public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity> implements QuestionStrategy {
+public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity>
+        implements QuestionStrategy {
 
     @Override
     public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
@@ -23,7 +25,24 @@ public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q exte
         return question;
     }
 
+    @Override
+    public QuestionResponse toDto(QuestionEntity entity) {
+        if (!getEntityType().isInstance(entity)) {
+            throw new IllegalArgumentException("Invalid entity type for " + getQuestionType());
+        }
+
+        Q typedEntity = getEntityType().cast(entity);
+        return mapToDto(typedEntity);
+    }
+
     protected abstract Q createTypedQuestion(T request);
+
     public abstract Class<T> getRequestType();
+
     public abstract QuestionEntity.QuestionType getQuestionType();
+
+    protected abstract Class<Q> getEntityType(); // <- para casteo
+
+    protected abstract QuestionResponse mapToDto(Q entity); // <- para el mapper
 }
+
