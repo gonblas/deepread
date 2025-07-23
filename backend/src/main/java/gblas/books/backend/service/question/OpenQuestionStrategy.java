@@ -1,10 +1,8 @@
-package gblas.books.backend.service;
+package gblas.books.backend.service.question;
 
 import gblas.books.backend.dto.OpenQuestionRequest;
-import gblas.books.backend.dto.QuestionRequest;
 import gblas.books.backend.entity.OpenQuestionEntity;
 import gblas.books.backend.entity.QuestionEntity;
-import gblas.books.backend.entity.QuizEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,12 +16,12 @@ public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionR
     }
 
     @Override
-    protected Class<OpenQuestionRequest> requestType() {
+    public Class<OpenQuestionRequest> getRequestType() {
         return OpenQuestionRequest.class;
     }
 
     @Override
-    protected QuestionEntity.QuestionType getType() {
+    public QuestionEntity.QuestionType getQuestionType() {
         return QuestionEntity.QuestionType.OPEN;
     }
 }

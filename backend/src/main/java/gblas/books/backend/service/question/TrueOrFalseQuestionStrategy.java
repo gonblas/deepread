@@ -1,4 +1,4 @@
-package gblas.books.backend.service;
+package gblas.books.backend.service.question;
 
 import gblas.books.backend.dto.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.QuestionEntity;
@@ -16,12 +16,12 @@ public class TrueOrFalseQuestionStrategy extends AbstractQuestionStrategy<TrueOr
     }
 
     @Override
-    protected Class<TrueOrFalseQuestionRequest> requestType() {
+    public Class<TrueOrFalseQuestionRequest> getRequestType() {
         return TrueOrFalseQuestionRequest.class;
     }
 
     @Override
-    protected QuestionEntity.QuestionType getType() {
+    public QuestionEntity.QuestionType getQuestionType() {
         return QuestionEntity.QuestionType.TRUE_FALSE;
     }
 }

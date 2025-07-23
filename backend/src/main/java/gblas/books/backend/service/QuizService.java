@@ -1,14 +1,12 @@
 package gblas.books.backend.service;
 
-import gblas.books.backend.dto.ChapterRequest;
-import gblas.books.backend.dto.ChapterResponse;
 import gblas.books.backend.dto.QuizRequest;
 import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.exceptions.NotFoundException;
-import gblas.books.backend.mapper.ChapterMapper;
 import gblas.books.backend.mapper.QuizMapper;
 import gblas.books.backend.repository.*;
+import gblas.books.backend.service.question.QuestionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
