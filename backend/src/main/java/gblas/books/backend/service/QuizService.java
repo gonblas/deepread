@@ -91,10 +91,10 @@ public class QuizService {
         quizRepository.save(quiz);
         List<QuestionEntity> questions = quizRequest.questions().stream()
                 .map(request -> {
-                    return questionService.createQuestion(request);
+                    return questionService.createQuestion(request, quiz);
                 })
                 .toList();
-
+        log.debug("Created quiz response: {}", quiz);
         quiz.setQuestions(questions);
         return QuizMapper.dtoFrom(quiz);
     }
