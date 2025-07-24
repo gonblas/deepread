@@ -14,5 +14,5 @@ import java.util.UUID;
 public interface ChapterRepository extends CrudRepository<ChapterEntity, UUID> {
     Page<ChapterEntity> findByBook(BookEntity book, Pageable pageable);
     Optional<ChapterEntity> findById(UUID chapterId);
-    ChapterEntity findByBookAndNumber(BookEntity book, int number);
+    Optional<ChapterEntity> findByBookAndNumber(BookEntity book, int number);
 }

@@ -5,6 +5,6 @@ import gblas.books.backend.validation.ValidTitle;
 
 public record ChapterRequest(
         @ValidTitle String title,
-        @ValidChapterNumber int number,
+        @ValidChapterNumber Integer number,
         String summary
         ) { }

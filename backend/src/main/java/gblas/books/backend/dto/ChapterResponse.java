@@ -10,6 +10,5 @@ public record ChapterResponse(
         @NotBlank UUID id,
         @ValidTitle String title,
         @ValidChapterNumber int number,
-        String summary,
-        @NotBlank UUID bookId
+        String summary
 ) { }

@@ -2,6 +2,7 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.ChapterRequest;
 import gblas.books.backend.dto.ChapterResponse;
+import gblas.books.backend.dto.UpdateChapterRequest;
 import gblas.books.backend.service.ChapterService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,12 @@ public class ChapterController {
     }
 
     @PutMapping("/{chapterId}")
-    public ChapterResponse updateChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
+    public ChapterResponse changeChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
+        return chapterService.changeChapter(bookId, chapterId, chapterRequest);
+    }
+
+    @PatchMapping("/{chapterId}")
+    public ChapterResponse updateChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody UpdateChapterRequest chapterRequest) {
         return chapterService.updateChapter(bookId, chapterId, chapterRequest);
     }
 }

@@ -21,6 +21,7 @@ public class ChapterEntity {
 
     @Column(nullable = false)
     private int number;
+
     @Column(nullable = false)
     private String title;
 

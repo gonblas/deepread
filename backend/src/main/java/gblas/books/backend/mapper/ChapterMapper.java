@@ -1,17 +1,37 @@
 package gblas.books.backend.mapper;
 
 import gblas.books.backend.dto.BookResponse;
+import gblas.books.backend.dto.ChapterRequest;
 import gblas.books.backend.dto.ChapterResponse;
+import gblas.books.backend.dto.UpdateChapterRequest;
+import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.ChapterEntity;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
-public class ChapterMapper {
-    public static ChapterResponse dtoFrom(ChapterEntity chapter) {
-        return new ChapterResponse(
-                chapter.getId(),
-                chapter.getTitle(),
-                chapter.getNumber(),
-                chapter.getSummary(),
-                chapter.getBook().getId()
-        );
-    }
+@Mapper
+public interface ChapterMapper {
+
+    ChapterMapper INSTANCE = Mappers.getMapper(ChapterMapper.class);
+
+    @Mapping(target = "id", source = "id")
+    ChapterResponse toDto(ChapterEntity chapter);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
+    @Mapping(target = "book", source = "book")
+    @Mapping(target = "title", source = "request.title")
+    ChapterEntity toEntity(ChapterRequest request, BookEntity book);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
+    @Mapping(target = "book", ignore = true)
+    void changeEntity(ChapterRequest request, @MappingTarget ChapterEntity entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
+    @Mapping(target = "book", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UpdateChapterRequest request, @MappingTarget ChapterEntity entity);
+
 }

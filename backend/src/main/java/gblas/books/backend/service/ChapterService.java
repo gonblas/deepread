@@ -2,6 +2,7 @@ package gblas.books.backend.service;
 
 import gblas.books.backend.dto.ChapterRequest;
 import gblas.books.backend.dto.ChapterResponse;
+import gblas.books.backend.dto.UpdateChapterRequest;
 import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.ChapterEntity;
 import gblas.books.backend.exceptions.NotFoundException;
@@ -10,14 +11,17 @@ import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ChapterService {
@@ -29,20 +33,21 @@ public class ChapterService {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         Page<ChapterEntity> chapters_page = chapterRepository.findByBook(book, pageable);
 
-        return chapters_page.map(ChapterMapper::dtoFrom);
+        return chapters_page.map(ChapterMapper.INSTANCE::toDto);
     }
 
     public ChapterResponse addChapter(UUID bookId, ChapterRequest chapterRequest) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-        ChapterEntity chapterEntity = chapterRepository.findByBookAndNumber(book, chapterRequest.number());
+        log.info("Adding chapter {}", chapterRequest.number());
+        Optional<ChapterEntity> chapterEntity = chapterRepository.findByBookAndNumber(book, chapterRequest.number());
 
-        if(chapterEntity != null ) {
+        if(chapterEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Chapter number already exists for this book");
         }
-        ChapterEntity newChapterEntity = new ChapterEntity();
-        newChapterEntity.setBook(book);
 
-        return getChapterResponse(chapterRequest, newChapterEntity);
+        ChapterEntity newChapterEntity = ChapterMapper.INSTANCE.toEntity(chapterRequest, book);
+        chapterRepository.save(newChapterEntity);
+        return ChapterMapper.INSTANCE.toDto(newChapterEntity);
     }
 
     public void deleteChapter(UUID bookId, UUID chapterId) {
@@ -54,24 +59,34 @@ public class ChapterService {
         chapterRepository.delete(chapterEntity);
     }
 
-    public ChapterResponse updateChapter(UUID bookId, UUID chapterId, ChapterRequest chapterRequest) {
+    public ChapterResponse changeChapter(UUID bookId, UUID chapterId, ChapterRequest chapterRequest) {
+        ChapterEntity chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
+
+        ChapterMapper.INSTANCE.changeEntity(chapterRequest, chapterToChange);
+        chapterRepository.save(chapterToChange);
+        return ChapterMapper.INSTANCE.toDto(chapterToChange);
+    }
+
+    public ChapterResponse updateChapter(UUID bookId, UUID chapterId, UpdateChapterRequest chapterRequest) {
+        ChapterEntity chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
+        ChapterEntity chapterEntity;
+
+        ChapterMapper.INSTANCE.updateEntity(chapterRequest, chapterToChange);
+        chapterRepository.save(chapterToChange);
+        return ChapterMapper.INSTANCE.toDto(chapterToChange);
+    }
+
+    private ChapterEntity findChapterWithSameNumber(UUID bookId, UUID chapterId, Integer number) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
 
-        if(chapterEntity == null ) {
-            throw new NotFoundException("Chapter not found");
+        Optional<ChapterEntity> chapter = chapterRepository
+                .findByBookAndNumber(book, number);
+
+        if(chapter.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Chapter number already exists for this book");
         }
 
-        return getChapterResponse(chapterRequest, chapterEntity);
-    }
-
-    private ChapterResponse getChapterResponse(ChapterRequest chapterRequest, ChapterEntity chapter) {
-        chapter.setTitle(chapterRequest.title());
-        chapter.setNumber(chapterRequest.number());
-        if(chapterRequest.summary() != null) {
-            chapter.setSummary(chapterRequest.summary());
-        }
-        chapterRepository.save(chapter);
-        return ChapterMapper.dtoFrom(chapter);
+        return chapterEntity;
     }
 }

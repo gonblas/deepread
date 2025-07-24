@@ -23,11 +23,11 @@ public interface BookMapper {
     @Mapping(target="id", ignore = true)
     @Mapping(target="chapters", ignore = true)
     @Mapping(target = "owner", ignore = true)
-    void changeEntity(BookRequest request, @MappingTarget BookEntity bookEntity);
+    void changeEntity(BookRequest request, @MappingTarget BookEntity entity);
 
     @Mapping(target="id", ignore = true)
     @Mapping(target="chapters", ignore = true)
     @Mapping(target = "owner", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(BookUpdateRequest request, @MappingTarget BookEntity bookEntity);
+    void updateEntity(BookUpdateRequest request, @MappingTarget BookEntity entity);
 }

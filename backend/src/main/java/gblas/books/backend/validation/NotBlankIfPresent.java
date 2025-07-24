@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotBlankIfPresent {
-    String message() default "Field must not be blank if present";
+    String message() default "Field must not be null or blank if present";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

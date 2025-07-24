@@ -16,7 +16,7 @@ public class QuizMapper {
     public QuizResponse dtoFrom(QuizEntity quiz) {
         return new QuizResponse(
                 quiz.getId(),
-                ChapterMapper.dtoFrom(quiz.getChapter()),
+                ChapterMapper.INSTANCE.toDto(quiz.getChapter()),
                 quiz.getQuestions()
                         .stream()
                         .map(questionMapper::dtoFrom)
