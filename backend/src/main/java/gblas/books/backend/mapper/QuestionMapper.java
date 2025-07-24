@@ -4,17 +4,18 @@ import gblas.books.backend.dto.QuestionResponse;
 import gblas.books.backend.entity.QuestionEntity;
 import gblas.books.backend.service.question.QuestionFactory;
 import gblas.books.backend.service.question.QuestionStrategy;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
 
-@Component
-@RequiredArgsConstructor
-public class QuestionMapper {
+@Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR)
+public interface QuestionMapper {
 
-    private final QuestionFactory questionFactory;
+    QuestionMapper INSTANCE =  Mappers.getMapper(QuestionMapper.class);
 
-    public QuestionResponse dtoFrom(QuestionEntity entity) {
-        QuestionStrategy strategy = questionFactory.getQuestionStrategy(entity.getType());
+    default QuestionResponse toDto(QuestionEntity entity, @Context QuestionFactory factory) {
+        QuestionStrategy strategy = factory.getQuestionStrategy(entity.getType());
         return strategy.toDto(entity);
     }
 }

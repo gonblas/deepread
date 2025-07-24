@@ -21,11 +21,13 @@ public interface ChapterMapper {
     @Mapping(target = "quiz", ignore = true)
     @Mapping(target = "book", source = "book")
     @Mapping(target = "title", source = "request.title")
+    @Mapping(target = "quizBidirectional", ignore = true)
     ChapterEntity toEntity(ChapterRequest request, BookEntity book);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quiz", ignore = true)
     @Mapping(target = "book", ignore = true)
+    @Mapping(target = "quizBidirectional", ignore = true)
     void changeEntity(ChapterRequest request, @MappingTarget ChapterEntity entity);
 
     @InheritConfiguration(name = "changeEntity")
