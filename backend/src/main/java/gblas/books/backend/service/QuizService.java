@@ -32,22 +32,24 @@ public class QuizService {
     private final QuestionService questionService;
     private final QuizMapper quizMapper;
 
-    public Page<QuizResponse> getAllQuizzesFromUser(String email, Pageable pageable) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+    public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
-
         return quizzes_page.map(quizMapper::dtoFrom);
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);
-
         return quizzes_page.map(quizMapper::dtoFrom);
     }
 
     public QuizResponse getQuizFromChapter(UUID bookId, UUID chapterId) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
+
+        if(!chapter.getBook().getId().equals(book.getId())) {
+            throw new NotFoundException("Chapter does not belong to this book");
+        }
+        
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
         return quizMapper.dtoFrom(quiz);
     }

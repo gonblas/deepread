@@ -33,67 +33,30 @@ public class QuizController {
     private QuizRepository quizRepository;
 
     @GetMapping("/api/quizzes")
-    public ResponseEntity<Page<QuizResponse>> getQuizzesFromUser(Principal principal, Pageable pageable) {
-        Page<QuizResponse> quizzes = quizService.getAllQuizzesFromUser(principal.getName(), pageable);
-        return ResponseEntity.ok(quizzes);
+    public Page<QuizResponse> getQuizzesFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
+        return quizService.getAllQuizzesFromUser(user, pageable);
     }
 
-    @RequestMapping("/api/books/{bookId}/quizzes")
-    public ResponseEntity<Page<QuizResponse>> getQuizzesFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
-        Page<QuizResponse> quizzes = quizService.getAllQuizzesFromBook(bookId, pageable);
-        return ResponseEntity.ok(quizzes);
+    @GetMapping("/api/books/{bookId}/quizzes")
+    public Page<QuizResponse> getQuizzesFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
+        return quizService.getAllQuizzesFromBook(bookId, pageable);
     }
 
-    @RequestMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
-    public ResponseEntity<QuizResponse> getQuizFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
-        QuizResponse quiz = quizService.getQuizFromChapter(bookId, chapterId);
-        return ResponseEntity.ok(quiz);
+    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
+    public QuizResponse getQuizFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
+        return quizService.getQuizFromChapter(bookId, chapterId);
     }
 
     @PostMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
-    public ResponseEntity<QuizResponse> createQuiz(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody QuizRequest quizRequest) {
-        QuizResponse quiz = quizService.addQuiz(bookId, chapterId, quizRequest);
-        return ResponseEntity.ok(quiz);
+    @ResponseStatus(HttpStatus.CREATED)
+    public QuizResponse createQuiz(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody QuizRequest quizRequest) {
+        return quizService.addQuiz(bookId, chapterId, quizRequest);
     }
 
     @DeleteMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
-    public ResponseEntity<?> deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
         quizService.deleteQuiz(bookId, chapterId);
-        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/api/quiz/test")
-    public void pushQuizzes(@AuthenticationPrincipal UserEntity user) {
-        quizRepository.deleteAll();
-        Iterable<ChapterEntity> chapters = chapterRepository.findAll();
-
-        ChapterEntity firstChapter = chapters.iterator().hasNext()
-                ? chapters.iterator().next()
-                : null;
-
-        QuizEntity quiz = new QuizEntity();
-        quiz.setChapter(firstChapter); // ya persistido
-        quiz.setQuestions(new ArrayList<>()); // redundante, pero claro
-
-//        OpenQuestionEntity q1 = new OpenQuestionEntity();
-//        q1.setType(QuestionEntity.QuestionType.OPEN);
-//        q1.setPrompt("Enter open question");
-//        q1.setExpectedAnswer("nashe");
-//
-//        TrueOrFalseQuestionEntity q2 = new TrueOrFalseQuestionEntity();
-//        q2.setType(QuestionEntity.QuestionType.TRUE_FALSE);
-//        q2.setPrompt("Is it nashe?");
-//        q2.setIsAnswerTrue(true);
-//
-//        // Asociá desde el lado del "dueño"
-//        quiz.getQuestions().add(q1);
-//        quiz.getQuestions().add(q2);
-
-        // Hibernate se encarga de asignar el quiz a cada pregunta
-//        q1.setQuiz(quiz);
-//        q2.setQuiz(quiz);
-
-        quizRepository.save(quiz); // <-- solo este save
-
-    }
 }

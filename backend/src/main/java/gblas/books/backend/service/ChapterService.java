@@ -69,7 +69,6 @@ public class ChapterService {
 
     public ChapterResponse updateChapter(UUID bookId, UUID chapterId, UpdateChapterRequest chapterRequest) {
         ChapterEntity chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
-        ChapterEntity chapterEntity;
 
         ChapterMapper.INSTANCE.updateEntity(chapterRequest, chapterToChange);
         chapterRepository.save(chapterToChange);
