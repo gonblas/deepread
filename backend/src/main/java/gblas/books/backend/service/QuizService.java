@@ -26,21 +26,20 @@ import java.util.UUID;
 @AllArgsConstructor
 public class QuizService {
 
-    private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ChapterRepository chapterRepository;
     private final QuizRepository quizRepository;
     private final QuestionService questionService;
-    private final QuizMapper quizMapper;
+    private final QuestionMapper questionMapper;
 
     public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
-        return quizzes_page.map(quizMapper::dtoFrom);
+        return quizzes_page.map(q -> QuizMapper.INSTANCE.toDto(q, questionMapper));
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);
-        return quizzes_page.map(quizMapper::dtoFrom);
+        return quizzes_page.map(q -> QuizMapper.INSTANCE.toDto(q, questionMapper));
     }
 
     public QuizResponse getQuizFromChapter(UUID bookId, UUID chapterId) {
@@ -52,7 +51,7 @@ public class QuizService {
         }
 
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        return quizMapper.dtoFrom(quiz);
+        return QuizMapper.INSTANCE.toDto(quiz, questionMapper);
     }
 
     public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
@@ -97,7 +96,7 @@ public class QuizService {
                 .toList();
 
         quiz.setQuestions(questions);
-        return quizMapper.dtoFrom(quiz);
+        return QuizMapper.INSTANCE.toDto(quiz, questionMapper);
     }
 
 }

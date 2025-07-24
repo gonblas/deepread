@@ -1,26 +1,33 @@
 package gblas.books.backend.mapper;
 
+import gblas.books.backend.dto.QuestionResponse;
 import gblas.books.backend.dto.QuizResponse;
+import gblas.books.backend.entity.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
-public class QuizMapper {
+@Mapper
+public interface QuizMapper {
+    QuizMapper INSTANCE = Mappers.getMapper(QuizMapper.class);
 
-    private final QuestionMapper questionMapper;
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "chapter", source = "chapter")
+    @Mapping(target = "questions", source = "questions", qualifiedByName = "questionMapping")
+    QuizResponse toDto(QuizEntity quiz, @Context QuestionMapper questionMapper);
 
-    public QuizResponse dtoFrom(QuizEntity quiz) {
-        return new QuizResponse(
-                quiz.getId(),
-                ChapterMapper.INSTANCE.toDto(quiz.getChapter()),
-                quiz.getQuestions()
-                        .stream()
-                        .map(questionMapper::dtoFrom)
-                        .collect(Collectors.toList())
-        );
+    @Named("questionMapping")
+    default List<QuestionResponse> questionMapping(List<QuestionEntity> questions, @Context QuestionMapper questionMapper) {
+        return questions
+                .stream()
+                .map(questionMapper::dtoFrom)
+                .collect(Collectors.toList());
     }
+
 }
