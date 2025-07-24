@@ -2,6 +2,7 @@ package gblas.books.backend.service;
 
 import gblas.books.backend.dto.BookResponse;
 import gblas.books.backend.dto.BookRequest;
+import gblas.books.backend.dto.BookUpdateRequest;
 import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.BookEntity.*;
 import gblas.books.backend.entity.UserEntity;
@@ -34,13 +35,13 @@ public class BookService {
         } else {
             books_page = bookRepository.findByOwnerAndGenreIn(user, genres, pageable);
         }
-        return books_page.map(BookMapper::dtoFrom);
+        return books_page.map(BookMapper.INSTANCE::toDto);
     }
 
     public BookResponse addBook(UserEntity user, BookRequest bookRequest) {
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setOwner(user);
-        return getBookResponse(bookRequest, bookEntity);
+        BookEntity bookEntity = BookMapper.INSTANCE.toEntity(bookRequest, user);
+        bookRepository.save(bookEntity);
+        return BookMapper.INSTANCE.toDto(bookEntity);
     }
 
     public void deleteBook(UserEntity user, UUID bookId) {
@@ -48,24 +49,18 @@ public class BookService {
         bookRepository.delete(bookEntity);
     }
 
-    public BookResponse updateBook(UserEntity user, UUID bookId, BookRequest bookRequest) {
+    public BookResponse changeBook(UserEntity user, UUID bookId, BookRequest bookRequest) {
         BookEntity bookEntity = bookRepository.findByOwnerAndId(user, bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-
-        return getBookResponse(bookRequest, bookEntity);
-    }
-
-    private BookResponse getBookResponse(BookRequest bookRequest, BookEntity bookEntity) {
-        bookEntity.setTitle(bookRequest.title());
-        bookEntity.setDescription(bookRequest.description());
-        if(bookRequest.authors()  != null && !bookRequest.authors().isEmpty()) {
-            bookEntity.setAuthors(bookRequest.authors());
-        } else {
-            bookEntity.setAuthors(new ArrayList<>());
-        }
-        bookEntity.setGenre(bookRequest.genre());
+        BookMapper.INSTANCE.changeEntity(bookRequest, bookEntity);
         bookRepository.save(bookEntity);
-        return BookMapper.dtoFrom(bookEntity);
+        return BookMapper.INSTANCE.toDto(bookEntity);
     }
 
+    public BookResponse updateBook(UserEntity user, UUID bookId, BookUpdateRequest bookRequest) {
+        BookEntity bookEntity = bookRepository.findByOwnerAndId(user, bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        BookMapper.INSTANCE.updateEntity(bookRequest, bookEntity);
+        bookRepository.save(bookEntity);
+        return BookMapper.INSTANCE.toDto(bookEntity);
+    }
 
 }

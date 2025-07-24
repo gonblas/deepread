@@ -2,6 +2,7 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.BookResponse;
 import gblas.books.backend.dto.BookRequest;
+import gblas.books.backend.dto.BookUpdateRequest;
 import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.BookEntity.*;
 import gblas.books.backend.entity.ChapterEntity;
@@ -32,9 +33,8 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public ResponseEntity<Page<BookResponse>> getBooks(@Valid @RequestParam(required = false) List<BookGenre> genres, @AuthenticationPrincipal UserEntity user, Pageable pageable) {
-        Page<BookResponse> books = bookService.getBooks(user, pageable, genres);
-        return ResponseEntity.ok(books);
+    public Page<BookResponse> getBooks(@Valid @RequestParam(required = false) List<BookGenre> genres, @AuthenticationPrincipal UserEntity user, Pageable pageable) {
+        return bookService.getBooks(user, pageable, genres);
     }
 
     @PostMapping
@@ -50,29 +50,13 @@ public class BookController {
     }
 
     @PutMapping("/{bookId}")
-    public BookResponse updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
+    public BookResponse changeBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
+        return bookService.changeBook(user, bookId, bookRequest);
+    }
+
+    @PatchMapping("/{bookId}")
+    public BookResponse updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookUpdateRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
         return bookService.updateBook(user, bookId, bookRequest);
     }
-
-    @PostMapping("/test")
-    public void getBooks(@AuthenticationPrincipal UserEntity user) {
-        bookRepository.deleteAll();
-        BookEntity book = new BookEntity();
-        book.setTitle("Titulo de libro con capitulos agregados");
-        book.setOwner(user);
-        ChapterEntity c1 = new ChapterEntity();
-        c1.setTitle("Titulo del c1");
-        c1.setBook(book);
-
-        ChapterEntity c2 = new ChapterEntity();
-        c2.setTitle("Titulo del c2");
-        c2.setBook(book);
-
-        book.getChapters().add(c1);
-        book.getChapters().add(c2);
-
-        bookRepository.save(book);
-    }
-
 
 }
