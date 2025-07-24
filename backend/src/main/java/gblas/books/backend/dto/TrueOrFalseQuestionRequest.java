@@ -1,13 +1,15 @@
 package gblas.books.backend.dto;
 
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.entity.QuestionEntity.QuestionType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record TrueOrFalseQuestionRequest(
-        QuestionEntity.QuestionType question_type,
-        String prompt,
+        @NotNull QuestionType question_type,
+        @NotBlank String prompt,
         String explanation,
-        boolean isAnswerTrue
+        @NotNull Boolean isAnswerTrue
 ) implements QuestionRequest {
 }

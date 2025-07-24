@@ -1,14 +1,16 @@
 package gblas.books.backend.dto;
 
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.entity.QuestionEntity.QuestionType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record OpenQuestionRequest(
-        QuestionEntity.QuestionType question_type,
-        String prompt,
+        @NotNull QuestionType question_type,
+        @NotBlank String prompt,
         String explanation,
-        String expectedAnswer
+        @NotBlank String expectedAnswer
 ) implements QuestionRequest {
 
 }

@@ -8,6 +8,7 @@ import gblas.books.backend.mapper.QuestionMapper;
 import gblas.books.backend.mapper.QuizMapper;
 import gblas.books.backend.repository.*;
 import gblas.books.backend.service.question.QuestionService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ public class QuizService {
         if(!chapter.getBook().getId().equals(book.getId())) {
             throw new NotFoundException("Chapter does not belong to this book");
         }
-        
+
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
         return quizMapper.dtoFrom(quiz);
     }

@@ -9,7 +9,7 @@ public record TrueFalseQuestionResponse(
         QuestionType question_type,
         String prompt,
         String explanation,
-        boolean isAnswerTrue
+        Boolean isAnswerTrue
 ) implements QuestionResponse {
 
 }
