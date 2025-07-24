@@ -28,9 +28,7 @@ public interface ChapterMapper {
     @Mapping(target = "book", ignore = true)
     void changeEntity(ChapterRequest request, @MappingTarget ChapterEntity entity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quiz", ignore = true)
-    @Mapping(target = "book", ignore = true)
+    @InheritConfiguration(name = "changeEntity")
     @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(UpdateChapterRequest request, @MappingTarget ChapterEntity entity);
 
