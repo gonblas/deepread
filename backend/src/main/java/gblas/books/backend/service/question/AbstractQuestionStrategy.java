@@ -15,14 +15,8 @@ public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q exte
         }
 
         T typedRequest = getRequestType().cast(request);
-        Q question = createTypedQuestion(typedRequest);
 
-        question.setExplanation(typedRequest.explanation());
-        question.setType(getQuestionType());
-        question.setPrompt(typedRequest.prompt());
-        question.setQuiz(quiz);
-
-        return question;
+        return createTypedQuestion(typedRequest, quiz);
     }
 
     @Override
@@ -35,14 +29,14 @@ public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q exte
         return mapToDto(typedEntity);
     }
 
-    protected abstract Q createTypedQuestion(T request);
+    protected abstract Q createTypedQuestion(T request, QuizEntity quiz);
 
     public abstract Class<T> getRequestType();
 
     public abstract QuestionEntity.QuestionType getQuestionType();
 
-    protected abstract Class<Q> getEntityType(); // <- para casteo
+    protected abstract Class<Q> getEntityType();
 
-    protected abstract QuestionResponse mapToDto(Q entity); // <- para el mapper
+    protected abstract QuestionResponse mapToDto(Q entity);
 }
 

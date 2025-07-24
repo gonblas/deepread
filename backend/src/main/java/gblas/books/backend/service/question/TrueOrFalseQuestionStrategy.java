@@ -1,8 +1,8 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.dto.TrueFalseQuestionResponse;
 import gblas.books.backend.dto.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
 import gblas.books.backend.mapper.TrueOrFalseQuestionMapper;
 import org.springframework.stereotype.Component;
@@ -19,10 +19,13 @@ public class TrueOrFalseQuestionStrategy
     }
 
     @Override
-    protected TrueOrFalseQuestionEntity createTypedQuestion(TrueOrFalseQuestionRequest request) {
-        TrueOrFalseQuestionEntity question = new TrueOrFalseQuestionEntity();
-        question.setIsAnswerTrue(request.isAnswerTrue());
-        return question;
+    protected TrueOrFalseQuestionEntity createTypedQuestion(TrueOrFalseQuestionRequest request, QuizEntity quiz) {
+        return mapper.toEntity(request, quiz);
+    }
+
+    @Override
+    protected QuestionResponse mapToDto(TrueOrFalseQuestionEntity entity) {
+        return mapper.toDto(entity);
     }
 
     @Override
@@ -40,10 +43,6 @@ public class TrueOrFalseQuestionStrategy
         return TrueOrFalseQuestionEntity.class;
     }
 
-    @Override
-    protected QuestionResponse mapToDto(TrueOrFalseQuestionEntity entity) {
-        return mapper.toDto(entity);
-    }
 }
 
 
