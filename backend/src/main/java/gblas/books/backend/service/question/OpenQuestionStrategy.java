@@ -2,13 +2,19 @@ package gblas.books.backend.service.question;
 
 import gblas.books.backend.dto.OpenQuestionRequest;
 import gblas.books.backend.dto.QuestionResponse;
-import gblas.books.backend.dto.OpenQuestionResponse;
 import gblas.books.backend.entity.OpenQuestionEntity;
 import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.mapper.OpenQuestionMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionRequest, OpenQuestionEntity> {
+
+    private final OpenQuestionMapper mapper;
+
+    public OpenQuestionStrategy(OpenQuestionMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     protected OpenQuestionEntity createTypedQuestion(OpenQuestionRequest request) {
@@ -34,13 +40,7 @@ public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionR
 
     @Override
     protected QuestionResponse mapToDto(OpenQuestionEntity entity) {
-        return new OpenQuestionResponse(
-                entity.getId(),
-                entity.getType(),
-                entity.getPrompt(),
-                entity.getExplanation(),
-                entity.getExpectedAnswer()
-        );
+        return mapper.toDto(entity);
     }
 }
 

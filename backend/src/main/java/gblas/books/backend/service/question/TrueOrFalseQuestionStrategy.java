@@ -4,12 +4,19 @@ import gblas.books.backend.dto.TrueFalseQuestionResponse;
 import gblas.books.backend.dto.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.QuestionEntity;
 import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
+import gblas.books.backend.mapper.TrueOrFalseQuestionMapper;
 import org.springframework.stereotype.Component;
 import gblas.books.backend.dto.QuestionResponse;
 
 @Component
 public class TrueOrFalseQuestionStrategy
         extends AbstractQuestionStrategy<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity> {
+
+    private final TrueOrFalseQuestionMapper mapper;
+
+    public TrueOrFalseQuestionStrategy(TrueOrFalseQuestionMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     protected TrueOrFalseQuestionEntity createTypedQuestion(TrueOrFalseQuestionRequest request) {
@@ -35,13 +42,7 @@ public class TrueOrFalseQuestionStrategy
 
     @Override
     protected QuestionResponse mapToDto(TrueOrFalseQuestionEntity entity) {
-        return new TrueFalseQuestionResponse(
-                entity.getId(),
-                entity.getType(),
-                entity.getPrompt(),
-                entity.getExplanation(),
-                entity.getIsAnswerTrue()
-        );
+        return mapper.toDto(entity);
     }
 }
 
