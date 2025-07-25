@@ -7,14 +7,12 @@ import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = QuestionConfig.class)
 public interface TrueOrFalseQuestionMapper {
-    @Mapping(target = "question_type", source = "type")
+    @Mapping(target = "isAnswerTrue", source = "isAnswerTrue")
     TrueOrFalseQuestionResponse toDto(TrueOrFalseQuestionEntity entity);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quiz", source = "quiz")
-    @Mapping(target = "type", source = "request.question_type")
+    
+    @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
     TrueOrFalseQuestionEntity toEntity(TrueOrFalseQuestionRequest request, QuizEntity quiz);
 }
 

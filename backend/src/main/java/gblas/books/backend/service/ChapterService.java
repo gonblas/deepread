@@ -38,7 +38,6 @@ public class ChapterService {
 
     public ChapterResponse addChapter(UUID bookId, ChapterRequest chapterRequest) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-        log.info("Adding chapter {}", chapterRequest.number());
         Optional<ChapterEntity> chapterEntity = chapterRepository.findByBookAndNumber(book, chapterRequest.number());
 
         if(chapterEntity.isPresent()) {

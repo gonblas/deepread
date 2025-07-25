@@ -27,7 +27,6 @@ public class AuthService {
             throw new UserAlreadyExistsException("Email " + request.email() + " already exists.");
         }
         UserEntity user = UserMapper.INSTANCE.toEntity(request, passwordEncoder);
-        log.info("Registering user with password {}", user.getHashedPassword());
         userRepository.save(user);
 
         String token = jwtService.generateToken(user.getEmail());

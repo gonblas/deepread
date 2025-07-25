@@ -7,14 +7,12 @@ import gblas.books.backend.entity.QuizEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = QuestionConfig.class)
 public interface OpenQuestionMapper {
-    @Mapping(target = "question_type", source = "type")
+    @Mapping(target = "expectedAnswer", source = "expectedAnswer")
     OpenQuestionResponse toDto(OpenQuestionEntity entity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quiz", source = "quiz")
-    @Mapping(target = "type", source = "request.question_type")
+    @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
     OpenQuestionEntity toEntity(OpenQuestionRequest request, QuizEntity quiz);
 }
 
