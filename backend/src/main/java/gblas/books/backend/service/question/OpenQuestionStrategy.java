@@ -9,22 +9,10 @@ import gblas.books.backend.mapper.OpenQuestionMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionRequest, OpenQuestionEntity> {
-
-    private final OpenQuestionMapper mapper;
+public class OpenQuestionStrategy extends AbstractQuestionStrategy<OpenQuestionRequest, OpenQuestionEntity, OpenQuestionMapper> {
 
     public OpenQuestionStrategy(OpenQuestionMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    @Override
-    protected OpenQuestionEntity createTypedQuestion(OpenQuestionRequest request, QuizEntity quiz) {
-        return mapper.toEntity(request, quiz);
-    }
-
-    @Override
-    protected QuestionResponse mapToDto(OpenQuestionEntity entity) {
-        return mapper.toDto(entity);
+        super(mapper);
     }
 
     @Override

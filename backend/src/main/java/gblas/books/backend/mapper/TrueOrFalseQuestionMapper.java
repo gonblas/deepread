@@ -8,10 +8,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
-public interface TrueOrFalseQuestionMapper {
+public interface TrueOrFalseQuestionMapper extends QuestionMapper2<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity> {
     @Mapping(target = "isAnswerTrue", source = "isAnswerTrue")
     TrueOrFalseQuestionResponse toDto(TrueOrFalseQuestionEntity entity);
-    
+
     @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
     TrueOrFalseQuestionEntity toEntity(TrueOrFalseQuestionRequest request, QuizEntity quiz);
 }

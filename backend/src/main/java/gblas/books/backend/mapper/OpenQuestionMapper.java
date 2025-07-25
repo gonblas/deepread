@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
-public interface OpenQuestionMapper {
+public interface OpenQuestionMapper extends QuestionMapper2<OpenQuestionRequest, OpenQuestionEntity> {
     @Mapping(target = "expectedAnswer", source = "expectedAnswer")
     OpenQuestionResponse toDto(OpenQuestionEntity entity);
 

@@ -10,22 +10,10 @@ import gblas.books.backend.dto.QuestionResponse;
 
 @Component
 public class TrueOrFalseQuestionStrategy
-        extends AbstractQuestionStrategy<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity> {
-
-    private final TrueOrFalseQuestionMapper mapper;
+        extends AbstractQuestionStrategy<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity, TrueOrFalseQuestionMapper> {
 
     public TrueOrFalseQuestionStrategy(TrueOrFalseQuestionMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    @Override
-    protected TrueOrFalseQuestionEntity createTypedQuestion(TrueOrFalseQuestionRequest request, QuizEntity quiz) {
-        return mapper.toEntity(request, quiz);
-    }
-
-    @Override
-    protected QuestionResponse mapToDto(TrueOrFalseQuestionEntity entity) {
-        return mapper.toDto(entity);
+        super(mapper);
     }
 
     @Override
