@@ -67,7 +67,12 @@ public class ChapterService {
     }
 
     public ChapterResponse updateChapter(UUID bookId, UUID chapterId, UpdateChapterRequest chapterRequest) {
-        ChapterEntity chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
+        ChapterEntity chapterToChange;
+        if (chapterRequest.number() != null) {
+            chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
+        } else {
+            chapterToChange = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
+        }
 
         ChapterMapper.INSTANCE.updateEntity(chapterRequest, chapterToChange);
         chapterRepository.save(chapterToChange);
