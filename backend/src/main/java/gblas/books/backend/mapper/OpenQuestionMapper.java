@@ -6,6 +6,7 @@ import gblas.books.backend.entity.OpenQuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
 public interface OpenQuestionMapper extends QuestionMapper2<OpenQuestionRequest, OpenQuestionEntity> {
@@ -14,5 +15,9 @@ public interface OpenQuestionMapper extends QuestionMapper2<OpenQuestionRequest,
 
     @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
     OpenQuestionEntity toEntity(OpenQuestionRequest request, QuizEntity quiz);
+
+    @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
+    @Mapping(target = "type", source = "request.question_type")
+    void updateEntity(OpenQuestionRequest request, @MappingTarget OpenQuestionEntity entity);
 }
 

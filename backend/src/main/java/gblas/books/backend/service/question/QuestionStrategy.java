@@ -12,6 +12,8 @@ public interface QuestionStrategy {
 
     QuestionEntity.QuestionType getQuestionType();
 
+    void updateQuestion(QuestionRequest request, QuestionEntity entity);
+
     QuestionResponse toDto(QuestionEntity entity);
 }
 

@@ -25,6 +25,16 @@ public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q exte
     }
 
     @Override
+    public void updateQuestion(QuestionRequest request, QuestionEntity entity) {
+        if (!getRequestType().isInstance(request)) {
+            throw new IllegalArgumentException("Invalid request type for " + getQuestionType());
+        }
+        T typedRequest = getRequestType().cast(request);
+        Q typedQuestion = getEntityType().cast(entity);
+        mapper.updateEntity(typedRequest, typedQuestion);
+    }
+
+    @Override
     public QuestionResponse toDto(QuestionEntity entity) {
         if (!getEntityType().isInstance(entity)) {
             throw new IllegalArgumentException("Invalid entity type for " + getQuestionType());

@@ -11,6 +11,7 @@ import gblas.books.backend.repository.QuizRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -27,10 +28,6 @@ public class QuestionService {
 
     public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
         QuestionStrategy strategy = questionFactory.getQuestionStrategy(request.question_type());
-
-        if (strategy == null) {
-            throw new IllegalArgumentException("Question type wrong: " + request.question_type());
-        }
         QuestionEntity newQuestion = strategy.createQuestion(request, quiz);
         questionRepository.save(newQuestion);
         return newQuestion;
@@ -49,12 +46,26 @@ public class QuestionService {
         quizRepository.save(quiz);
     }
 
-//    public QuestionResponse changeQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) {
-//        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-//        QuestionEntity question = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
-//
-//    }
-//
-//    public QuestionResponse updateQuestion(@Valid UUID quizId, @Valid UUID questionId, UpdateQuestionRequest questionRequest) {
-//    }
+    public QuestionResponse changeQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) {
+        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
+        questionRepository.delete(questionEntity);
+        questionEntity = createQuestion(questionRequest, quiz);
+        return QuestionMapper.INSTANCE.toDto(questionEntity, questionFactory);
+    }
+
+    public QuestionResponse updateQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) throws BadRequestException {
+        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
+
+        if(!questionEntity.getType().equals(questionRequest.question_type())) {
+            throw new BadRequestException("Question type not match");
+        }
+
+        QuestionStrategy strategy = questionFactory.getQuestionStrategy(questionRequest.question_type());
+        strategy.updateQuestion(questionRequest, questionEntity);
+        questionRepository.save(questionEntity);
+        return QuestionMapper.INSTANCE.toDto(questionEntity, questionFactory);
+    }
+
 }

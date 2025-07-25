@@ -6,6 +6,7 @@ import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
 public interface TrueOrFalseQuestionMapper extends QuestionMapper2<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity> {
@@ -14,5 +15,9 @@ public interface TrueOrFalseQuestionMapper extends QuestionMapper2<TrueOrFalseQu
 
     @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
     TrueOrFalseQuestionEntity toEntity(TrueOrFalseQuestionRequest request, QuizEntity quiz);
+
+    @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
+    @Mapping(target = "type", source = "request.question_type")
+    void updateEntity(TrueOrFalseQuestionRequest request, @MappingTarget TrueOrFalseQuestionEntity entity);
 }
 
