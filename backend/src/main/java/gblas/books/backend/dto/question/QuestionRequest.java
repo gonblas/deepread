@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "question_type",
+        property = "type",
         visible = true
 )
 @JsonSubTypes({
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = TrueOrFalseQuestionRequest.class, name = "TRUE_FALSE")
 })
 public interface QuestionRequest {
-    QuestionType question_type();
+    QuestionType type();
     String prompt();
     String explanation();
 }

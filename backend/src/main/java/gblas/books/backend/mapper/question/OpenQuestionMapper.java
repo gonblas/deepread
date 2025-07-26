@@ -17,7 +17,7 @@ public interface OpenQuestionMapper extends QuestionMapper2<OpenQuestionRequest,
     OpenQuestionEntity toEntity(OpenQuestionRequest request, QuizEntity quiz);
 
     @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
-    @Mapping(target = "type", source = "request.question_type")
+    @Mapping(target = "type", source = "request.type")
     void updateEntity(OpenQuestionRequest request, @MappingTarget OpenQuestionEntity entity);
 }
 

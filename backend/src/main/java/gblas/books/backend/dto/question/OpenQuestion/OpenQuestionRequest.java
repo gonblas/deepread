@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record OpenQuestionRequest(
-        @NotNull QuestionType question_type,
+        @NotNull QuestionType type,
         @NotBlank String prompt,
         String explanation,
         @NotBlank String expectedAnswer

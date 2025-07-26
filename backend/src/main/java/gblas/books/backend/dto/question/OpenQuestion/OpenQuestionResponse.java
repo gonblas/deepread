@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record OpenQuestionResponse(
         UUID id,
-        QuestionEntity.QuestionType question_type,
+        QuestionEntity.QuestionType type,
         String prompt,
         String explanation,
         String expectedAnswer

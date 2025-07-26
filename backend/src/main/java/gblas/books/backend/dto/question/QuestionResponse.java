@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface QuestionResponse {
     UUID id();
-    QuestionType question_type();
+    QuestionType type();
     String prompt();
     String explanation();
 }

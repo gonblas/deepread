@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record TrueOrFalseQuestionResponse(
         UUID id,
-        QuestionEntity.QuestionType question_type,
+        QuestionEntity.QuestionType type,
         String prompt,
         String explanation,
         Boolean isAnswerTrue

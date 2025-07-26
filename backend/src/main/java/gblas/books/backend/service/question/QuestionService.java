@@ -27,7 +27,7 @@ public class QuestionService {
 
 
     public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        QuestionStrategy strategy = questionFactory.getQuestionStrategy(request.question_type());
+        QuestionStrategy strategy = questionFactory.getQuestionStrategy(request.type());
         QuestionEntity newQuestion = strategy.createQuestion(request, quiz);
         questionRepository.save(newQuestion);
         return newQuestion;
@@ -58,11 +58,11 @@ public class QuestionService {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
 
-        if(!questionEntity.getType().equals(questionRequest.question_type())) {
+        if(!questionEntity.getType().equals(questionRequest.type())) {
             throw new BadRequestException("Question type not match");
         }
 
-        QuestionStrategy strategy = questionFactory.getQuestionStrategy(questionRequest.question_type());
+        QuestionStrategy strategy = questionFactory.getQuestionStrategy(questionRequest.type());
         strategy.updateQuestion(questionRequest, questionEntity);
         questionRepository.save(questionEntity);
         return QuestionMapper.INSTANCE.toDto(questionEntity, questionFactory);

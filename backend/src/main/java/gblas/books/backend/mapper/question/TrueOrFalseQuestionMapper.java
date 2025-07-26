@@ -17,7 +17,7 @@ public interface TrueOrFalseQuestionMapper extends QuestionMapper2<TrueOrFalseQu
     TrueOrFalseQuestionEntity toEntity(TrueOrFalseQuestionRequest request, QuizEntity quiz);
 
     @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
-    @Mapping(target = "type", source = "request.question_type")
+    @Mapping(target = "type", source = "request.type")
     void updateEntity(TrueOrFalseQuestionRequest request, @MappingTarget TrueOrFalseQuestionEntity entity);
 }
 

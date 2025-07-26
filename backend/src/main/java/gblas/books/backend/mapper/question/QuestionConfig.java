@@ -11,17 +11,17 @@ import org.mapstruct.*;
 )
 public interface QuestionConfig {
 
-    @Mapping(target = "question_type", source = "type")
+    @Mapping(target = "type", source = "type")
     QuestionResponse ToDto(QuestionEntity entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quiz", source = "quiz")
-    @Mapping(target = "type", source = "request.question_type")
+    @Mapping(target = "type", source = "request.type")
     QuestionEntity toEntity(QuestionRequest request, QuizEntity quiz);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quiz", ignore = true)
-    @Mapping(target = "type", source = "request.question_type")
+    @Mapping(target = "type", source = "request.type")
     @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(QuestionRequest request, @MappingTarget QuestionEntity entity);
 
