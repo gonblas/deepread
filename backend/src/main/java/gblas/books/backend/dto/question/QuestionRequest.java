@@ -1,8 +1,6 @@
 package gblas.books.backend.dto;
 
-import gblas.books.backend.entity.QuestionEntity.QuestionType;
-
-import java.util.UUID;
+import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

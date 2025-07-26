@@ -1,15 +1,14 @@
 package gblas.books.backend.dto;
 
-import gblas.books.backend.entity.QuestionEntity.QuestionType;
+import gblas.books.backend.entity.question.QuestionEntity;
 
 import java.util.UUID;
 
-public record TrueFalseQuestionResponse(
+public record TrueOrFalseQuestionResponse(
         UUID id,
-        QuestionType question_type,
+        QuestionEntity.QuestionType question_type,
         String prompt,
         String explanation,
         Boolean isAnswerTrue
 ) implements QuestionResponse {
-
 }
