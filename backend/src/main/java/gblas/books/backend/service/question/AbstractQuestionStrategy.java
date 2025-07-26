@@ -1,10 +1,10 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.dto.QuestionRequest;
-import gblas.books.backend.dto.QuestionResponse;
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.dto.question.QuestionRequest;
+import gblas.books.backend.dto.question.QuestionResponse;
+import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.mapper.QuestionMapper2;
+import gblas.books.backend.mapper.question.QuestionMapper2;
 
 public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity, M extends QuestionMapper2<T, Q>>
         implements QuestionStrategy {

@@ -1,5 +1,7 @@
-package gblas.books.backend.dto;
+package gblas.books.backend.dto.question;
 
+import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
+import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;

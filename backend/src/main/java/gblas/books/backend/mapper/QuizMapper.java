@@ -1,9 +1,10 @@
 package gblas.books.backend.mapper;
 
-import gblas.books.backend.dto.QuestionResponse;
+import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.dto.QuizResponse;
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
+import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.service.question.QuestionFactory;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;

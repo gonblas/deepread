@@ -1,5 +1,6 @@
-package gblas.books.backend.entity;
+package gblas.books.backend.entity.question;
 
+import gblas.books.backend.entity.QuizEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

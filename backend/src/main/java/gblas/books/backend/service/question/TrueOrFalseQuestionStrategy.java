@@ -1,12 +1,10 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.dto.TrueOrFalseQuestionRequest;
-import gblas.books.backend.entity.QuestionEntity;
-import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
-import gblas.books.backend.mapper.TrueOrFalseQuestionMapper;
+import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
+import gblas.books.backend.entity.question.QuestionEntity;
+import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
+import gblas.books.backend.mapper.question.TrueOrFalseQuestionMapper;
 import org.springframework.stereotype.Component;
-import gblas.books.backend.dto.QuestionResponse;
 
 @Component
 public class TrueOrFalseQuestionStrategy

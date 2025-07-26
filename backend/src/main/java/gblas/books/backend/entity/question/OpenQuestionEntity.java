@@ -1,4 +1,4 @@
-package gblas.books.backend.entity;
+package gblas.books.backend.entity.question;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

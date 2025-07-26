@@ -1,11 +1,9 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.dto.OpenQuestionRequest;
-import gblas.books.backend.dto.QuestionResponse;
-import gblas.books.backend.entity.OpenQuestionEntity;
-import gblas.books.backend.entity.QuestionEntity;
-import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.mapper.OpenQuestionMapper;
+import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
+import gblas.books.backend.entity.question.OpenQuestionEntity;
+import gblas.books.backend.entity.question.QuestionEntity;
+import gblas.books.backend.mapper.question.OpenQuestionMapper;
 import org.springframework.stereotype.Component;
 
 @Component

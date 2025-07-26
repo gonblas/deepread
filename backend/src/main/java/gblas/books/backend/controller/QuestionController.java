@@ -1,7 +1,7 @@
 package gblas.books.backend.controller;
 
-import gblas.books.backend.dto.QuestionRequest;
-import gblas.books.backend.dto.QuestionResponse;
+import gblas.books.backend.dto.question.QuestionRequest;
+import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.service.question.QuestionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

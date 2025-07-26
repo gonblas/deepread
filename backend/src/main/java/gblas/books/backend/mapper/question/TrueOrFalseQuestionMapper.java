@@ -1,9 +1,9 @@
-package gblas.books.backend.mapper;
+package gblas.books.backend.mapper.question;
 
-import gblas.books.backend.dto.TrueOrFalseQuestionRequest;
-import gblas.books.backend.dto.TrueOrFalseQuestionResponse;
+import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
+import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionResponse;
 import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.entity.TrueOrFalseQuestionEntity;
+import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -1,11 +1,11 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.dto.QuestionRequest;
-import gblas.books.backend.dto.QuestionResponse;
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.dto.question.QuestionRequest;
+import gblas.books.backend.dto.question.QuestionResponse;
+import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.exceptions.NotFoundException;
-import gblas.books.backend.mapper.QuestionMapper;
+import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.repository.QuestionRepository;
 import gblas.books.backend.repository.QuizRepository;
 import jakarta.validation.Valid;

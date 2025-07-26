@@ -1,4 +1,4 @@
-package gblas.books.backend.dto;
+package gblas.books.backend.dto.question;
 
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
 

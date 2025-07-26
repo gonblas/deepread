@@ -1,7 +1,6 @@
 package gblas.books.backend.dto;
 
-import gblas.books.backend.entity.ChapterEntity;
-import gblas.books.backend.validation.ValidChapterNumber;
+import gblas.books.backend.dto.question.QuestionResponse;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;

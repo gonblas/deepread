@@ -1,10 +1,9 @@
 package gblas.books.backend.repository;
-import gblas.books.backend.entity.QuestionEntity;
+import gblas.books.backend.entity.question.QuestionEntity;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository

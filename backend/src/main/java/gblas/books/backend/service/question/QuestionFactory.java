@@ -1,6 +1,6 @@
 package gblas.books.backend.service.question;
 
-import gblas.books.backend.entity.QuestionEntity.QuestionType;
+import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
