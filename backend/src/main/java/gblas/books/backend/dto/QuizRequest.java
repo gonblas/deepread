@@ -8,6 +8,6 @@ import java.util.List;
 
 public record QuizRequest(
         @NotEmpty(message = "Questions list cannot be empty")
-        @Valid List<QuestionRequest> questions
+        @Valid List<@Valid QuestionRequest> questions
 ) { }
 
