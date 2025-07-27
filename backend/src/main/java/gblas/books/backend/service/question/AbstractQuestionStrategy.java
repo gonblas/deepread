@@ -4,9 +4,9 @@ import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.mapper.question.QuestionMapper2;
+import gblas.books.backend.mapper.question.TypedQuestionMapper;
 
-public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity, M extends QuestionMapper2<T, Q>>
+public abstract class AbstractQuestionStrategy<T extends QuestionRequest, Q extends QuestionEntity, M extends TypedQuestionMapper<T, Q>>
         implements QuestionStrategy {
 
     protected final M mapper;

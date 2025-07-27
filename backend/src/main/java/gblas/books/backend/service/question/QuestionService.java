@@ -27,8 +27,7 @@ public class QuestionService {
 
 
     public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        QuestionStrategy strategy = questionFactory.getQuestionStrategy(request.type());
-        QuestionEntity newQuestion = strategy.createQuestion(request, quiz);
+        QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, quiz, questionFactory);
         questionRepository.save(newQuestion);
         return newQuestion;
     }
