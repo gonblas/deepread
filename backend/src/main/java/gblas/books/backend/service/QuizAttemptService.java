@@ -1,27 +1,10 @@
 package gblas.books.backend.service;
 
-import gblas.books.backend.dto.QuizAttemptResponse;
-import gblas.books.backend.dto.QuizRequest;
-import gblas.books.backend.dto.QuizResponse;
-import gblas.books.backend.entity.*;
-import gblas.books.backend.entity.question.QuestionEntity;
-import gblas.books.backend.exceptions.NotFoundException;
-import gblas.books.backend.mapper.QuizMapper;
 import gblas.books.backend.repository.*;
-import gblas.books.backend.service.question.QuestionFactory;
 import gblas.books.backend.service.question.QuestionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -32,7 +15,6 @@ public class QuizAttemptService {
     private final ChapterRepository chapterRepository;
     private final QuizRepository quizRepository;
     private final QuestionService questionService;
-    private final QuestionFactory questionFactory;
     private final QuizAttemptRepository quizAttemptRepository;
 
 //    public Page<QuizAttemptResponse> getAllQuizAttemptsFromUser(UserEntity user, Pageable pageable) {

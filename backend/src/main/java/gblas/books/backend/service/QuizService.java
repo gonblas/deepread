@@ -6,8 +6,8 @@ import gblas.books.backend.entity.*;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.QuizMapper;
+import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.*;
-import gblas.books.backend.service.question.QuestionFactory;
 import gblas.books.backend.service.question.QuestionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +30,16 @@ public class QuizService {
     private final ChapterRepository chapterRepository;
     private final QuizRepository quizRepository;
     private final QuestionService questionService;
-    private final QuestionFactory questionFactory;
+    private final QuestionMapperFactory questionMapperFactory;
 
     public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
-        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionFactory));
+        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory));
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
         Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);
-        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionFactory));
+        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory));
     }
 
     public QuizResponse getQuizFromChapter(UUID bookId, UUID chapterId) {
@@ -51,7 +51,7 @@ public class QuizService {
         }
 
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        return QuizMapper.INSTANCE.toDto(quiz, questionFactory);
+        return QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory);
     }
 
     public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
@@ -96,7 +96,7 @@ public class QuizService {
                 .toList();
 
         quiz.setQuestions(questions);
-        return QuizMapper.INSTANCE.toDto(quiz, questionFactory);
+        return QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory);
     }
 
 }

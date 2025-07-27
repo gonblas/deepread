@@ -6,6 +6,7 @@ import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.question.QuestionMapper;
+import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.QuestionRepository;
 import gblas.books.backend.repository.QuizRepository;
 import jakarta.validation.Valid;
@@ -23,11 +24,11 @@ public class QuestionService {
 
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
-    private final QuestionFactory questionFactory;
+    private final QuestionMapperFactory questionMapperFactory;
 
 
     public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, quiz, questionFactory);
+        QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, quiz, questionMapperFactory);
         questionRepository.save(newQuestion);
         return newQuestion;
     }
@@ -35,7 +36,7 @@ public class QuestionService {
     public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuestionEntity newQuestion = createQuestion(questionRequest, quiz);
-        return QuestionMapper.INSTANCE.toDto(newQuestion, questionFactory);
+        return QuestionMapper.INSTANCE.toDto(newQuestion, questionMapperFactory);
     }
 
     public void deleteQuestion(@Valid UUID quizId, @Valid UUID questionId) {
@@ -50,7 +51,7 @@ public class QuestionService {
         QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
         questionRepository.delete(questionEntity);
         questionEntity = createQuestion(questionRequest, quiz);
-        return QuestionMapper.INSTANCE.toDto(questionEntity, questionFactory);
+        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
     }
 
     public QuestionResponse updateQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) throws BadRequestException {
@@ -61,10 +62,9 @@ public class QuestionService {
             throw new BadRequestException("Question type not match");
         }
 
-        QuestionStrategy strategy = questionFactory.getQuestionStrategy(questionRequest.type());
-        strategy.updateQuestion(questionRequest, questionEntity);
+        QuestionMapper.INSTANCE.updateEntity(questionRequest, questionEntity, questionMapperFactory);
         questionRepository.save(questionEntity);
-        return QuestionMapper.INSTANCE.toDto(questionEntity, questionFactory);
+        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
     }
 
 }

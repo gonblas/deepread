@@ -21,7 +21,8 @@ public abstract class QuestionEntity {
     @Column(nullable = false)
     private UUID id;
 
-    @Transient
+    @Column(name = "type", insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private QuestionType type;
 
     @Column(nullable = false)

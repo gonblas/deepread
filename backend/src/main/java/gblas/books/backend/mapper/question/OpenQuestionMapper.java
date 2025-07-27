@@ -4,12 +4,13 @@ import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
 import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionResponse;
 import gblas.books.backend.entity.question.OpenQuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
+import gblas.books.backend.entity.question.QuestionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
-public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequest, OpenQuestionEntity> {
+public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequest, OpenQuestionEntity, OpenQuestionResponse> {
     @Mapping(target = "expectedAnswer", source = "expectedAnswer")
     OpenQuestionResponse toDto(OpenQuestionEntity entity);
 
@@ -19,5 +20,24 @@ public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequ
     @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
     @Mapping(target = "type", source = "request.type")
     void updateEntity(OpenQuestionRequest request, @MappingTarget OpenQuestionEntity entity);
+
+    default QuestionEntity.QuestionType getQuestionType() {
+        return QuestionEntity.QuestionType.OPEN;
+    }
+
+    @Override
+    default Class<OpenQuestionRequest> getRequestClass() {
+        return OpenQuestionRequest.class;
+    }
+
+    @Override
+    default Class<OpenQuestionEntity> getEntityClass() {
+        return OpenQuestionEntity.class;
+    }
+
+    @Override
+    default Class<OpenQuestionResponse> getResponseClass() {
+        return OpenQuestionResponse.class;
+    }
 }
 

@@ -45,5 +45,4 @@ public class QuizController {
     public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
         quizService.deleteQuiz(bookId, chapterId);
     }
-
 }
