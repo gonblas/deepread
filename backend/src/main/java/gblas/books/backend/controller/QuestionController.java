@@ -2,7 +2,7 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
-import gblas.books.backend.service.question.QuestionService;
+import gblas.books.backend.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;

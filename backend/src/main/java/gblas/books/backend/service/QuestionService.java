@@ -1,4 +1,4 @@
-package gblas.books.backend.service.question;
+package gblas.books.backend.service;
 
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;

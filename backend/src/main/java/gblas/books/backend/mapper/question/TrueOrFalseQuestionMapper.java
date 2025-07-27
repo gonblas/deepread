@@ -34,10 +34,5 @@ public interface TrueOrFalseQuestionMapper extends TypedQuestionMapper<TrueOrFal
     default Class<TrueOrFalseQuestionEntity> getEntityClass() {
         return TrueOrFalseQuestionEntity.class;
     }
-
-    @Override
-    default Class<TrueOrFalseQuestionResponse> getResponseClass() {
-        return TrueOrFalseQuestionResponse.class;
-    }
 }
 

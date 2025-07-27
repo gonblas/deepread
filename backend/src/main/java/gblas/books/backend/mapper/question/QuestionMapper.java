@@ -16,56 +16,23 @@ public interface QuestionMapper {
     QuestionMapper INSTANCE =  Mappers.getMapper(QuestionMapper.class);
 
     default QuestionResponse toDto(QuestionEntity entity, @Context QuestionMapperFactory factory) {
-        var mapper = factory.getByType(entity.getType());
-
-        Class<?> expected = mapper.getEntityClass();
-
-        if (!expected.isInstance(entity)) {
-            throw new IllegalArgumentException("Invalid entity type. Expected: " + expected + ", got: " + entity.getClass());
-        }
-
-        @SuppressWarnings("unchecked")
-        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> casted =
-                (TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse>) mapper;
-
+        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> casted = getTypedMapper(entity.getType(), factory);
         return casted.toDto(entity);
     }
 
     default QuestionEntity toEntity(QuestionRequest request, QuizEntity quiz, @Context QuestionMapperFactory factory) {
-        var mapper = factory.getByType(request.type());
-
-        Class<?> expectedRequest = mapper.getRequestClass();
-
-        if (!expectedRequest.isInstance(request)) {
-            throw new IllegalArgumentException("Invalid request type. Expected: " + expectedRequest + ", got: " + request.getClass());
-        }
-
-        @SuppressWarnings("unchecked")
-        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> casted =
-                (TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse>) mapper;
-
-        return casted.toEntity(request, quiz);
+        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> castedMapper = getTypedMapper(request.type(), factory);
+        return castedMapper.toEntity(request, quiz);
     }
 
     default void updateEntity(QuestionRequest request, QuestionEntity entity, @Context QuestionMapperFactory factory) {
-        var mapper = factory.getByType(request.type());
-
-        Class<?> expectedRequest = mapper.getRequestClass();
-        Class<?> expectedEntity = mapper.getEntityClass();
-
-        if (!expectedRequest.isInstance(request)) {
-            throw new IllegalArgumentException("Invalid request type. Expected: " + expectedRequest + ", got: " + request.getClass());
-        }
-
-        if (!expectedEntity.isInstance(entity)) {
-            throw new IllegalArgumentException("Invalid entity type. Expected: " + expectedEntity + ", got: " + entity.getClass());
-        }
-
-        @SuppressWarnings("unchecked")
-        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> casted =
-                (TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse>) mapper;
-
-        casted.updateEntity(request, entity);
+        TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> castedMapper = getTypedMapper(request.type(), factory);
+        castedMapper.updateEntity(request, entity);
     }
+
+    private TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse> getTypedMapper(QuestionEntity.QuestionType type, @Context QuestionMapperFactory factory) {
+        return (TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse>) factory.getByType(type);
+    }
+
 
 }

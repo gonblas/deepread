@@ -16,10 +16,8 @@ public interface TypedQuestionMapper<
     void updateEntity(T request, @MappingTarget E entity);
 
     QuestionEntity.QuestionType getQuestionType();
-
     Class<T> getRequestClass();
     Class<E> getEntityClass();
-    Class<R> getResponseClass();
 }
 
 

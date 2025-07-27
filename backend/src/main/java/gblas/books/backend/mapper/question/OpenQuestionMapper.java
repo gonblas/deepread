@@ -34,10 +34,5 @@ public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequ
     default Class<OpenQuestionEntity> getEntityClass() {
         return OpenQuestionEntity.class;
     }
-
-    @Override
-    default Class<OpenQuestionResponse> getResponseClass() {
-        return OpenQuestionResponse.class;
-    }
 }
 
