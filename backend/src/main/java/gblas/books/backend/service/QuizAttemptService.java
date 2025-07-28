@@ -1,8 +1,15 @@
 package gblas.books.backend.service;
 
+import gblas.books.backend.dto.QuizAttemptResponse;
+import gblas.books.backend.entity.QuizAttemptEntity;
+import gblas.books.backend.entity.UserEntity;
+import gblas.books.backend.mapper.QuizAttemptMapper;
+import gblas.books.backend.mapper.answer.AnswerMapperFactory;
 import gblas.books.backend.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -15,11 +22,12 @@ public class QuizAttemptService {
     private final QuizRepository quizRepository;
     private final QuestionService questionService;
     private final QuizAttemptRepository quizAttemptRepository;
+    private final AnswerMapperFactory answerMapperFactory;
 
-//    public Page<QuizAttemptResponse> getAllQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
-//        Page<QuizAttemptEntity> quizzes_page = quizAttemptRepository.findByUserId(user.getId(), pageable);
-//        //return quizzes_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, questionFactory));
-//    }
+    public Page<QuizAttemptResponse> getAllQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
+        Page<QuizAttemptEntity> quizzes_page = quizAttemptRepository.findByUserId(user.getId(), pageable);
+        return quizzes_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
+    }
 
 //    public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
 //        Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);

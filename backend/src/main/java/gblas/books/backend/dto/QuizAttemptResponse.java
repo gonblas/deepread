@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record QuizAttemptResponse(
-        @NotBlank UUID question_id,
+        @NotBlank UUID quiz_id,
         @NotEmpty(message = "Answer list cannot be empty")
         @Valid
         List<@Valid AnswerResponse> answers
