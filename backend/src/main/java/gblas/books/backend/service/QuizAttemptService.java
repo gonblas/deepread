@@ -5,9 +5,13 @@ import gblas.books.backend.dto.QuizAttemptResponse;
 import gblas.books.backend.dto.QuizRequest;
 import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.*;
+import gblas.books.backend.entity.answer.AnswerEntity;
+import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.QuizAttemptMapper;
+import gblas.books.backend.mapper.answer.AnswerMapper;
 import gblas.books.backend.mapper.answer.AnswerMapperFactory;
+import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.repository.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -26,9 +31,10 @@ public class QuizAttemptService {
     private final BookRepository bookRepository;
     private final ChapterRepository chapterRepository;
     private final QuizRepository quizRepository;
-    private final QuestionService questionService;
+    private final QuestionRepository questionRepository;
     private final QuizAttemptRepository quizAttemptRepository;
     private final AnswerMapperFactory answerMapperFactory;
+    private final AnswerRepository answerRepository;
 
     public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUserId(user.getId(), pageable);
@@ -53,12 +59,13 @@ public class QuizAttemptService {
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
     }
 
-//    public QuizResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
-//        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-//        QuizAttemptEntity quizAttempt = QuizAttemptMapper.INSTANCE.toEntity(quizAttemptRequest, answerMapperFactory);
-//        return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory);
-//    }
-//
+    public QuizAttemptResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
+        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizAttemptEntity newQuizAttemptEntity = new QuizAttemptEntity();
+        newQuizAttemptEntity.setQuiz(quiz);
+        return getQuizResponse(quizAttemptRequest, newQuizAttemptEntity);
+    }
+
 //    public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
 //        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
 //
@@ -91,17 +98,19 @@ public class QuizAttemptService {
 //
 //        quizRepository.delete(quizEntity);
 //    }
-//
-//    private QuizResponse getQuizResponse(QuizRequest quizRequest, QuizEntity quiz) {
-//        quizRepository.save(quiz);
-//        List<QuestionEntity> questions = quizRequest.questions().stream()
-//                .map(request -> {
-//                    return questionService.createQuestion(request, quiz);
-//                })
-//                .toList();
-//
-//        quiz.setQuestions(questions);
-//        return QuizMapper.INSTANCE.toDto(quiz, questionFactory);
-//    }
 
+    private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt) {
+        quizAttemptRepository.save(quizAttempt);
+        List<AnswerEntity> answers = quizAttemptRequest.answers().stream()
+                .map(request -> {
+                    QuestionEntity question = questionRepository.getById(request.questionId());
+                    AnswerEntity newAnswer = AnswerMapper.INSTANCE.toEntity(request, quizAttempt, question, answerMapperFactory);
+                    answerRepository.save(newAnswer);
+                    return newAnswer;
+                })
+                .toList();
+
+        quizAttempt.setAnswers(answers);
+        return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory);
+    }
 }

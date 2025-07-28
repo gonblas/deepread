@@ -2,13 +2,11 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.QuizAttemptRequest;
 import gblas.books.backend.dto.QuizAttemptResponse;
-import gblas.books.backend.dto.QuizRequest;
-import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.service.QuizAttemptService;
-import gblas.books.backend.service.QuizService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 public class QuizAttemptController {
@@ -37,12 +36,13 @@ public class QuizAttemptController {
         return quizAttemptService.getQuizAttemptFromChapter(bookId, chapterId, pageable);
     }
 
-//    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public QuizResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
-//        return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
-//    }
-//
+    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
+    @ResponseStatus(HttpStatus.CREATED)
+    public QuizAttemptResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
+        log.info("Answer {}", quizAttemptRequest.answers().getFirst().toString());
+        return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
+    }
+
 //    @DeleteMapping("/api/quiz-attempts/{quizId}/")
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
 //    public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {

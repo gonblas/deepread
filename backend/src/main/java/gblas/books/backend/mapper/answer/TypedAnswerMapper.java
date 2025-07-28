@@ -4,6 +4,7 @@ import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.AnswerResponse;
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
+import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
@@ -14,7 +15,7 @@ public interface TypedAnswerMapper<
         E extends AnswerEntity,
         R extends AnswerResponse> {
 
-    E toEntity(T request, QuizEntity quiz);
+    E toEntity(T request, QuizAttemptEntity quiz, QuestionEntity question);
     R toDto(E entity);
 
     QuestionEntity.QuestionType getAnswerType();

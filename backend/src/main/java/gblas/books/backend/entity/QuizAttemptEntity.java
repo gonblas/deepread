@@ -31,10 +31,10 @@ public class QuizAttemptEntity {
     @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerEntity> answers = new ArrayList<>();
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at", nullable = true) // cambiar esto a false
     private Instant startedAt;
 
-    @Column(name = "submitted_at", nullable = false)
+    @Column(name = "submitted_at", nullable = true) // cambiar esto a false
     private Instant submittedAt;
 
     @Column(name = "correct_count")

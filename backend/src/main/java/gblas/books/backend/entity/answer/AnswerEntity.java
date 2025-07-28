@@ -3,7 +3,6 @@ package gblas.books.backend.entity.answer;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
-import gblas.books.backend.entity.QuizEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +18,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class AnswerEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
@@ -32,10 +32,11 @@ public abstract class AnswerEntity {
     @JoinColumn(name = "quiz_attempt_id")
     private QuizAttemptEntity quizAttempt;
 
-    @Transient
+    @Column(name = "type", insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private QuestionType type;
 
-    @Column(nullable = false)
+    @Column(nullable = true) //cambiar a false
     private Boolean isCorrect;
 }
 

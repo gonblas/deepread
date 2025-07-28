@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface QuestionRepository extends CrudRepository<QuestionEntity, UUID> {
+    QuestionEntity getById(UUID id);
 }
