@@ -39,15 +39,13 @@ public class QuizAttemptController {
     @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
     @ResponseStatus(HttpStatus.CREATED)
     public QuizAttemptResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
-        log.info("Answer {}", quizAttemptRequest.answers().getFirst().toString());
         return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
     }
 
-//    @DeleteMapping("/api/quiz-attempts/{quizId}/")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
-//        quizAttemptService.deleteQuiz(bookId, chapterId);
-//    }
-
+    @DeleteMapping("/api/quiz-attempts/{quizAttemptId}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteQuizAttempt(@Valid @PathVariable UUID quizAttemptId) {
+        quizAttemptService.deleteQuizAttempt(quizAttemptId);
+    }
 }
 

@@ -19,7 +19,7 @@ public interface AnswerConfig {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quizAttempt", source = "quizAttempt")
     @Mapping(target = "type", source = "request.type")
-    @Mapping(target = "isCorrect", ignore = true) //cambiar esto
+    @Mapping(target = "isCorrect", expression = "java(question.validate(request))")
     AnswerEntity toEntity(AnswerRequest request, QuizAttemptEntity quizAttempt, QuestionEntity question);
 
 }

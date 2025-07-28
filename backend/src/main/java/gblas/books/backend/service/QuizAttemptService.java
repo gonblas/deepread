@@ -54,50 +54,17 @@ public class QuizAttemptService {
             throw new NotFoundException("Chapter does not belong to this book");
         }
 
-        QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByQuiz(quiz, pageable);
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
     }
 
     public QuizAttemptResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
-        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
         QuizAttemptEntity newQuizAttemptEntity = new QuizAttemptEntity();
         newQuizAttemptEntity.setQuiz(quiz);
         return getQuizResponse(quizAttemptRequest, newQuizAttemptEntity);
     }
-
-//    public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
-//        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-//
-//        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-//        Optional<QuizEntity> quizEntity = quizRepository.findByChapter(chapterEntity);
-//
-//        if(quizEntity.isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Quiz already exists for this chapter");
-//        }
-//        if(!chapterEntity.getBook().getId().equals(bookEntity.getId())) {
-//            throw new NotFoundException("Chapter does not belong to this book");
-//        }
-//
-//        QuizEntity newQuizEntity = new QuizEntity();
-//        chapterEntity.setQuizBidirectional(newQuizEntity);
-//        return getQuizResponse(quizRequest, newQuizEntity);
-//    }
-//
-//    public void deleteQuiz(UUID bookId, UUID chapterId) {
-//        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-//        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-//        QuizEntity quizEntity = quizRepository.findByChapter(chapterEntity).orElseThrow(() -> new NotFoundException("Quiz not found"));
-//
-//        if (!chapterEntity.getBook().getId().equals(bookEntity.getId())) {
-//            throw new NotFoundException("Chapter does not belong to this book");
-//        }
-//
-//        chapterEntity.setQuiz(null);
-//        quizEntity.setChapter(null);
-//
-//        quizRepository.delete(quizEntity);
-//    }
 
     private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt) {
         quizAttemptRepository.save(quizAttempt);
@@ -112,5 +79,10 @@ public class QuizAttemptService {
 
         quizAttempt.setAnswers(answers);
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory);
+    }
+
+    public void deleteQuizAttempt(@Valid UUID quizAttemptId) {
+        QuizAttemptEntity quizAttempt = quizAttemptRepository.findById(quizAttemptId).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
+        quizAttemptRepository.delete(quizAttempt);
     }
 }

@@ -1,10 +1,13 @@
 package gblas.books.backend.entity.question;
 
+import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.entity.QuizEntity;
+import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
@@ -39,5 +42,7 @@ public abstract class QuestionEntity {
         TRUE_FALSE,
         OPEN
     }
+
+    public abstract Boolean validate(AnswerRequest request);
 }
 

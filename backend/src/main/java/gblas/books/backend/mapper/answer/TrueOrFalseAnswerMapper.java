@@ -5,8 +5,7 @@ import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerResponse;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.TrueOrFalseAnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", config = AnswerConfig.class)
 public interface TrueOrFalseAnswerMapper extends TypedAnswerMapper<TrueOrFalseAnswerRequest, TrueOrFalseAnswerEntity, TrueOrFalseAnswerResponse> {
