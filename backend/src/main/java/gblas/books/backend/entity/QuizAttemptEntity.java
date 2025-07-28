@@ -1,5 +1,6 @@
 package gblas.books.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

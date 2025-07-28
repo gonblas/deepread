@@ -15,7 +15,7 @@ public record QuizAttemptResponse(
         @Valid
         List<@Valid AnswerResponse> answers,
         @NotBlank Integer correctCount,
-        @NotBlank LocalDateTime startedAt,
-        @NotBlank LocalDateTime submittedAt
+        @NotBlank String startedAt,
+        @NotBlank String submittedAt
 
 ) { }

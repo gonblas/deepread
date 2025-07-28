@@ -18,7 +18,8 @@ public interface QuizAttemptMapper {
 
     @Mapping(target = "quiz_id", source = "id")
     @Mapping(target = "answers", source = "answers", qualifiedByName = "answerMapping")
-    @Mapping(target = "startedAt", source = "startedAt", dateFormat = "")
+    @Mapping(target = "startedAt", source = "startedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
+    @Mapping(target = "submittedAt", source = "submittedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     QuizAttemptResponse toDto(QuizAttemptEntity quizAttempt, @Context AnswerMapperFactory factory);
 
     @Named("answerMapping")
