@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,11 +32,11 @@ public class QuizAttemptEntity {
     @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerEntity> answers = new ArrayList<>();
 
-    @Column(name = "started_at", nullable = true) // TODO: cambiar esto a false
-    private Instant startedAt;
+    @Column(name = "started_at", nullable = false)
+    private LocalDateTime startedAt;
 
-    @Column(name = "submitted_at", nullable = true) // TODO: cambiar esto a false
-    private Instant submittedAt;
+    @Column(name = "submitted_at", nullable = false)
+    private LocalDateTime submittedAt;
 
     @Column(name = "correct_count")
     private Integer correctCount;

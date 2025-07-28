@@ -20,6 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,6 +70,8 @@ public class QuizAttemptService {
     }
 
     private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt) {
+        quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
+        quizAttempt.setSubmittedAt(LocalDateTime.now());
         quizAttemptRepository.save(quizAttempt);
         List<AnswerEntity> answers = quizAttemptRequest.answers().stream()
                 .map(request -> {
@@ -76,9 +81,15 @@ public class QuizAttemptService {
                     return newAnswer;
                 })
                 .toList();
-
         quizAttempt.setAnswers(answers);
+        quizAttempt.setCorrectCount(getCorrectCountFromAnswers(answers));
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory);
+    }
+
+    private Integer getCorrectCountFromAnswers(List<AnswerEntity> answers) {
+        return (int) answers.stream()
+                .filter(AnswerEntity::getIsCorrect)
+                .count();
     }
 
     public void deleteQuizAttempt(@Valid UUID quizAttemptId) {
