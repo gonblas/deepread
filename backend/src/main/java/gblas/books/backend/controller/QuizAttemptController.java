@@ -1,5 +1,6 @@
 package gblas.books.backend.controller;
 
+import gblas.books.backend.dto.QuizAttemptRequest;
 import gblas.books.backend.dto.QuizAttemptResponse;
 import gblas.books.backend.dto.QuizRequest;
 import gblas.books.backend.dto.QuizResponse;
@@ -21,25 +22,25 @@ import java.util.UUID;
 public class QuizAttemptController {
     private QuizAttemptService quizAttemptService;
 
-//    @GetMapping("/api/quiz-attempts")
-//    public Page<QuizAttemptResponse> getQuizzesFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
-//        return quizAttemptService.getAllQuizAttemptsFromUser(user, pageable);
-//    }
+    @GetMapping("/api/quiz-attempts")
+    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
+        return quizAttemptService.getQuizAttemptsFromUser(user, pageable);
+    }
 
-//    @GetMapping("/api/books/{bookId}/quiz-attempts")
-//    public Page<QuizResponse> getQuizzesFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
-//        return quizAttemptService.getAllQuizzesFromBook(bookId, pageable);
-//    }
-//
-//    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz-attempts")
-//    public QuizResponse getQuizFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
-//        return quizAttemptService.getQuizFromChapter(bookId, chapterId);
-//    }
-//
+    @GetMapping("/api/books/{bookId}/quiz-attempts")
+    public Page<QuizAttemptResponse> getQuizAttemptsFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
+        return quizAttemptService.getQuizAttemptsFromBook(bookId, pageable);
+    }
+
+    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz-attempts")
+    public Page<QuizAttemptResponse> getQuizAttemptFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
+        return quizAttemptService.getQuizAttemptFromChapter(bookId, chapterId, pageable);
+    }
+
 //    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
 //    @ResponseStatus(HttpStatus.CREATED)
-//    public QuizResponse createQuiz(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, @Valid @RequestBody QuizRequest quizRequest) {
-//        return quizAttemptService.addQuiz(bookId, chapterId, quizRequest);
+//    public QuizResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
+//        return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
 //    }
 //
 //    @DeleteMapping("/api/quiz-attempts/{quizId}/")
