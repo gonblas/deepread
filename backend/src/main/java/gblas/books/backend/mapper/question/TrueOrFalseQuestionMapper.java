@@ -1,16 +1,16 @@
 package gblas.books.backend.mapper.question;
 
+import gblas.books.backend.dto.question.OpenQuestion.UpdateOpenQuestionRequest;
 import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
 import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionResponse;
+import gblas.books.backend.dto.question.TrueOrFalse.UpdateTrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
-public interface TrueOrFalseQuestionMapper extends TypedQuestionMapper<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity, TrueOrFalseQuestionResponse> {
+public interface TrueOrFalseQuestionMapper extends TypedQuestionMapper<TrueOrFalseQuestionRequest, TrueOrFalseQuestionEntity, TrueOrFalseQuestionResponse, UpdateTrueOrFalseQuestionRequest> {
     @Mapping(target = "isAnswerTrue", source = "isAnswerTrue")
     TrueOrFalseQuestionResponse toDto(TrueOrFalseQuestionEntity entity);
 
@@ -19,7 +19,8 @@ public interface TrueOrFalseQuestionMapper extends TypedQuestionMapper<TrueOrFal
 
     @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
     @Mapping(target = "type", source = "request.type")
-    void updateEntity(TrueOrFalseQuestionRequest request, @MappingTarget TrueOrFalseQuestionEntity entity);
+    @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UpdateTrueOrFalseQuestionRequest request, @MappingTarget TrueOrFalseQuestionEntity entity);
 
     default QuestionEntity.QuestionType getQuestionType() {
         return QuestionEntity.QuestionType.TRUE_FALSE;

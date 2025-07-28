@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -32,5 +33,14 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
     Page<QuizAttemptEntity> findByBookId(UUID bookId, Pageable pageable);
 
     Page<QuizAttemptEntity> findByQuiz(QuizEntity quiz, Pageable pageable);
+
+    @Query("""
+    SELECT qa FROM QuizAttemptEntity qa
+    JOIN qa.quiz q
+    JOIN q.questions qu
+    WHERE qu.id = :questionId
+    """)
+    List<QuizAttemptEntity> findAllByQuestionId(UUID questionId);
+
 }
 

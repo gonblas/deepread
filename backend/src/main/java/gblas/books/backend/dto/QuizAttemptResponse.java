@@ -17,5 +17,4 @@ public record QuizAttemptResponse(
         @NotBlank Integer correctCount,
         @NotBlank String startedAt,
         @NotBlank String submittedAt
-
 ) { }

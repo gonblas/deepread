@@ -2,6 +2,7 @@ package gblas.books.backend.mapper.question;
 
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
+import gblas.books.backend.dto.question.UpdateQuestionRequest;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import org.mapstruct.*;
@@ -22,7 +23,6 @@ public interface QuestionConfig {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quiz", ignore = true)
     @Mapping(target = "type", source = "request.type")
-    @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(QuestionRequest request, @MappingTarget QuestionEntity entity);
+    void updateEntity(UpdateQuestionRequest request, @MappingTarget QuestionEntity entity);
 
 }

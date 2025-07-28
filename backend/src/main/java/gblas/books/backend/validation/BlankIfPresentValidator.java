@@ -1,5 +1,6 @@
 package gblas.books.backend.validation;
 
+import gblas.books.backend.entity.question.QuestionEntity;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,9 @@ public class BlankIfPresentValidator implements ConstraintValidator<NotBlankIfPr
             }
             case String str -> {
                 return !str.isBlank();
+            }
+            case QuestionEntity.QuestionType ignored -> {
+                return QuestionEntity.QuestionType.values().length > 0;
             }
             case Integer integer -> {
                 return (integer > 0);
