@@ -8,6 +8,7 @@ import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.QuizMapper;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,30 +33,7 @@ public class QuizService {
     private final QuizVersionRepository quizVersionRepository;
     private final QuestionMapperFactory questionMapperFactory;
     private final QuizVersionService quizVersionService;
-//    public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
-//        Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
-//        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory));
-//    }
-
-
-//    public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
-//        Page<QuizEntity> quizzes_page = quizRepository.findAllQuizzesByBookId(bookId, pageable);
-//        return quizzes_page.map(quiz -> QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory));
-//    }
-
-
-//    public QuizResponse getQuizFromChapter(UUID bookId, UUID chapterId) {
-//        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-//        ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-//
-//        if(!chapter.getBook().getId().equals(book.getId())) {
-//            throw new NotFoundException("Chapter does not belong to this book");
-//        }
-//
-//        QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz not found"));
-//        return QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory);
-//    }
-
+    private final QuestionRepository questionRepository;
 
 
     public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
@@ -125,7 +103,7 @@ public class QuizService {
         return QuizMapper.INSTANCE.toDto(firstVersion, questionMapperFactory);
     }
 
-
+    @Transactional
     public void deleteQuiz(UUID bookId, UUID chapterId) {
         BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
@@ -135,22 +113,10 @@ public class QuizService {
             throw new NotFoundException("Chapter does not belong to this book");
         }
 
+        questionRepository.deleteQuestionsByQuizId(quizEntity.getId());
         chapterEntity.setQuiz(null);
         quizEntity.setChapter(null);
-
         quizRepository.delete(quizEntity);
     }
-
-//    private QuizResponse getQuizResponse(QuizRequest quizRequest, QuizEntity quiz) {
-//        quizRepository.save(quiz);
-//        List<QuestionEntity> questions = quizRequest.questions().stream()
-//                .map(request -> {
-//                    return questionService.createQuestion(request, quiz);
-//                })
-//                .toList();
-//
-//        quiz.setQuestions(questions);
-//        return QuizMapper.INSTANCE.toDto(quiz, questionMapperFactory);
-//    }
 
 }
