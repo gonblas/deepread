@@ -15,7 +15,8 @@ import java.util.UUID;
 public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity, UUID> {
     @Query("""
     SELECT q FROM QuizAttemptEntity qa
-    JOIN qa.quiz q
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
     JOIN q.chapter c
     JOIN c.book b
     JOIN b.owner u
@@ -25,19 +26,26 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
 
     @Query("""
     SELECT q FROM QuizAttemptEntity qa
-    JOIN qa.quiz q
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
     JOIN q.chapter c
     JOIN c.book b
     WHERE b.id = :bookId
     """)
     Page<QuizAttemptEntity> findByBookId(UUID bookId, Pageable pageable);
 
+    @Query("""
+    SELECT q FROM QuizAttemptEntity qa
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
+    WHERE q = :quiz
+    """)
     Page<QuizAttemptEntity> findByQuiz(QuizEntity quiz, Pageable pageable);
 
     @Query("""
     SELECT qa FROM QuizAttemptEntity qa
-    JOIN qa.quiz q
-    JOIN q.questions qu
+    JOIN qa.quizVersion qv
+    JOIN qv.questions qu
     WHERE qu.id = :questionId
     """)
     List<QuizAttemptEntity> findAllByQuestionId(UUID questionId);

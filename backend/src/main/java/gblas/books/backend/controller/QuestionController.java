@@ -18,25 +18,25 @@ import java.util.UUID;
 public class QuestionController {
     private final QuestionService questionService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public QuestionResponse createQuestion(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuestionRequest questionRequest) {
-        return questionService.addQuestion(quizId, questionRequest);
-    }
-
-    @DeleteMapping("/{questionId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId) {
-        questionService.deleteQuestion(quizId, questionId);
-    }
-
-    @PutMapping("/{questionId}")
-    public QuestionResponse changeQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId, @Valid @RequestBody QuestionRequest questionRequest) {
-        return questionService.changeQuestion(quizId, questionId, questionRequest);
-    }
-
-    @PatchMapping("/{questionId}")
-    public QuestionResponse updateQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId, @Valid @RequestBody UpdateQuestionRequest questionRequest) throws BadRequestException {
-        return questionService.updateQuestion(quizId, questionId, questionRequest);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public QuestionResponse createQuestion(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuestionRequest questionRequest) {
+//        return questionService.addQuestion(quizId, questionRequest);
+//    }
+//
+//    @DeleteMapping("/{questionId}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void deleteQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId) {
+//        questionService.deleteQuestion(quizId, questionId);
+//    }
+//
+//    @PutMapping("/{questionId}")
+//    public QuestionResponse changeQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId, @Valid @RequestBody QuestionRequest questionRequest) {
+//        return questionService.changeQuestion(quizId, questionId, questionRequest);
+//    }
+//
+//    @PatchMapping("/{questionId}")
+//    public QuestionResponse updateQuestion(@Valid @PathVariable UUID quizId, @Valid @PathVariable UUID questionId, @Valid @RequestBody UpdateQuestionRequest questionRequest) throws BadRequestException {
+//        return questionService.updateQuestion(quizId, questionId, questionRequest);
+//    }
 }

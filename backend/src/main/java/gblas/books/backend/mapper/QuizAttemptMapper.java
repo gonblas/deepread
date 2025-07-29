@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public interface QuizAttemptMapper {
     QuizAttemptMapper INSTANCE = Mappers.getMapper(QuizAttemptMapper.class);
 
-    @Mapping(target = "quiz_id", source = "id")
+    @Mapping(target = "quiz_id", source = "quizVersion.quiz.id")
     @Mapping(target = "answers", source = "answers", qualifiedByName = "answerMapping")
     @Mapping(target = "startedAt", source = "startedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     @Mapping(target = "submittedAt", source = "submittedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")

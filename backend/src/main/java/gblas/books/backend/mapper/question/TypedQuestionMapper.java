@@ -13,7 +13,7 @@ public interface TypedQuestionMapper<
         R extends QuestionResponse,
         U extends UpdateQuestionRequest> {
 
-    E toEntity(T request, QuizEntity quiz);
+    E toEntity(T request);
     R toDto(E entity);
     void updateEntity(U request, @MappingTarget E entity);
 

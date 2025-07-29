@@ -2,6 +2,7 @@ package gblas.books.backend.mapper;
 
 import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.dto.QuizResponse;
+import gblas.books.backend.entity.QuizVersionEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.mapper.question.QuestionMapper;
@@ -19,10 +20,10 @@ import java.util.stream.Collectors;
 public interface QuizMapper {
     QuizMapper INSTANCE = Mappers.getMapper(QuizMapper.class);
 
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "chapter", source = "chapter")
+    @Mapping(target = "id", source = "quiz.id")
+    @Mapping(target = "chapter", source = "quiz.chapter")
     @Mapping(target = "questions", source = "questions", qualifiedByName = "questionMapping")
-    QuizResponse toDto(QuizEntity quiz, @Context QuestionMapperFactory factory);
+    QuizResponse toDto(QuizVersionEntity quizVersion, @Context QuestionMapperFactory factory);
 
     @Named("questionMapping")
     default List<QuestionResponse> questionMapping(List<QuestionEntity> questions, @Context QuestionMapperFactory factory) {

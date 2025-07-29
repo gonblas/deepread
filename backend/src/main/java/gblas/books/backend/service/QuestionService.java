@@ -4,6 +4,7 @@ import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.dto.question.UpdateQuestionRequest;
 import gblas.books.backend.entity.QuizAttemptEntity;
+import gblas.books.backend.entity.QuizVersionEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.exceptions.NotFoundException;
@@ -28,53 +29,56 @@ public class QuestionService {
 
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
-    private final QuizAttemptRepository quizAttemptRepository;
+    //private final QuizAttemptRepository quizAttemptRepository;
     private final QuestionMapperFactory questionMapperFactory;
+    //private final QuizVersionService quizVersionService;
 
 
-    public QuestionEntity createQuestion(QuestionRequest request, QuizEntity quiz) {
-        QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, quiz, questionMapperFactory);
+    public QuestionEntity createQuestion(QuestionRequest request, QuizVersionEntity quizVersion) {
+        QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, questionMapperFactory);
+
+        quizVersion.getQuestions().add(newQuestion);
         questionRepository.save(newQuestion);
+        newQuestion.getVersions().add(quizVersion);
+
         return newQuestion;
     }
 
-    public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
-        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        QuestionEntity newQuestion = createQuestion(questionRequest, quiz);
-//        List<QuizAttemptEntity> attempts = quizAttemptRepository.findAllByQuestionId(newQuestion.getId());
-//        quizAttemptRepository.deleteAll(attempts);
-
-        return QuestionMapper.INSTANCE.toDto(newQuestion, questionMapperFactory);
-    }
-
-    public void deleteQuestion(@Valid UUID quizId, @Valid UUID questionId) {
-        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        QuestionEntity question = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
-//        List<QuizAttemptEntity> attempts = quizAttemptRepository.findAllByQuestionId(question.getId());
-//        quizAttemptRepository.deleteAll(attempts);
-        quiz.getQuestions().remove(question);
-        quizRepository.save(quiz);
-    }
-
-    public QuestionResponse changeQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) {
-        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
-        questionRepository.delete(questionEntity);
-        questionEntity = createQuestion(questionRequest, quiz);
-        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
-    }
-
-    public QuestionResponse updateQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid UpdateQuestionRequest updateQuestionRequest) throws BadRequestException {
-        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
-
-        if(!questionEntity.getType().equals(updateQuestionRequest.type())) {
-            throw new BadRequestException("Question type not match");
-        }
-
-        QuestionMapper.INSTANCE.updateEntity(updateQuestionRequest, questionEntity, questionMapperFactory);
-        questionRepository.save(questionEntity);
-        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
-    }
+//
+//    public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
+//        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+//        QuestionEntity newQuestion = createQuestion(questionRequest, quiz);
+//
+//        return QuestionMapper.INSTANCE.toDto(newQuestion, questionMapperFactory);
+//    }
+//
+//    public void deleteQuestion(@Valid UUID quizId, @Valid UUID questionId) {
+//        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+//        QuestionEntity question = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
+//        QuizVersionEntity quizLastVersion = quizVersionService.getLastQuizVersionEntity(quiz);
+//        quizLastVersion.getQuestions().remove(question);
+//        quizRepository.save(quiz);
+//    }
+//
+//    public QuestionResponse changeQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid QuestionRequest questionRequest) {
+//        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+//        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
+//        questionRepository.delete(questionEntity);
+//        questionEntity = createQuestion(questionRequest, quiz);
+//        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
+//    }
+//
+//    public QuestionResponse updateQuestion(@Valid UUID quizId, @Valid UUID questionId, @Valid UpdateQuestionRequest updateQuestionRequest) throws BadRequestException {
+//        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+//        QuestionEntity questionEntity = questionRepository.findById(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
+//
+//        if(!questionEntity.getType().equals(updateQuestionRequest.type())) {
+//            throw new BadRequestException("Question type not match");
+//        }
+//
+//        QuestionMapper.INSTANCE.updateEntity(updateQuestionRequest, questionEntity, questionMapperFactory);
+//        questionRepository.save(questionEntity);
+//        return QuestionMapper.INSTANCE.toDto(questionEntity, questionMapperFactory);
+//    }
 
 }

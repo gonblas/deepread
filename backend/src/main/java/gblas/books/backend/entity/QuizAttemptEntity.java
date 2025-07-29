@@ -28,7 +28,7 @@ public class QuizAttemptEntity {
 
     @ManyToOne
     @JoinColumn(name = "quiz_id")
-    private QuizEntity quiz;
+    private QuizVersionEntity quizVersion;
 
     @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerEntity> answers = new ArrayList<>();

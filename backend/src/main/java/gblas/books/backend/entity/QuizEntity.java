@@ -10,16 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Table(name = "quizzes")
 @Entity
+@Table(name = "quizzes")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class QuizEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @OneToOne(optional = false)
@@ -27,10 +26,7 @@ public class QuizEntity {
     private ChapterEntity chapter;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionEntity> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuizAttemptEntity> attempts = new ArrayList<>();
-
+    private List<QuizVersionEntity> versions = new ArrayList<>();
 }
+
 

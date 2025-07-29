@@ -21,9 +21,9 @@ public interface QuestionMapper {
         return casted.toDto(entity);
     }
 
-    default QuestionEntity toEntity(QuestionRequest request, QuizEntity quiz, @Context QuestionMapperFactory factory) {
+    default QuestionEntity toEntity(QuestionRequest request, @Context QuestionMapperFactory factory) {
         TypedQuestionMapper<QuestionRequest, QuestionEntity, QuestionResponse, UpdateQuestionRequest> castedMapper = getTypedMapper(request.type(), factory);
-        return castedMapper.toEntity(request, quiz);
+        return castedMapper.toEntity(request);
     }
 
     default void updateEntity(UpdateQuestionRequest updateQuestionRequest, QuestionEntity entity, @Context QuestionMapperFactory factory) {

@@ -19,33 +19,33 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 public class QuizAttemptController {
-    private QuizAttemptService quizAttemptService;
-
-    @GetMapping("/api/quiz-attempts")
-    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
-        return quizAttemptService.getQuizAttemptsFromUser(user, pageable);
-    }
-
-    @GetMapping("/api/books/{bookId}/quiz-attempts")
-    public Page<QuizAttemptResponse> getQuizAttemptsFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
-        return quizAttemptService.getQuizAttemptsFromBook(bookId, pageable);
-    }
-
-    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz-attempts")
-    public Page<QuizAttemptResponse> getQuizAttemptFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
-        return quizAttemptService.getQuizAttemptFromChapter(bookId, chapterId, pageable);
-    }
-
-    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
-    @ResponseStatus(HttpStatus.CREATED)
-    public QuizAttemptResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
-        return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
-    }
-
-    @DeleteMapping("/api/quiz-attempts/{quizAttemptId}/")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteQuizAttempt(@Valid @PathVariable UUID quizAttemptId) {
-        quizAttemptService.deleteQuizAttempt(quizAttemptId);
-    }
+//    private QuizAttemptService quizAttemptService;
+//
+//    @GetMapping("/api/quiz-attempts")
+//    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
+//        return quizAttemptService.getQuizAttemptsFromUser(user, pageable);
+//    }
+//
+//    @GetMapping("/api/books/{bookId}/quiz-attempts")
+//    public Page<QuizAttemptResponse> getQuizAttemptsFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
+//        return quizAttemptService.getQuizAttemptsFromBook(bookId, pageable);
+//    }
+//
+//    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz-attempts")
+//    public Page<QuizAttemptResponse> getQuizAttemptFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
+//        return quizAttemptService.getQuizAttemptFromChapter(bookId, chapterId, pageable);
+//    }
+//
+//    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public QuizAttemptResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
+//        return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
+//    }
+//
+//    @DeleteMapping("/api/quiz-attempts/{quizAttemptId}/")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void deleteQuizAttempt(@Valid @PathVariable UUID quizAttemptId) {
+//        quizAttemptService.deleteQuizAttempt(quizAttemptId);
+//    }
 }
 

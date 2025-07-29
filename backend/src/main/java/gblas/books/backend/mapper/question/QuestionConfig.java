@@ -16,12 +16,12 @@ public interface QuestionConfig {
     QuestionResponse ToDto(QuestionEntity entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quiz", source = "quiz")
+    @Mapping(target = "versions", ignore = true)
     @Mapping(target = "type", source = "request.type")
-    QuestionEntity toEntity(QuestionRequest request, QuizEntity quiz);
+    QuestionEntity toEntity(QuestionRequest request);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quiz", ignore = true)
+    @Mapping(target = "versions", ignore = true) // revisar esto, deberia agregarse una nueva versión
     @Mapping(target = "type", source = "request.type")
     void updateEntity(UpdateQuestionRequest request, @MappingTarget QuestionEntity entity);
 
