@@ -5,11 +5,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record QuizAttemptResponse(
+        @NotBlank UUID id,
         @NotBlank UUID quiz_id,
         @NotEmpty(message = "Answer list cannot be empty")
         @Valid
