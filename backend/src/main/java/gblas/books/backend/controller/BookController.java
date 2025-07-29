@@ -9,6 +9,7 @@ import gblas.books.backend.entity.ChapterEntity;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.service.BookService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/book")
 @AllArgsConstructor
+@Tag(name = "Book Management", description = "APIs for managing users")
 public class BookController {
 
     private final BookRepository bookRepository;

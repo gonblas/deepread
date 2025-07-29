@@ -4,6 +4,7 @@ import gblas.books.backend.dto.QuizAttemptRequest;
 import gblas.books.backend.dto.QuizAttemptResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.service.QuizAttemptService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
+@Tag(name = "Quiz attempts Management", description = "APIs for managing users")
 public class QuizAttemptController {
     private QuizAttemptService quizAttemptService;
 

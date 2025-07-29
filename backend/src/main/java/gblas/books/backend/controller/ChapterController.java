@@ -4,6 +4,7 @@ import gblas.books.backend.dto.ChapterRequest;
 import gblas.books.backend.dto.ChapterResponse;
 import gblas.books.backend.dto.UpdateChapterRequest;
 import gblas.books.backend.service.ChapterService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/book/{bookId}/chapters")
+@Tag(name = "Chapter Management", description = "APIs for managing users")
 public class ChapterController {
     private ChapterService chapterService;
 

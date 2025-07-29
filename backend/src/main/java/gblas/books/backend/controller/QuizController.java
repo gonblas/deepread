@@ -4,6 +4,7 @@ import gblas.books.backend.dto.QuizRequest;
 import gblas.books.backend.dto.QuizResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.service.QuizService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Quiz Management", description = "APIs for managing users")
 public class QuizController {
     private QuizService quizService;
 
