@@ -22,4 +22,7 @@ public interface QuestionRepository extends CrudRepository<QuestionEntity, UUID>
     """)
     void deleteQuestionsByQuizId(@Param("quizId") UUID quizId);
 
+
+
+
 }
