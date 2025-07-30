@@ -26,6 +26,9 @@ public class QuizEntity {
     private ChapterEntity chapter;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionEntity> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizVersionEntity> versions = new ArrayList<>();
 }
 

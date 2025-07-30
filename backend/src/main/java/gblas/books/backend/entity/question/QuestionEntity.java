@@ -36,6 +36,11 @@ public abstract class QuestionEntity {
 
     private String explanation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private QuizEntity quiz;
+
+
     @ManyToMany(mappedBy = "questions")
     private List<QuizVersionEntity> versions = new ArrayList<>();
 

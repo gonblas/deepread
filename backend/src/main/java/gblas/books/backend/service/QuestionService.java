@@ -34,6 +34,8 @@ public class QuestionService {
         QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, questionMapperFactory);
 
         quizVersion.getQuestions().add(newQuestion);
+        quizVersion.getQuiz().getQuestions().add(newQuestion);
+        newQuestion.setQuiz(quizVersion.getQuiz());
         questionRepository.save(newQuestion);
         newQuestion.getVersions().add(quizVersion);
 
