@@ -23,8 +23,6 @@ import java.util.UUID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // --- Errores comunes con cuerpo plano ---
-
     @ExceptionHandler({
             BadRequestException.class,
             IllegalArgumentException.class
@@ -75,8 +73,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(new Exception(ex.getReason()), request, HttpStatus.BAD_REQUEST);
     }
 
-    // --- Validación de parámetros con @Valid y @PathVariable / @RequestParam ---
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -105,8 +101,6 @@ public class GlobalExceptionHandler {
         }
         return buildErrorResponse(new IllegalArgumentException(msg), request, HttpStatus.BAD_REQUEST);
     }
-
-    // --- Fallback para errores no esperados ---
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {

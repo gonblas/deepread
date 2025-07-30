@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(source="id", target="id")
+    @Mapping(source="email", target="email")
     UserResponse toDto(UserEntity entity);
 
     @Mapping(target = "id", ignore = true)

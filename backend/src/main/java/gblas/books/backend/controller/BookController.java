@@ -9,6 +9,9 @@ import gblas.books.backend.entity.ChapterEntity;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.service.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -34,30 +37,92 @@ public class BookController {
     private final BookRepository bookRepository;
     private BookService bookService;
 
+    @Operation(
+            summary = "Get paginated list of books",
+            description = "Retrieves a pageable list of books, optionally filtered by genres.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Books retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
     @GetMapping
-    public Page<BookResponse> getBooks(@Valid @RequestParam(required = false) List<BookGenre> genres, @AuthenticationPrincipal UserEntity user, Pageable pageable) {
+    public Page<BookResponse> getBooks(
+            @Valid @RequestParam(required = false) List<BookGenre> genres,
+            @AuthenticationPrincipal UserEntity user,
+            Pageable pageable
+    ) {
         return bookService.getBooks(user, pageable, genres);
     }
 
+    @Operation(
+            summary = "Add a new book",
+            description = "Creates a new book associated with the authenticated user.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Book created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid book data - no response body", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookResponse addBook(@Valid @RequestBody BookRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
+    public BookResponse addBook(
+            @Valid @RequestBody BookRequest bookRequest,
+            @AuthenticationPrincipal UserEntity user
+    ) {
         return bookService.addBook(user, bookRequest);
     }
 
+    @Operation(
+            summary = "Delete a book",
+            description = "Deletes the book with the specified ID belonging to the authenticated user.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Book deleted successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid book ID - no response body", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
     @DeleteMapping("/{bookId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBook(@PathVariable UUID bookId, @AuthenticationPrincipal UserEntity user) {
+    public void deleteBook(
+            @PathVariable UUID bookId,
+            @AuthenticationPrincipal UserEntity user
+    ) {
         bookService.deleteBook(user, bookId);
     }
 
+    @Operation(
+            summary = "Replace an existing book",
+            description = "Fully updates the book with the specified ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Book updated successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid book data or ID - no response body", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
     @PutMapping("/{bookId}")
-    public BookResponse changeBook(@PathVariable UUID bookId, @Valid @RequestBody BookRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
+    public BookResponse changeBook(
+            @PathVariable UUID bookId,
+            @Valid @RequestBody BookRequest bookRequest,
+            @AuthenticationPrincipal UserEntity user
+    ) {
         return bookService.changeBook(user, bookId, bookRequest);
     }
 
+    @Operation(
+            summary = "Partially update a book",
+            description = "Partially updates the book with the specified ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Book partially updated successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid book data or ID - no response body", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
     @PatchMapping("/{bookId}")
-    public BookResponse updateBook(@PathVariable UUID bookId, @Valid @RequestBody BookUpdateRequest bookRequest, @AuthenticationPrincipal UserEntity user) {
+    public BookResponse updateBook(
+            @PathVariable UUID bookId,
+            @Valid @RequestBody BookUpdateRequest bookRequest,
+            @AuthenticationPrincipal UserEntity user
+    ) {
         return bookService.updateBook(user, bookId, bookRequest);
     }
 
