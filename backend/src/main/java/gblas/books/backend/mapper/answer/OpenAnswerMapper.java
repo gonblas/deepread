@@ -5,13 +5,15 @@ import gblas.books.backend.dto.answer.OpenAnswer.OpenAnswerResponse;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.OpenAnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
+import gblas.books.backend.mapper.question.QuestionMapperFactory;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", config = AnswerConfig.class)
 public interface OpenAnswerMapper extends TypedAnswerMapper<OpenAnswerRequest, OpenAnswerEntity, OpenAnswerResponse> {
     @Mapping(target = "answerText", source = "answerText")
-    OpenAnswerResponse toDto(OpenAnswerEntity entity);
+    OpenAnswerResponse toDto(OpenAnswerEntity entity, @Context QuestionMapperFactory factory);
 
     @Mapping(target = "answerText", source = "request.answerText")
     @Mapping(target = "quizAttempt", source = "quizAttempt")

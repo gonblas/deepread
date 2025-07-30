@@ -9,6 +9,7 @@ import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.QuizAttemptMapper;
 import gblas.books.backend.mapper.answer.AnswerMapper;
 import gblas.books.backend.mapper.answer.AnswerMapperFactory;
+import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -32,17 +33,18 @@ public class QuizAttemptService {
     private final QuestionRepository questionRepository;
     private final QuizAttemptRepository quizAttemptRepository;
     private final AnswerMapperFactory answerMapperFactory;
+    private final QuestionMapperFactory questionMapperFactory;
     private final AnswerRepository answerRepository;
     private final QuizVersionService quizVersionService;
 
     public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUserId(user.getId(), pageable);
-        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
+        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
     public Page<QuizAttemptResponse> getQuizAttemptsFromBook(UUID bookId, Pageable pageable) {
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByBookId(bookId, pageable);
-        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
+        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
     public Page<QuizAttemptResponse> getQuizAttemptFromChapter(UUID bookId, UUID chapterId, Pageable pageable) {
@@ -55,15 +57,14 @@ public class QuizAttemptService {
 
         QuizEntity quiz = quizRepository.findByChapter(chapter).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByQuiz(quiz, pageable);
-        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory));
+        return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
     public QuizAttemptResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
-        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuizVersionEntity quizVersionEntity = quizVersionService.getLastQuizVersionEntity(quiz);
         QuizAttemptEntity newQuizAttemptEntity = new QuizAttemptEntity();
-        newQuizAttemptEntity.setQuizVersion(quizVersionEntity);
-        return getQuizResponse(quizAttemptRequest, newQuizAttemptEntity);
+        return getQuizResponse(quizAttemptRequest, newQuizAttemptEntity, quizVersionEntity);
     }
 
     public void deleteQuizAttempt(@Valid UUID quizAttemptId) {
@@ -71,9 +72,10 @@ public class QuizAttemptService {
         quizAttemptRepository.delete(quizAttempt);
     }
 
-    private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt) {
+    private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt, QuizVersionEntity quizVersionEntity) {
         quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
         quizAttempt.setSubmittedAt(LocalDateTime.now());
+        quizAttempt.setQuizVersion(quizVersionEntity);
         quizAttemptRepository.save(quizAttempt);
         List<AnswerEntity> answers = quizAttemptRequest.answers().stream()
                 .map(request -> {
@@ -85,7 +87,7 @@ public class QuizAttemptService {
                 .toList();
         quizAttempt.setAnswers(answers);
         quizAttempt.setCorrectCount(getCorrectCountFromAnswers(answers));
-        return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory);
+        return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
     }
 
     private Integer getCorrectCountFromAnswers(List<AnswerEntity> answers) {

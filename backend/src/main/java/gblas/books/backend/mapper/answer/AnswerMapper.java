@@ -5,6 +5,7 @@ import gblas.books.backend.dto.answer.AnswerResponse;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
+import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -15,9 +16,9 @@ public interface AnswerMapper {
 
     AnswerMapper INSTANCE =  Mappers.getMapper(AnswerMapper.class);
 
-    default AnswerResponse toDto(AnswerEntity entity, @Context AnswerMapperFactory factory) {
-        TypedAnswerMapper<AnswerRequest, AnswerEntity, AnswerResponse> casted = getTypedMapper(entity.getType(), factory);
-        return casted.toDto(entity);
+    default AnswerResponse toDto(AnswerEntity entity, @Context AnswerMapperFactory answerFactory, @Context QuestionMapperFactory questionFactory) {
+        TypedAnswerMapper<AnswerRequest, AnswerEntity, AnswerResponse> casted = getTypedMapper(entity.getType(), answerFactory);
+        return casted.toDto(entity, questionFactory);
     }
 
     default AnswerEntity toEntity(AnswerRequest request, QuizAttemptEntity quizAttempt, QuestionEntity question, @Context AnswerMapperFactory factory) {
