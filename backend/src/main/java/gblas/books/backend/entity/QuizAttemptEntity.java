@@ -40,6 +40,14 @@ public class QuizAttemptEntity {
     private LocalDateTime submittedAt;
 
     @Column(name = "correct_count")
+    @Transient
     private Integer correctCount;
+
+    @PostLoad
+    public void getCorrectCountFromAnswers() {
+        this.correctCount = (int) this.answers.stream()
+                .filter(AnswerEntity::getIsCorrect)
+                .count();
+    }
 }
 

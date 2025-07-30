@@ -76,7 +76,7 @@ public class QuizAttemptService {
         quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
         quizAttempt.setSubmittedAt(LocalDateTime.now());
         quizAttempt.setQuizVersion(quizVersionEntity);
-        quizAttemptRepository.save(quizAttempt);
+        QuizAttemptEntity savedQuizAttempt = quizAttemptRepository.save(quizAttempt);
         List<AnswerEntity> answers = quizAttemptRequest.answers().stream()
                 .map(request -> {
                     QuestionEntity question = questionRepository.getById(request.questionId());
@@ -86,13 +86,7 @@ public class QuizAttemptService {
                 })
                 .toList();
         quizAttempt.setAnswers(answers);
-        quizAttempt.setCorrectCount(getCorrectCountFromAnswers(answers));
+        quizAttempt.getCorrectCountFromAnswers();
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
-    }
-
-    private Integer getCorrectCountFromAnswers(List<AnswerEntity> answers) {
-        return (int) answers.stream()
-                .filter(AnswerEntity::getIsCorrect)
-                .count();
     }
 }
