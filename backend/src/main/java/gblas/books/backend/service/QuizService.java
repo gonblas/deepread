@@ -82,6 +82,27 @@ public class QuizService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Quiz already exists for this chapter");
         }
 
+        return getNewQuizResponse(quizRequest, chapterEntity);
+    }
+
+    @Transactional
+    public void deleteQuiz(UUID bookId, UUID chapterId) {
+        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
+        QuizEntity quizEntity = quizRepository.findByChapter(chapterEntity).orElseThrow(() -> new NotFoundException("Quiz not found"));
+
+        if (!chapterEntity.getBook().getId().equals(bookEntity.getId())) {
+            throw new NotFoundException("Chapter does not belong to this book");
+        }
+
+        questionRepository.deleteQuestionsByQuizId(quizEntity.getId());
+        chapterEntity.setQuiz(null);
+        quizEntity.setChapter(null);
+        quizRepository.delete(quizEntity);
+    }
+
+
+    private QuizResponse getNewQuizResponse(QuizRequest quizRequest, ChapterEntity chapterEntity) {
         QuizEntity newQuizEntity = new QuizEntity();
         chapterEntity.setQuizBidirectional(newQuizEntity);
 
@@ -100,22 +121,6 @@ public class QuizService {
         newQuizEntity.getQuestions().addAll(questions);
         newQuizEntity.getVersions().add(firstVersion);
         return QuizMapper.INSTANCE.toDto(firstVersion, questionMapperFactory);
-    }
-
-    @Transactional
-    public void deleteQuiz(UUID bookId, UUID chapterId) {
-        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-        QuizEntity quizEntity = quizRepository.findByChapter(chapterEntity).orElseThrow(() -> new NotFoundException("Quiz not found"));
-
-        if (!chapterEntity.getBook().getId().equals(bookEntity.getId())) {
-            throw new NotFoundException("Chapter does not belong to this book");
-        }
-
-        questionRepository.deleteQuestionsByQuizId(quizEntity.getId());
-        chapterEntity.setQuiz(null);
-        quizEntity.setChapter(null);
-        quizRepository.delete(quizEntity);
     }
 
 }
