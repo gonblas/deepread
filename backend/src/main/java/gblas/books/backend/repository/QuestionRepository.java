@@ -13,16 +13,4 @@ import java.util.UUID;
 public interface QuestionRepository extends CrudRepository<QuestionEntity, UUID> {
     QuestionEntity getById(UUID id);
 
-    @Modifying
-    @Query("""
-        DELETE FROM QuestionEntity q
-        WHERE q.id IN (
-            SELECT q2.id FROM QuizVersionEntity v JOIN v.questions q2 WHERE v.quiz.id = :quizId
-        )
-    """)
-    void deleteQuestionsByQuizId(@Param("quizId") UUID quizId);
-
-
-
-
 }

@@ -26,7 +26,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
 
     public Page<BookResponse> getBooks(UserEntity user, Pageable pageable, List<BookGenre> genres) {
         Page<BookEntity> books_page;

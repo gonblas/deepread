@@ -95,7 +95,6 @@ public class QuizService {
             throw new NotFoundException("Chapter does not belong to this book");
         }
 
-        questionRepository.deleteQuestionsByQuizId(quizEntity.getId());
         chapterEntity.setQuiz(null);
         quizEntity.setChapter(null);
         quizRepository.delete(quizEntity);

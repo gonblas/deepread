@@ -40,7 +40,7 @@ public class UserEntity implements UserDetails {
     @Override
     public String getPassword() { return hashedPassword; }
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookEntity> books = new ArrayList<>();
 
     @Override public boolean isAccountNonExpired() { return true; }
