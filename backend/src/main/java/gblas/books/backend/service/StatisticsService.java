@@ -28,7 +28,7 @@ public class StatisticsService {
     public UserStatisticsResponse getStatisticsFromUserAttempts(UserEntity user) {
         List<QuizAttemptEntity> attempts = quizAttemptRepository.findByUserId(user.getId());
         if (attempts.isEmpty()) {
-            throw new NotFoundException("Quiz attempts not found");
+            return null;
         }
 
         GeneralStatistics userStats = calculateGeneralStatistics(attempts);
@@ -41,7 +41,7 @@ public class StatisticsService {
                     UUID bookId = entry.getKey();
                     List<QuizAttemptEntity> bookAttempts = entry.getValue();
 
-                    String bookTitle = bookAttempts.get(0).getQuizVersion().getQuiz().getChapter().getBook().getTitle();
+                    String bookTitle = bookAttempts.getFirst().getQuizVersion().getQuiz().getChapter().getBook().getTitle();
 
                     GeneralStatistics bookStats = calculateGeneralStatistics(bookAttempts);
 
@@ -55,7 +55,7 @@ public class StatisticsService {
     public BookStatisticsResponse getStatisticsFromBookAttempts(UUID bookId) {
         List<QuizAttemptEntity> attempts = quizAttemptRepository.findByBookId(bookId);
         if (attempts.isEmpty()) {
-            throw new NotFoundException("Quiz attempts not found for this book");
+            return null;
         }
 
         GeneralStatistics bookStats = calculateGeneralStatistics(attempts);
@@ -68,7 +68,7 @@ public class StatisticsService {
                     UUID chapterId = entry.getKey();
                     List<QuizAttemptEntity> chapterAttempts = entry.getValue();
 
-                    String chapterTitle = chapterAttempts.get(0).getQuizVersion().getQuiz().getChapter().getTitle();
+                    String chapterTitle = chapterAttempts.getFirst().getQuizVersion().getQuiz().getChapter().getTitle();
 
                     GeneralStatistics chapterStats = calculateGeneralStatistics(chapterAttempts);
 
@@ -82,12 +82,12 @@ public class StatisticsService {
     public ChapterStatisticsResponse getStatisticsFromOneChapterAttempts(UUID chapterId) {
         ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
         if(chapter.getQuiz() == null) {
-            throw new NotFoundException("Quiz not found");
+            return null;
         }
         QuizEntity quiz = chapter.getQuiz();
         List<QuizAttemptEntity> attempts = quizAttemptRepository.findByQuiz(quiz);
         if(attempts.isEmpty()) {
-            throw new NotFoundException("Quiz attempts not found");
+            return null;
         }
         return new ChapterStatisticsResponse(
                 quiz.getChapter().getId(),
