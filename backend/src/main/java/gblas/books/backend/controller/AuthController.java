@@ -116,7 +116,7 @@ public class AuthController {
                     )
             }
     )
-    @GetMapping(path = "/me")
+    @GetMapping
     public UserResponse me(@AuthenticationPrincipal UserEntity user) {
         return UserMapper.INSTANCE.toDto(user);
     }
@@ -135,7 +135,7 @@ public class AuthController {
                     )
             }
     )
-    @DeleteMapping(path = "/delete")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@Valid @RequestBody DeleteAccountRequest request, @AuthenticationPrincipal UserEntity user) {
         authService.deleteAccount(request, user);
