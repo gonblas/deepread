@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorDetails> handleResponseStatus(ResponseStatusException ex, WebRequest request) {
-        return buildErrorResponse(new Exception(ex.getReason()), request, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(new Exception(ex.getReason()), request, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

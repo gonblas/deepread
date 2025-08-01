@@ -60,18 +60,15 @@ public class ChapterService {
 
     public ChapterResponse changeChapter(UUID bookId, UUID chapterId, ChapterRequest chapterRequest) {
         ChapterEntity chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
-
         ChapterMapper.INSTANCE.changeEntity(chapterRequest, chapterToChange);
         chapterRepository.save(chapterToChange);
         return ChapterMapper.INSTANCE.toDto(chapterToChange);
     }
 
     public ChapterResponse updateChapter(UUID bookId, UUID chapterId, UpdateChapterRequest chapterRequest) {
-        ChapterEntity chapterToChange;
-        if (chapterRequest.number() != null) {
+        ChapterEntity chapterToChange = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
+        if (chapterRequest.number() != null && chapterRequest.number() != chapterToChange.getNumber()) {
             chapterToChange = findChapterWithSameNumber(bookId, chapterId, chapterRequest.number());
-        } else {
-            chapterToChange = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
         }
 
         ChapterMapper.INSTANCE.updateEntity(chapterRequest, chapterToChange);

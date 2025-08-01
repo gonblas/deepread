@@ -2,6 +2,7 @@ package gblas.books.backend.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.lang.annotation.*;
@@ -11,6 +12,7 @@ import java.lang.annotation.*;
 })
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
+@NotNull(message = "Chapter number is required")
 @Positive(message = "Chapter number must be positive")
 public @interface ValidChapterNumber {
     String message() default "Invalid Chapter Number";
