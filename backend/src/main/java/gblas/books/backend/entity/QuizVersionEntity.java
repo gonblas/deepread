@@ -31,7 +31,7 @@ public class QuizVersionEntity {
     @Column(nullable = false)
     private Boolean isCurrent = false;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "quiz_version_questions",
             joinColumns = @JoinColumn(name = "quiz_version_id"),

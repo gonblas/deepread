@@ -33,7 +33,6 @@ public class QuizService {
     private final QuizVersionRepository quizVersionRepository;
     private final QuestionMapperFactory questionMapperFactory;
     private final QuizVersionService quizVersionService;
-    private final QuestionRepository questionRepository;
 
 
     public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
@@ -66,6 +65,7 @@ public class QuizService {
         return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);
     }
 
+    @Transactional
     public QuizResponse addQuiz(UUID bookId, UUID chapterId, QuizRequest quizRequest) {
         BookEntity bookEntity = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException("Book not found"));
@@ -100,8 +100,8 @@ public class QuizService {
         quizRepository.delete(quizEntity);
     }
 
-
-    private QuizResponse getNewQuizResponse(QuizRequest quizRequest, ChapterEntity chapterEntity) {
+    @Transactional
+    protected QuizResponse getNewQuizResponse(QuizRequest quizRequest, ChapterEntity chapterEntity) {
         QuizEntity newQuizEntity = new QuizEntity();
         chapterEntity.setQuizBidirectional(newQuizEntity);
 
@@ -117,9 +117,9 @@ public class QuizService {
                     return questionService.createQuestion(request, firstVersion);
                 })
                 .toList();
+        firstVersion.getQuestions().addAll(questions);
         newQuizEntity.getQuestions().addAll(questions);
         newQuizEntity.getVersions().add(firstVersion);
         return QuizMapper.INSTANCE.toDto(firstVersion, questionMapperFactory);
     }
-
 }

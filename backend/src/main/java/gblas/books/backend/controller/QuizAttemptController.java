@@ -72,7 +72,7 @@ public class QuizAttemptController {
             description = "Creates a new quiz attempt for the specified quiz.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Quiz attempt created successfully"),
-                    @ApiResponse(responseCode = "400", description = "Invalid quiz ID or quiz attempt data - no response body", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Invalid quiz ID or quiz attempt data - no response body - Wrong question id", content = @Content),
                     @ApiResponse(responseCode = "404", description = "Quiz not found - no response body", content = @Content)
             }
     )

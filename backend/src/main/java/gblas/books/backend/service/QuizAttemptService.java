@@ -10,6 +10,7 @@ import gblas.books.backend.mapper.QuizAttemptMapper;
 import gblas.books.backend.mapper.answer.AnswerMapper;
 import gblas.books.backend.mapper.answer.AnswerMapperFactory;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
+import org.springframework.transaction.annotation.Transactional;
 import gblas.books.backend.repository.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -60,6 +61,7 @@ public class QuizAttemptService {
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
+    @Transactional
     public QuizAttemptResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuizVersionEntity quizVersionEntity = quizVersionService.getLastQuizVersionEntity(quiz);
@@ -72,14 +74,21 @@ public class QuizAttemptService {
         quizAttemptRepository.delete(quizAttempt);
     }
 
-    private QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt, QuizVersionEntity quizVersionEntity) {
+    @Transactional
+    protected QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt, QuizVersionEntity quizVersionEntity) {
         quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
         quizAttempt.setSubmittedAt(LocalDateTime.now());
         quizAttempt.setQuizVersion(quizVersionEntity);
-        QuizAttemptEntity savedQuizAttempt = quizAttemptRepository.save(quizAttempt);
+        List<QuestionEntity> possibleQuestions = quizVersionEntity.getQuestions();
+        quizAttemptRepository.save(quizAttempt);
         List<AnswerEntity> answers = quizAttemptRequest.answers().stream()
                 .map(request -> {
-                    QuestionEntity question = questionRepository.getById(request.questionId());
+                    QuestionEntity question = questionRepository.findById(request.questionId())
+                            .orElseThrow(() -> new NotFoundException("Question with id " + request.questionId() + " not found"));
+
+                    if(!possibleQuestions.contains(question)) {
+                        throw new NotFoundException("Question does not belong to this quiz");
+                    }
                     AnswerEntity newAnswer = AnswerMapper.INSTANCE.toEntity(request, quizAttempt, question, answerMapperFactory);
                     answerRepository.save(newAnswer);
                     return newAnswer;
