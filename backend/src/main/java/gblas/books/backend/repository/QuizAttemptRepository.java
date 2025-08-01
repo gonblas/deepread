@@ -42,5 +42,34 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
     """)
     Page<QuizAttemptEntity> findByQuiz(QuizEntity quiz, Pageable pageable);
 
+    @Query("""
+    SELECT qa FROM QuizAttemptEntity qa
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
+    JOIN q.chapter c
+    JOIN c.book b
+    JOIN b.owner u
+    WHERE u.id = :userId
+    """)
+    List<QuizAttemptEntity> findByUserId(UUID userId);
+
+    @Query("""
+    SELECT qa FROM QuizAttemptEntity qa
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
+    JOIN q.chapter c
+    JOIN c.book b
+    WHERE b.id = :bookId
+    """)
+    List<QuizAttemptEntity> findByBookId(UUID bookId);
+
+    @Query("""
+    SELECT qa FROM QuizAttemptEntity qa
+    JOIN qa.quizVersion qv
+    JOIN qv.quiz q
+    WHERE q = :quiz
+    """)
+    List<QuizAttemptEntity> findByQuiz(QuizEntity quiz);
+
 }
 
