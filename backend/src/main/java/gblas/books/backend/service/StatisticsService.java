@@ -86,13 +86,15 @@ public class StatisticsService {
         }
         QuizEntity quiz = chapter.getQuiz();
         List<QuizAttemptEntity> attempts = quizAttemptRepository.findByQuiz(quiz);
+        if(attempts.isEmpty()) {
+            throw new NotFoundException("Quiz attempts not found");
+        }
         return new ChapterStatisticsResponse(
                 quiz.getChapter().getId(),
                 quiz.getChapter().getTitle(),
                 calculateGeneralStatistics(attempts)
         );
     }
-
 
     private GeneralStatistics calculateGeneralStatistics(List<QuizAttemptEntity> attempts) {
         int totalAttempts = attempts.size();
