@@ -8,6 +8,8 @@ import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.QuizAttemptRepository;
 import gblas.books.backend.repository.QuizRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,9 +25,10 @@ public class StatisticsService {
     private final QuizRepository quizRepository;
     private final ChapterRepository chapterRepository;
     private final BookRepository bookRepository;
+    private final Pageable emptyPageable = Pageable.unpaged();
 
     public UserStatisticsResponse getStatisticsFromUserAttempts(UserEntity user) {
-        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByUser(user);
+        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByUser(user, emptyPageable).getContent();
         if (attempts.isEmpty()) {
             return null;
         }
@@ -53,7 +56,7 @@ public class StatisticsService {
 
     public BookStatisticsResponse getStatisticsFromBookAttempts(UUID bookId) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByBook(book);
+        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByBook(book, emptyPageable).getContent();
         if (attempts.isEmpty()) {
             return null;
         }
@@ -85,7 +88,7 @@ public class StatisticsService {
             return null;
         }
         QuizEntity quiz = chapter.getQuiz();
-        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByQuiz(quiz);
+        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByQuiz(quiz, emptyPageable).getContent();
         if(attempts.isEmpty()) {
             return null;
         }
