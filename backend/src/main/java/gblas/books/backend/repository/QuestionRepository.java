@@ -14,4 +14,11 @@ import java.util.UUID;
 public interface QuestionRepository extends CrudRepository<QuestionEntity, UUID> {
     Optional<QuestionEntity> getById(UUID id);
 
+    @Query("""
+    SELECT q FROM QuestionEntity q
+    JOIN q.versions v
+    WHERE q.id = :questionId AND v.id = :versionId AND v.isCurrent = true
+""")
+    Optional<QuestionEntity> findByIdAndCurrentVersion(UUID questionId, UUID versionId);
+
 }

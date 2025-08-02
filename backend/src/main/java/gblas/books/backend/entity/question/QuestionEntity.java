@@ -41,7 +41,7 @@ public abstract class QuestionEntity {
     private QuizEntity quiz;
 
 
-    @ManyToMany(mappedBy = "questions")
+    @ManyToMany(mappedBy = "questions", fetch =  FetchType.EAGER)
     private List<QuizVersionEntity> versions = new ArrayList<>();
 
     public enum QuestionType {
