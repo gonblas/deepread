@@ -56,13 +56,6 @@ class QuizRepositoryTest {
         pageable = PageRequest.of(0, 10);
     }
 
-    @Test
-    void shouldReturnQuizByUserId_whenQuizExists() {
-        Page<QuizEntity> result = quizRepository.findAllQuizzesByUserId(userId, pageable);
-
-        //assertEquals(1, result.getTotalElements());
-        //assertEquals(quizExpected.getId(), result.getContent().getFirst().getId());
-    }
 
     @Test
     void findAllQuizzesByBookId() {

@@ -36,7 +36,7 @@ public class QuizService {
 
 
     public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
-        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByUserId(user.getId(), pageable);
+        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByUser(user, pageable);
         return quizzesPage.map(quiz -> {
             QuizVersionEntity currentVersion = quizVersionService.getLastQuizVersionEntity(quiz);
             return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);
@@ -44,7 +44,8 @@ public class QuizService {
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
-        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByBookId(bookId, pageable);
+        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByBook(book, pageable);
         return quizzesPage.map(quiz -> {
             QuizVersionEntity currentVersion = quizVersionService.getLastQuizVersionEntity(quiz);
             return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);

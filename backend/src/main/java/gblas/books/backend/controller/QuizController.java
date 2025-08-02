@@ -57,7 +57,7 @@ public class QuizController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Quiz retrieved successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid book or chapter ID - no response body", content = @Content),
-                    @ApiResponse(responseCode = "404", description = "Book or chapter or quiz not found - no response body", content = @Content)
+                    @ApiResponse(responseCode = "404", description = "Book or chapter, Quiz not found or Chapter does not belong to this book - no response body", content = @Content)
             }
     )
     @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
@@ -71,7 +71,8 @@ public class QuizController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Quiz created successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid data or IDs - no response body", content = @Content),
-                    @ApiResponse(responseCode = "404", description = "Book or chapter not found - no response body", content = @Content)
+                    @ApiResponse(responseCode = "404", description = "Book or chapter not found - no response body", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "Chapter Already Having Quiz - no response body", content = @Content)
             }
     )
     @PostMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
