@@ -44,7 +44,7 @@ public class QuizAttemptEntity {
     private Integer correctCount;
 
     @PostLoad
-    public void getCorrectCountFromAnswers() {
+    public void setCorrectCountFromAnswers() {
         this.correctCount = (int) this.answers.stream()
                 .filter(AnswerEntity::getIsCorrect)
                 .count();

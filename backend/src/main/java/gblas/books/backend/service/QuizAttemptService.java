@@ -39,12 +39,13 @@ public class QuizAttemptService {
     private final QuizVersionService quizVersionService;
 
     public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
-        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUserId(user.getId(), pageable);
+        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUser(user, pageable);
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
     public Page<QuizAttemptResponse> getQuizAttemptsFromBook(UUID bookId, Pageable pageable) {
-        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByBookId(bookId, pageable);
+        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByBook(book, pageable);
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 
@@ -65,8 +66,7 @@ public class QuizAttemptService {
     public QuizAttemptResponse createQuizAttempt(@Valid UUID quizId, @Valid QuizAttemptRequest quizAttemptRequest) {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuizVersionEntity quizVersionEntity = quizVersionService.getLastQuizVersionEntity(quiz);
-        QuizAttemptEntity newQuizAttemptEntity = new QuizAttemptEntity();
-        return getQuizResponse(quizAttemptRequest, newQuizAttemptEntity, quizVersionEntity);
+        return getQuizResponse(quizAttemptRequest, quizVersionEntity);
     }
 
     public void deleteQuizAttempt(@Valid UUID quizAttemptId) {
@@ -75,7 +75,8 @@ public class QuizAttemptService {
     }
 
     @Transactional
-    protected QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizAttemptEntity quizAttempt, QuizVersionEntity quizVersionEntity) {
+    protected QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizVersionEntity quizVersionEntity) {
+        QuizAttemptEntity quizAttempt = new QuizAttemptEntity();
         quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
         quizAttempt.setSubmittedAt(LocalDateTime.now());
         quizAttempt.setQuizVersion(quizVersionEntity);
@@ -95,7 +96,7 @@ public class QuizAttemptService {
                 })
                 .toList();
         quizAttempt.setAnswers(answers);
-        quizAttempt.getCorrectCountFromAnswers();
+        quizAttempt.setCorrectCountFromAnswers();
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
     }
 }

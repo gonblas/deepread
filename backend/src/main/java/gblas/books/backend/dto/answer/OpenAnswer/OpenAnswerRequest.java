@@ -2,12 +2,14 @@ package gblas.books.backend.dto.answer.OpenAnswer;
 
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record OpenAnswerRequest(
-        UUID questionId,
-        QuestionType type,
-        String answerText
+        @NotNull QuestionType type,
+        @NotNull UUID questionId,
+        @NotEmpty String answerText
 ) implements AnswerRequest {
 }
