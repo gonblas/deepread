@@ -1,11 +1,9 @@
 package gblas.books.backend.service;
 
 import gblas.books.backend.dto.statistics.*;
-import gblas.books.backend.entity.ChapterEntity;
-import gblas.books.backend.entity.QuizAttemptEntity;
-import gblas.books.backend.entity.QuizEntity;
-import gblas.books.backend.entity.UserEntity;
+import gblas.books.backend.entity.*;
 import gblas.books.backend.exceptions.NotFoundException;
+import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.QuizAttemptRepository;
 import gblas.books.backend.repository.QuizRepository;
@@ -24,9 +22,10 @@ public class StatisticsService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final QuizRepository quizRepository;
     private final ChapterRepository chapterRepository;
+    private final BookRepository bookRepository;
 
     public UserStatisticsResponse getStatisticsFromUserAttempts(UserEntity user) {
-        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByUserId(user.getId());
+        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByUser(user);
         if (attempts.isEmpty()) {
             return null;
         }
@@ -53,7 +52,8 @@ public class StatisticsService {
     }
 
     public BookStatisticsResponse getStatisticsFromBookAttempts(UUID bookId) {
-        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByBookId(bookId);
+        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        List<QuizAttemptEntity> attempts = quizAttemptRepository.findByBook(book);
         if (attempts.isEmpty()) {
             return null;
         }

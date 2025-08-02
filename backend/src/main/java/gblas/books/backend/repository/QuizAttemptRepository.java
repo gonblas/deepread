@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Book;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,9 +52,9 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
     JOIN q.chapter c
     JOIN c.book b
     JOIN b.owner u
-    WHERE u.id = :userId
+    WHERE u = :user
     """)
-    List<QuizAttemptEntity> findByUserId(UUID userId);
+    List<QuizAttemptEntity> findByUser(UserEntity user);
 
     @Query("""
     SELECT qa FROM QuizAttemptEntity qa
@@ -61,9 +62,9 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
     JOIN qv.quiz q
     JOIN q.chapter c
     JOIN c.book b
-    WHERE b.id = :bookId
+    WHERE b = :book
     """)
-    List<QuizAttemptEntity> findByBookId(UUID bookId);
+    List<QuizAttemptEntity> findByBook(BookEntity book);
 
     @Query("""
     SELECT qa FROM QuizAttemptEntity qa
