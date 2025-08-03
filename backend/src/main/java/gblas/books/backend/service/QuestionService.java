@@ -40,7 +40,6 @@ public class QuestionService {
         return newQuestion;
     }
 
-
     public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuizVersionEntity newQuizVersion = quizVersionService.updateVersion(quiz);
@@ -52,9 +51,6 @@ public class QuestionService {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
         QuizVersionEntity currentVersionQuiz = quizVersionService.getLastQuizVersionEntity(quiz);
         QuestionEntity question = questionRepository.findByIdAndCurrentVersion(questionId, currentVersionQuiz.getId()).orElseThrow(() -> new NotFoundException("Question not found"));
-//        if(!question.getVersions().contains(currentVersionQuiz) || !currentVersionQuiz.getQuestions().contains(question)) {
-//            throw new NotFoundException("Question not found!!!");
-//        }
         QuizVersionEntity newQuizVersion = quizVersionService.updateVersion(quiz);
         newQuizVersion.getQuestions().remove(question);
         quizVersionRepository.save(newQuizVersion);

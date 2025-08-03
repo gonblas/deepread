@@ -1,6 +1,7 @@
 package gblas.books.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gblas.books.backend.dto.*;
 import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.entity.question.QuestionEntity;
@@ -8,7 +9,7 @@ import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
 import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.*;
-import gblas.books.backend.service.JwtService;
+import gblas.books.backend.service.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -32,59 +34,42 @@ class QuestionControllerTest {
     @Autowired private UserRepository userRepository;
     @Autowired private BookRepository bookRepository;
     @Autowired private ChapterRepository chapterRepository;
+    @Autowired private ChapterService chapterService;
+    @Autowired private BookService bookService;
+    @Autowired private AuthService authService;
     @Autowired private QuizRepository quizRepository;
     @Autowired private QuizVersionRepository quizVersionRepository;
     @Autowired private QuestionRepository questionRepository;
+    @Autowired private QuizService quizService;
     @Autowired private QuestionMapperFactory questionMapperFactory;
     @Autowired private JwtService jwtService;
 
     private String authToken;
-    private QuizEntity quiz;
-    private QuestionEntity question;
-    private ChapterEntity chapter;
-    private QuizVersionEntity quizVersion;
+    private UUID quizId;
+    private UUID questionId;
 
     @BeforeEach
     void setUp() {
-        UserEntity user = new UserEntity();
-        user.setEmail("test@example.com");
-        user.setUsername("testuser");
-        user.setHashedPassword("encoded_password");
-        user = userRepository.save(user);
+        RegisterRequest registerRequest = new RegisterRequest("test@example.com", "encoded_password", "testuser");
+        authService.register(registerRequest);
+        UserEntity newUser = userRepository.findByEmail("test@example.com").orElseThrow(() -> new UsernameNotFoundException("testuser"));
 
-        BookEntity book = new BookEntity();
-        book.setTitle("Test Book");
-        book.setOwner(user);
-        book = bookRepository.save(book);
+                BookRequest bookRequest = new BookRequest("title", "description", BookEntity.BookGenre.ECONOMICS, List.of("Lionel Messi"));
+        UUID bookId = bookService.addBook(newUser, bookRequest).id();
 
-        chapter = new ChapterEntity();
-        chapter.setNumber(1);
-        chapter.setTitle("Chapter 1");
-        chapter.setSummary("Summary 1");
-        chapter.setBook(book);
-        chapter = chapterRepository.save(chapter);
+        ChapterRequest chapterRequest = new ChapterRequest("title", 1, "summary");
+        UUID chapterId = chapterService.addChapter(bookId, chapterRequest).id();
 
-        quiz = new QuizEntity();
-        chapter.setQuizBidirectional(quiz);
-        quizRepository.save(quiz);
 
-        quizVersion = new QuizVersionEntity();
+        TrueOrFalseQuestionRequest questionRequest = new TrueOrFalseQuestionRequest(QuestionEntity.QuestionType.TRUE_FALSE, "prompt", "explanation", true);
+        QuizRequest quizRequest = new QuizRequest(List.of(questionRequest));
+        QuizResponse quizResponse = quizService.addQuiz(bookId, chapterId, quizRequest);
+        quizId = quizResponse.id();
+        questionId = quizResponse.questions().getFirst().id();
+        //quiz = quizRepository.getById(quizResponse.id());
+        //question = questionRepository.getById(quiz.getQuestions().getFirst().getId()).orElse(null);
 
-        quizVersion.setQuiz(quiz);
-        quizVersion.setIsCurrent(true);
-        quizVersionRepository.save(quizVersion);
-
-        question = QuestionMapper.INSTANCE.toEntity(new TrueOrFalseQuestionRequest(QuestionEntity.QuestionType.TRUE_FALSE, "prompt", "explanation", true), questionMapperFactory);
-
-        question.setQuiz(quiz);
-        question = questionRepository.save(question);
-        question.getVersions().add(quizVersion);
-
-        quizVersion.getQuestions().add(question);
-        quiz.getQuestions().add(question);
-        quiz.getVersions().add(quizVersion);
-
-        authToken = jwtService.generateToken(user.getEmail());
+        authToken = jwtService.generateToken("test@example.com");
     }
 
 
@@ -109,7 +94,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + quiz.getId() + "/questions")
+        mockMvc.perform(post("/api/" + quizId + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -128,7 +113,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + quiz.getId() + "/questions")
+        mockMvc.perform(post("/api/" + quizId + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -136,23 +121,23 @@ class QuestionControllerTest {
                 .andExpect(jsonPath("$.prompt").value("What is Java?"));
     }
 
-//    @Test
-//    void deleteQuestion_shouldReturnNoContent() throws Exception {
-//        mockMvc.perform(delete("/api/" + quiz.getId() + "/questions/" + question.getId())
-//                        .header("Authorization", "Bearer " + authToken))
-//                .andExpect(status().isNoContent());
-//    }
+    @Test
+    void deleteQuestion_shouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/" + quizId + "/questions/" + questionId)
+                        .header("Authorization", "Bearer " + authToken))
+                .andExpect(status().isNoContent());
+    }
 
     @Test
     void deleteQuestion_withInvalidId_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/" + quiz.getId() + "/questions/" + UUID.randomUUID())
+        mockMvc.perform(delete("/api/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void deleteQuestion_withInvalidQuiz_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + question.getId())
+        mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + questionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
     }
@@ -168,7 +153,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + quiz.getId() + "/questions/" + question.getId())
+        mockMvc.perform(put("/api/" + quizId + "/questions/" + questionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedJson))
@@ -186,7 +171,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + UUID.randomUUID() + "/questions/" + question.getId())
+        mockMvc.perform(put("/api/" + UUID.randomUUID() + "/questions/" + questionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -203,7 +188,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + quiz.getId() + "/questions/" + UUID.randomUUID())
+        mockMvc.perform(put("/api/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
