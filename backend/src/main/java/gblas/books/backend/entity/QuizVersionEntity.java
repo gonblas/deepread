@@ -42,7 +42,7 @@ public class QuizVersionEntity {
     @OneToMany(mappedBy = "quizVersion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAttemptEntity> attempts = new ArrayList<>();
 
-    public void updateVersion() {
+    public void updateVersionNumber() {
         this.versionNumber++;
     }
 }

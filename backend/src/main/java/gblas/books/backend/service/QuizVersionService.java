@@ -2,6 +2,7 @@ package gblas.books.backend.service;
 
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.QuizVersionEntity;
+import gblas.books.backend.repository.QuizRepository;
 import gblas.books.backend.repository.QuizVersionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 public class QuizVersionService {
 
     private final QuizVersionRepository quizVersionRepository;
+    private final QuizRepository quizRepository;
 
     public QuizVersionEntity getLastQuizVersionEntity(QuizEntity quizEntity) {
         return quizVersionRepository
@@ -24,7 +26,7 @@ public class QuizVersionService {
         QuizVersionEntity oldQuizVersion = getLastQuizVersionEntity(quiz);
         QuizVersionEntity newQuizVersion = cloneQuizVersion(oldQuizVersion);
         oldQuizVersion.setIsCurrent(false);
-        newQuizVersion.updateVersion();
+        newQuizVersion.updateVersionNumber();
         quizVersionRepository.save(oldQuizVersion);
         quizVersionRepository.save(newQuizVersion);
         return newQuizVersion;

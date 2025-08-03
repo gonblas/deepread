@@ -5,9 +5,7 @@ import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.QuizVersionEntity;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -16,7 +14,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "questions")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)

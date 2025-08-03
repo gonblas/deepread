@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -32,18 +33,31 @@ public class QuestionService {
 
     public QuestionEntity createQuestion(QuestionRequest request, QuizVersionEntity quizVersion) {
         QuestionEntity newQuestion = QuestionMapper.INSTANCE.toEntity(request, questionMapperFactory);
-
         newQuestion.setQuiz(quizVersion.getQuiz());
         questionRepository.save(newQuestion);
-        newQuestion.getVersions().add(quizVersion);
-
+        quizVersion.getQuestions().add(newQuestion);
+        quizVersionRepository.save(quizVersion);
         return newQuestion;
     }
 
+
     public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
-        QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        log.info("Adding question to quiz with ID: {}", quizId);
+
+        QuizEntity quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NotFoundException("Quiz not found"));
+
         QuizVersionEntity newQuizVersion = quizVersionService.updateVersion(quiz);
+        log.info("Using new quiz version with ID: {}", newQuizVersion.getId());
+
         QuestionEntity newQuestion = createQuestion(questionRequest, newQuizVersion);
+
+        // Confirmar estado al final
+        QuizVersionEntity versionFromDb = quizVersionRepository.findById(newQuizVersion.getId())
+                .orElseThrow(() -> new IllegalStateException("Quiz version not found after update"));
+
+        log.info("Questions in DB version (post-save): {}", versionFromDb.getQuestions().stream().map(QuestionEntity::getId).toList());
+
         return QuestionMapper.INSTANCE.toDto(newQuestion, questionMapperFactory);
     }
 

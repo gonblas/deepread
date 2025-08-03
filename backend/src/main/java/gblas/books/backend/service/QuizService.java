@@ -118,7 +118,7 @@ public class QuizService {
                     return questionService.createQuestion(request, firstVersion);
                 })
                 .toList();
-        firstVersion.getQuestions().addAll(questions);
+
         newQuizEntity.getQuestions().addAll(questions);
         newQuizEntity.getVersions().add(firstVersion);
         return QuizMapper.INSTANCE.toDto(firstVersion, questionMapperFactory);

@@ -2,9 +2,7 @@ package gblas.books.backend.entity;
 
 import gblas.books.backend.entity.question.QuestionEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "quizzes")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizEntity {
