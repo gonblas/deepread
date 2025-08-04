@@ -2,6 +2,7 @@ package gblas.books.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gblas.books.backend.dto.*;
+import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
 import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.entity.question.QuestionEntity;
@@ -47,7 +48,8 @@ class QuestionControllerTest {
 
     private String authToken;
     private UUID quizId;
-    private UUID questionId;
+    private UUID trueOrFalseQuestionId;
+    private UUID openQuestionId;
 
     @BeforeEach
     void setUp() {
@@ -61,11 +63,13 @@ class QuestionControllerTest {
         ChapterRequest chapterRequest = new ChapterRequest("title", 1, "summary");
         UUID chapterId = chapterService.addChapter(bookId, chapterRequest).id();
 
-        TrueOrFalseQuestionRequest questionRequest = new TrueOrFalseQuestionRequest(QuestionEntity.QuestionType.TRUE_FALSE, "prompt", "explanation", true);
-        QuizRequest quizRequest = new QuizRequest(List.of(questionRequest));
+        TrueOrFalseQuestionRequest trueOrFalseRequest = new TrueOrFalseQuestionRequest(QuestionEntity.QuestionType.TRUE_FALSE, "prompt", "explanation", true);
+        OpenQuestionRequest openRequest = new OpenQuestionRequest(QuestionEntity.QuestionType.OPEN, "prompt", "explanation", "expectedAnswer");
+        QuizRequest quizRequest = new QuizRequest(List.of(trueOrFalseRequest, openRequest));
         QuizResponse quizResponse = quizService.addQuiz(bookId, chapterId, quizRequest);
         quizId = quizResponse.id();
-        questionId = quizResponse.questions().getFirst().id();
+        trueOrFalseQuestionId = quizResponse.questions().getFirst().id();
+        openQuestionId = quizResponse.questions().get(1).id();
 
         authToken = jwtService.generateToken(newUser.getEmail());
     }
@@ -97,7 +101,8 @@ class QuestionControllerTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.prompt").value("Java is statically typed?"));
-        assertCountEquals(questionRepository, 2);
+        assertCountEquals(questionRepository, 3);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
@@ -117,17 +122,28 @@ class QuestionControllerTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.prompt").value("What is Java?"));
-        assertCountEquals(questionRepository, 2);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 3);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
-    void deleteQuestion_shouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/" + quizId + "/questions/" + questionId)
+    void deleteTrueOrFalseQuestion_shouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/" + quizId + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isEmpty());
+        assertCountEquals(questionRepository, 2);
+        assertCountEquals(quizRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isEmpty());
+    }
+
+    @Test
+    void deleteOpenQuestion_shouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/" + quizId + "/questions/" + openQuestionId)
+                        .header("Authorization", "Bearer " + authToken))
+                .andExpect(status().isNoContent());
+        assertCountEquals(questionRepository, 2);
+        assertCountEquals(quizRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(openQuestionId).isEmpty());
     }
 
     @Test
@@ -135,17 +151,17 @@ class QuestionControllerTest {
         mockMvc.perform(delete("/api/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
     void deleteQuestion_withInvalidQuiz_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + questionId)
+        mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
@@ -159,14 +175,14 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + quizId + "/questions/" + questionId)
+        mockMvc.perform(put("/api/" + quizId + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.prompt").value("Updated question?"));
-        assertCountEquals(questionRepository, 2);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isEmpty());
+        assertCountEquals(questionRepository, 3);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isEmpty());
     }
 
     @Test
@@ -179,13 +195,13 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + UUID.randomUUID() + "/questions/" + questionId)
+        mockMvc.perform(put("/api/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
@@ -203,8 +219,8 @@ class QuestionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 
     @Test
@@ -223,7 +239,7 @@ class QuestionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
-        assertCountEquals(questionRepository, 1);
-        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(trueOrFalseQuestionId).isPresent());
     }
 }
