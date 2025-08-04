@@ -15,6 +15,7 @@ public interface QuestionConfig {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
     @Mapping(target = "type", source = "request.type")
     QuestionEntity toEntity(QuestionRequest request);
 

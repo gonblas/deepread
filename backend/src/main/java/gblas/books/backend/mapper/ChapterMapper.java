@@ -30,7 +30,10 @@ public interface ChapterMapper {
     @Mapping(target = "quizBidirectional", ignore = true)
     void changeEntity(ChapterRequest request, @MappingTarget ChapterEntity entity);
 
-    @InheritConfiguration(name = "changeEntity")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
+    @Mapping(target = "book", ignore = true)
+    @Mapping(target = "quizBidirectional", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(UpdateChapterRequest request, @MappingTarget ChapterEntity entity);
 

@@ -13,6 +13,7 @@ public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequ
     OpenQuestionResponse toDto(OpenQuestionEntity entity);
 
     @Mapping(target = "expectedAnswer", source = "request.expectedAnswer")
+    @Mapping(target = "quiz", ignore = true)
     OpenQuestionEntity toEntity(OpenQuestionRequest request, QuizEntity quiz);
 
     default QuestionEntity.QuestionType getQuestionType() {

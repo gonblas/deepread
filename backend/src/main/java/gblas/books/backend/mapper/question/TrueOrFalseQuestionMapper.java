@@ -13,6 +13,7 @@ public interface TrueOrFalseQuestionMapper extends TypedQuestionMapper<TrueOrFal
     TrueOrFalseQuestionResponse toDto(TrueOrFalseQuestionEntity entity);
 
     @Mapping(target = "isAnswerTrue", source = "request.isAnswerTrue")
+    @Mapping(target = "quiz", ignore = true)
     TrueOrFalseQuestionEntity toEntity(TrueOrFalseQuestionRequest request, QuizEntity quiz);
 
     default QuestionEntity.QuestionType getQuestionType() {
