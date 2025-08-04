@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
 
+import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,7 +43,6 @@ class QuestionControllerTest {
     @Autowired private QuizVersionRepository quizVersionRepository;
     @Autowired private QuestionRepository questionRepository;
     @Autowired private QuizService quizService;
-    @Autowired private QuestionMapperFactory questionMapperFactory;
     @Autowired private JwtService jwtService;
 
     private String authToken;
@@ -60,18 +61,14 @@ class QuestionControllerTest {
         ChapterRequest chapterRequest = new ChapterRequest("title", 1, "summary");
         UUID chapterId = chapterService.addChapter(bookId, chapterRequest).id();
 
-
         TrueOrFalseQuestionRequest questionRequest = new TrueOrFalseQuestionRequest(QuestionEntity.QuestionType.TRUE_FALSE, "prompt", "explanation", true);
         QuizRequest quizRequest = new QuizRequest(List.of(questionRequest));
         QuizResponse quizResponse = quizService.addQuiz(bookId, chapterId, quizRequest);
         quizId = quizResponse.id();
         questionId = quizResponse.questions().getFirst().id();
-        //quiz = quizRepository.getById(quizResponse.id());
-        //question = questionRepository.getById(quiz.getQuestions().getFirst().getId()).orElse(null);
 
-        authToken = jwtService.generateToken("test@example.com");
+        authToken = jwtService.generateToken(newUser.getEmail());
     }
-
 
     @AfterEach
     void tearDown() {
@@ -100,6 +97,7 @@ class QuestionControllerTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.prompt").value("Java is statically typed?"));
+        assertCountEquals(questionRepository, 2);
     }
 
     @Test
@@ -119,6 +117,8 @@ class QuestionControllerTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.prompt").value("What is Java?"));
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 
     @Test
@@ -126,6 +126,8 @@ class QuestionControllerTest {
         mockMvc.perform(delete("/api/" + quizId + "/questions/" + questionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isEmpty());
     }
 
     @Test
@@ -133,6 +135,8 @@ class QuestionControllerTest {
         mockMvc.perform(delete("/api/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 
     @Test
@@ -140,6 +144,8 @@ class QuestionControllerTest {
         mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + questionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 
     @Test
@@ -159,6 +165,8 @@ class QuestionControllerTest {
                         .content(updatedJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.prompt").value("Updated question?"));
+        assertCountEquals(questionRepository, 2);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isEmpty());
     }
 
     @Test
@@ -176,6 +184,8 @@ class QuestionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 
     @Test
@@ -193,6 +203,8 @@ class QuestionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 
     @Test
@@ -211,5 +223,7 @@ class QuestionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+        assertCountEquals(questionRepository, 1);
+        assertTrue(questionRepository.findByIdAndCurrentVersion(questionId).isPresent());
     }
 }

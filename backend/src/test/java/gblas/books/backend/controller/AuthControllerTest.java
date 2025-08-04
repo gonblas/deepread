@@ -1,5 +1,6 @@
 package gblas.books.backend.controller;
 
+import static gblas.books.backend.util.RepositoryAssertions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static gblas.books.backend.util.RepositoryAssertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -69,6 +71,9 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isCreated());
+        assertCountEquals(userRepository, 2);
+        assertNotNull(userRepository.findByEmail(registeredEmail));
+
     }
 
     @Test
@@ -218,6 +223,8 @@ class AuthControllerTest {
                         .content(requestBody)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
+        assertFalse(userRepository.findAll().iterator().hasNext());
+        assertIsEmpty(userRepository);
     }
 
     @Test
@@ -230,6 +237,7 @@ class AuthControllerTest {
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("Password is required"));
+        assertIsNotEmpty(userRepository);
     }
 
     @Test
@@ -245,5 +253,6 @@ class AuthControllerTest {
                         .content(requestBody)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isUnauthorized());
+        assertIsNotEmpty(userRepository);
     }
 }

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
+import static gblas.books.backend.util.RepositoryAssertions.assertIsEmpty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -33,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class QuizAttemptControllerTest {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
     @Autowired private UserRepository userRepository;
     @Autowired private BookRepository bookRepository;
     @Autowired private ChapterRepository chapterRepository;
@@ -46,18 +47,15 @@ class QuizAttemptControllerTest {
     @Autowired private JwtService jwtService;
 
     private String authToken;
-    private UserEntity user;
     private BookEntity book;
     private ChapterEntity chapter;
-    private ChapterEntity anotherChapter;
     private QuizEntity quiz;
     private TrueOrFalseQuestionEntity question;
     private QuizAttemptEntity attempt;
-    private AnswerEntity answer;
 
     @BeforeEach
     void setUp() {
-        user = new UserEntity();
+        UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
         user.setUsername("testuser");
         user.setHashedPassword("encoded_password");
@@ -75,12 +73,12 @@ class QuizAttemptControllerTest {
         chapter.setBook(book);
         chapter = chapterRepository.save(chapter);
 
-        anotherChapter = new ChapterEntity();
+        ChapterEntity anotherChapter = new ChapterEntity();
         anotherChapter.setNumber(2);
         anotherChapter.setTitle("Chapter 2");
         anotherChapter.setSummary("Content 2");
         anotherChapter.setBook(book);
-        anotherChapter = chapterRepository.save(anotherChapter);
+        chapterRepository.save(anotherChapter);
 
         quiz = new QuizEntity();
         chapter.setQuizBidirectional(quiz);
@@ -115,9 +113,9 @@ class QuizAttemptControllerTest {
 
         List<AnswerEntity> answers = new ArrayList<>();
         AnswerRequest request = new TrueOrFalseAnswerRequest(QuestionEntity.QuestionType.TRUE_FALSE, question.getId(), true);
-        answer = AnswerMapper.INSTANCE.toEntity(request, attempt, question, answerMapperFactory);
+        AnswerEntity answer = AnswerMapper.INSTANCE.toEntity(request, attempt, question, answerMapperFactory);
         answers.add(answer);
-        answer = answerRepository.save(answer);
+        answerRepository.save(answer);
 
         attempt.setAnswers(answers);
         attempt.setCorrectCountFromAnswers();
@@ -233,6 +231,8 @@ class QuizAttemptControllerTest {
                 .andExpect(jsonPath("$.correctCount").value(1))
                 .andExpect(jsonPath("$.startedAt").value(startedAtExpected))
                 .andExpect(jsonPath("$.submittedAt").isNotEmpty());
+        //assertCountEquals(answerRepository, 2);
+        assertCountEquals(quizAttemptRepository, 2);
     }
 
     @Test
@@ -255,6 +255,7 @@ class QuizAttemptControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -276,6 +277,7 @@ class QuizAttemptControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -298,6 +300,7 @@ class QuizAttemptControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -320,6 +323,7 @@ class QuizAttemptControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.['answers[0].questionId']").value("must not be null"));
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -342,6 +346,7 @@ class QuizAttemptControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.['answers[0].answer']").value("must not be null"));
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -357,8 +362,8 @@ class QuizAttemptControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
+        assertCountEquals(quizAttemptRepository, 1);
     }
-
 
     @Test
     void createQuizAttempt_withInvalidStartedAt_shouldReturnBadRequest() throws Exception {
@@ -382,6 +387,7 @@ class QuizAttemptControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("startedAt").value("must be a date in the past or in the present"));
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -389,6 +395,7 @@ class QuizAttemptControllerTest {
         mockMvc.perform(delete("/api/quiz-attempts/" + attempt.getId() + "/")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
+        assertIsEmpty(quizAttemptRepository);
     }
 
     @Test
@@ -396,6 +403,7 @@ class QuizAttemptControllerTest {
         mockMvc.perform(delete("/api/quiz-attempts/invalid-uuid/")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isBadRequest());
+        assertCountEquals(quizAttemptRepository, 1);
     }
 
     @Test
@@ -403,5 +411,6 @@ class QuizAttemptControllerTest {
         mockMvc.perform(delete("/api/quiz-attempts/" + UUID.randomUUID() + "/")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizAttemptRepository, 1);
     }
 }

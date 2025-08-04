@@ -1,9 +1,13 @@
 package gblas.books.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import gblas.books.backend.dto.answer.AnswerRequest;
+import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
 import gblas.books.backend.entity.*;
+import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
+import gblas.books.backend.mapper.answer.AnswerMapper;
+import gblas.books.backend.mapper.answer.AnswerMapperFactory;
 import gblas.books.backend.repository.*;
 import gblas.books.backend.service.JwtService;
 import org.junit.jupiter.api.AfterEach;
@@ -15,8 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
+import static gblas.books.backend.util.RepositoryAssertions.assertIsEmpty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -25,22 +34,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class QuizControllerTest {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
     @Autowired private UserRepository userRepository;
     @Autowired private BookRepository bookRepository;
     @Autowired private ChapterRepository chapterRepository;
     @Autowired private QuizRepository quizRepository;
     @Autowired private QuizVersionRepository quizVersionRepository;
     @Autowired private QuestionRepository questionRepository;
+    @Autowired private QuizAttemptRepository quizAttemptRepository;
+    @Autowired private AnswerMapperFactory answerMapperFactory;
+    @Autowired private AnswerRepository answerRepository;
     @Autowired private JwtService jwtService;
 
     private String authToken;
     private UserEntity user;
     private BookEntity book;
     private ChapterEntity chapter;
-    private ChapterEntity anotherChapter;
-    private QuizEntity quiz;
     private TrueOrFalseQuestionEntity question;
+    private ChapterEntity anotherChapter;
 
     @BeforeEach
     void setUp() {
@@ -67,9 +77,9 @@ class QuizControllerTest {
         anotherChapter.setTitle("Chapter 2");
         anotherChapter.setSummary("Content 2");
         anotherChapter.setBook(book);
-        anotherChapter = chapterRepository.save(anotherChapter);
+        chapterRepository.save(anotherChapter);
 
-        quiz = new QuizEntity();
+        QuizEntity quiz = new QuizEntity();
         chapter.setQuizBidirectional(quiz);
         quiz = quizRepository.save(quiz);
 
@@ -93,6 +103,21 @@ class QuizControllerTest {
 
         quizVersionRepository.save(firstVersion);
         quizRepository.save(quiz);
+
+        QuizAttemptEntity attempt = new QuizAttemptEntity();
+        attempt.setStartedAt(LocalDateTime.now());
+        attempt.setSubmittedAt(LocalDateTime.now());
+        attempt.setQuizVersion(firstVersion);
+        quizAttemptRepository.save(attempt);
+
+        List<AnswerEntity> answers = new ArrayList<>();
+        AnswerRequest request = new TrueOrFalseAnswerRequest(QuestionEntity.QuestionType.TRUE_FALSE, question.getId(), true);
+        AnswerEntity answer = AnswerMapper.INSTANCE.toEntity(request, attempt, question, answerMapperFactory);
+        answers.add(answer);
+        answerRepository.save(answer);
+
+        attempt.setAnswers(answers);
+        attempt.setCorrectCountFromAnswers();
 
         authToken = jwtService.generateToken(user.getEmail());
     }
@@ -187,6 +212,9 @@ class QuizControllerTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.chapter.id").value(anotherChapter.getId().toString()));
+        assertCountEquals(quizRepository, 2);
+        assertCountEquals(quizVersionRepository, 2);
+        assertCountEquals(questionRepository, 2);
     }
 
     @Test
@@ -203,6 +231,9 @@ class QuizControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.questions").value("Questions list cannot be empty"));
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 
     @Test
@@ -225,6 +256,9 @@ class QuizControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isConflict());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 
     @Test
@@ -247,6 +281,10 @@ class QuizControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
+
     }
 
     @Test
@@ -269,6 +307,9 @@ class QuizControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 
     @Test
@@ -296,6 +337,9 @@ class QuizControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 
     @Test
@@ -303,6 +347,11 @@ class QuizControllerTest {
         mockMvc.perform(delete("/api/books/" + book.getId() + "/chapters/" + chapter.getId() + "/quiz")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
+        assertIsEmpty(quizRepository);
+        assertIsEmpty(quizVersionRepository);
+        assertIsEmpty(questionRepository);
+        assertIsEmpty(quizAttemptRepository);
+        assertIsEmpty(answerRepository);
     }
 
     @Test
@@ -310,6 +359,11 @@ class QuizControllerTest {
         mockMvc.perform(delete("/api/books/" + book.getId() + "/chapters/" + UUID.randomUUID() + "/quiz")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
+        assertCountEquals(quizAttemptRepository, 1);
+        //assertCountEquals(answerRepository, 1);
     }
 
     @Test
@@ -317,6 +371,9 @@ class QuizControllerTest {
         mockMvc.perform(delete("/api/books/" + UUID.randomUUID() + "/chapters/" + chapter.getId() + "/quiz")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 
     @Test
@@ -329,5 +386,8 @@ class QuizControllerTest {
         mockMvc.perform(delete("/api/books/" + otherBook.getId() + "/chapters/" + chapter.getId() + "/quiz")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
+        assertCountEquals(quizRepository, 1);
+        assertCountEquals(quizVersionRepository, 1);
+        assertCountEquals(questionRepository, 1);
     }
 }

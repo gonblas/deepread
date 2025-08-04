@@ -17,8 +17,8 @@ public interface QuestionRepository extends CrudRepository<QuestionEntity, UUID>
     @Query("""
     SELECT q FROM QuestionEntity q
     JOIN q.versions v
-    WHERE q.id = :questionId AND v.id = :versionId AND v.isCurrent = true
+    WHERE q.id = :questionId AND v.isCurrent = true
 """)
-    Optional<QuestionEntity> findByIdAndCurrentVersion(UUID questionId, UUID versionId);
+    Optional<QuestionEntity> findByIdAndCurrentVersion(UUID questionId);
 
 }

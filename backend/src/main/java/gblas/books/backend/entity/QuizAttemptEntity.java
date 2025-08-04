@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class QuizAttemptEntity {
     @JoinColumn(name = "quiz_id")
     private QuizVersionEntity quizVersion;
 
-    @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<AnswerEntity> answers = new ArrayList<>();
 
     @Column(name = "started_at", nullable = false)
@@ -45,7 +46,12 @@ public class QuizAttemptEntity {
 
     @PostLoad
     public void setCorrectCountFromAnswers() {
-        this.correctCount = (int) this.answers.stream()
+        if (answers == null) {
+            correctCount = 0;
+            return;
+        }
+
+        correctCount = (int) answers.stream()
                 .filter(AnswerEntity::getIsCorrect)
                 .count();
     }

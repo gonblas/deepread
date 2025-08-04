@@ -63,8 +63,7 @@ public class QuestionService {
 
     public void deleteQuestion(@Valid UUID quizId, @Valid UUID questionId) {
         QuizEntity quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
-        QuizVersionEntity currentVersionQuiz = quizVersionService.getLastQuizVersionEntity(quiz);
-        QuestionEntity question = questionRepository.findByIdAndCurrentVersion(questionId, currentVersionQuiz.getId()).orElseThrow(() -> new NotFoundException("Question not found"));
+        QuestionEntity question = questionRepository.findByIdAndCurrentVersion(questionId).orElseThrow(() -> new NotFoundException("Question not found"));
         QuizVersionEntity newQuizVersion = quizVersionService.updateVersion(quiz);
         newQuizVersion.getQuestions().remove(question);
         quizVersionRepository.save(newQuizVersion);

@@ -1,6 +1,5 @@
 package gblas.books.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
 import gblas.books.backend.entity.*;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -33,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class StatisticsControllerTest {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
     @Autowired private UserRepository userRepository;
     @Autowired private BookRepository bookRepository;
     @Autowired private ChapterRepository chapterRepository;
@@ -46,18 +43,12 @@ class StatisticsControllerTest {
     @Autowired private JwtService jwtService;
 
     private String authToken;
-    private UserEntity user;
     private BookEntity book;
     private ChapterEntity chapter;
-    private ChapterEntity anotherChapter;
-    private QuizEntity quiz;
-    private TrueOrFalseQuestionEntity question;
-    private QuizAttemptEntity attempt;
-    private AnswerEntity answer;
 
     @BeforeEach
     void setUp() {
-        user = new UserEntity();
+        UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
         user.setUsername("testuser");
         user.setHashedPassword("encoded_password");
@@ -75,14 +66,14 @@ class StatisticsControllerTest {
         chapter.setBook(book);
         chapter = chapterRepository.save(chapter);
 
-        anotherChapter = new ChapterEntity();
+        ChapterEntity anotherChapter = new ChapterEntity();
         anotherChapter.setNumber(2);
         anotherChapter.setTitle("Chapter 2");
         anotherChapter.setSummary("Content 2");
         anotherChapter.setBook(book);
         anotherChapter = chapterRepository.save(anotherChapter);
 
-        quiz = new QuizEntity();
+        QuizEntity quiz = new QuizEntity();
         chapter.setQuizBidirectional(quiz);
         quiz = quizRepository.save(quiz);
 
@@ -91,7 +82,7 @@ class StatisticsControllerTest {
         firstVersion.setIsCurrent(true);
         firstVersion = quizVersionRepository.save(firstVersion);
 
-        question = new TrueOrFalseQuestionEntity();
+        TrueOrFalseQuestionEntity question = new TrueOrFalseQuestionEntity();
         question.setType(QuestionEntity.QuestionType.TRUE_FALSE);
         question.setPrompt("prompt");
         question.setIsAnswerTrue(true);
@@ -107,7 +98,7 @@ class StatisticsControllerTest {
         quizVersionRepository.save(firstVersion);
         quizRepository.save(quiz);
 
-        attempt = new QuizAttemptEntity();
+        QuizAttemptEntity attempt = new QuizAttemptEntity();
         LocalDateTime time = LocalDateTime.now();
         attempt.setStartedAt(time);
         attempt.setSubmittedAt(time.plusSeconds(60));
@@ -116,7 +107,7 @@ class StatisticsControllerTest {
 
         List<AnswerEntity> answers = new ArrayList<>();
         AnswerRequest request = new TrueOrFalseAnswerRequest(QuestionEntity.QuestionType.TRUE_FALSE, question.getId(), true);
-        answer = AnswerMapper.INSTANCE.toEntity(request, attempt, question, answerMapperFactory);
+        AnswerEntity answer = AnswerMapper.INSTANCE.toEntity(request, attempt, question, answerMapperFactory);
         answers.add(answer);
         answer = answerRepository.save(answer);
 

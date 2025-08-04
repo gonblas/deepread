@@ -15,10 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
+import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,12 +36,11 @@ class BookControllerTest {
     @Autowired private JwtService jwtService;
 
     private String authToken;
-    private UserEntity user;
     private BookEntity book;
 
     @BeforeEach
     void setUp() {
-        user = new UserEntity();
+        UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
         user.setUsername("testuser");
         user.setHashedPassword("encoded_password");
@@ -64,6 +67,7 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
         .andExpect(jsonPath("$.content").isNotEmpty());
+        assertNotNull(bookRepository.findById(book.getId()));
     }
 
     @Test
@@ -98,6 +102,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.genre").value(expectedGenre))
                 .andExpect(jsonPath("$.description").value(expectedDescription))
                 .andExpect(jsonPath("$.authors[0]").value(expectedAuthor));
+        assertCountEquals(bookRepository, 2);
     }
 
     @Test
@@ -120,6 +125,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -129,6 +135,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -147,6 +154,7 @@ class BookControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Title is required"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -167,6 +175,7 @@ class BookControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid value for field: genre"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -193,7 +202,6 @@ class BookControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Book not found"));
     }
-
 
     @Test
     void deleteBook_withoutToken_shouldReturnAUnauthorizedRequest() throws Exception {
@@ -227,6 +235,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.description").value(newDescription))
                 .andExpect(jsonPath("$.genre").value(newGenre))
                 .andExpect(jsonPath("$.authors[0]").value(newAuthor));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -248,6 +257,7 @@ class BookControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Title is required"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -257,6 +267,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -275,6 +286,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -297,6 +309,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.description").value(newDescription))
                 .andExpect(jsonPath("$.genre").value(book.getGenre()))
                 .andExpect(jsonPath("$.authors", containsInAnyOrder(book.getAuthors().toArray())));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -315,6 +328,7 @@ class BookControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Field must not be null or blank if present"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -324,6 +338,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
+        assertCountEquals(bookRepository, 1);
     }
 
     @Test
@@ -339,6 +354,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
+        assertCountEquals(bookRepository, 1);
     }
 
 }

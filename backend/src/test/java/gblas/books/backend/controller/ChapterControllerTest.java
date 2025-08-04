@@ -15,12 +15,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.*;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
+import static gblas.books.backend.util.RepositoryAssertions.assertIsEmpty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -91,7 +90,7 @@ class ChapterControllerTest {
             "title": "%s",
             "number": %d
         }
-    """, expectedTitle, expectedChapterNumber);
+        """, expectedTitle, expectedChapterNumber);
 
         mockMvc.perform(post("/api/book/" + book.getId() + "/chapters")
                         .header("Authorization", "Bearer " + authToken)
@@ -100,6 +99,7 @@ class ChapterControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value(expectedTitle))
                 .andExpect(jsonPath("$.number").value(expectedChapterNumber));
+        assertCountEquals(chapterRepository, 3);
     }
 
     @Test
@@ -118,6 +118,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Chapter number already exists for this book"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -134,6 +135,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.number").value("Chapter number is required"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -150,6 +152,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Title is required"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -159,6 +162,7 @@ class ChapterControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -178,6 +182,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Title is required"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -199,6 +204,7 @@ class ChapterControllerTest {
                 .andExpect(jsonPath("$.title").value(updatedTitle))
                 .andExpect(jsonPath("$.summary").value(chapter.getSummary()))
                 .andExpect(jsonPath("$.number").value(chapter.getNumber()));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -220,6 +226,7 @@ class ChapterControllerTest {
                 .andExpect(jsonPath("$.id").value(chapter.getId().toString()))
                 .andExpect(jsonPath("$.title").value(chapter.getTitle()))
                 .andExpect(jsonPath("$.summary").value(chapter.getSummary()));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -238,6 +245,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Chapter number already exists for this book"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -254,6 +262,7 @@ class ChapterControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Field must not be null or blank if present"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -278,6 +287,7 @@ class ChapterControllerTest {
                 .andExpect(jsonPath("$.title").value(updatedTitle))
                 .andExpect(jsonPath("$.number").value(updatedNumber))
                 .andExpect(jsonPath("$.summary").value(updatedSummary));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -293,6 +303,7 @@ class ChapterControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isBadRequest());
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -311,6 +322,7 @@ class ChapterControllerTest {
                         .content(conflictRequest))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Chapter number already exists for this book"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -329,6 +341,7 @@ class ChapterControllerTest {
                         .content(request))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Chapter number already exists for this book"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -336,6 +349,7 @@ class ChapterControllerTest {
         mockMvc.perform(delete("/api/book/" + book.getId() + "/chapters/" + chapter.getId())
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
+        assertCountEquals(chapterRepository, 1);
     }
 
     @Test
@@ -344,6 +358,7 @@ class ChapterControllerTest {
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Chapter not found"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -352,6 +367,7 @@ class ChapterControllerTest {
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Book not found"));
+        assertCountEquals(chapterRepository, 2);
     }
 
     @Test
@@ -365,5 +381,6 @@ class ChapterControllerTest {
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Chapter does not belong to this book"));
+        assertCountEquals(chapterRepository, 2);
     }
 }
