@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Slf4j
 public class TrueOrFalseQuestionEntity extends QuestionEntity {
+    @Column(nullable = false)
     private Boolean isAnswerTrue;
 
     @Override

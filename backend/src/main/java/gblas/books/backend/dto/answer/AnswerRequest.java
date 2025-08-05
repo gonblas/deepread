@@ -1,6 +1,7 @@
 package gblas.books.backend.dto.answer;
 
-import gblas.books.backend.dto.answer.OpenAnswer.OpenAnswerRequest;
+import gblas.books.backend.dto.answer.MultipleChoice.MultipleChoiceAnswerRequest;
+import gblas.books.backend.dto.answer.Open.OpenAnswerRequest;
 import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
 
@@ -16,8 +17,9 @@ import java.util.UUID;
         visible = true
 )
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = OpenAnswerRequest.class, name = "OPEN"),
         @JsonSubTypes.Type(value = TrueOrFalseAnswerRequest.class, name = "TRUE_FALSE"),
-        @JsonSubTypes.Type(value = OpenAnswerRequest.class, name = "OPEN")
+        @JsonSubTypes.Type(value = MultipleChoiceAnswerRequest.class, name = "MULTIPLE_CHOICE")
 })
 public interface AnswerRequest {
     QuestionType type();

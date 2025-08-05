@@ -1,4 +1,4 @@
-package gblas.books.backend.dto.question.OpenQuestion;
+package gblas.books.backend.dto.question.Open;
 
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;

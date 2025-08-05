@@ -46,7 +46,8 @@ public class GlobalExceptionHandler {
                     .map(JsonMappingException.Reference::getFieldName)
                     .reduce((a, b) -> a + "." + b)
                     .orElse("unknown");
-        } else {
+        }
+        else {
             message = "Request body is missing or malformed";
         }
 

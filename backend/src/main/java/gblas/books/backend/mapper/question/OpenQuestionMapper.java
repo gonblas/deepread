@@ -1,7 +1,7 @@
 package gblas.books.backend.mapper.question;
 
-import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
-import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionResponse;
+import gblas.books.backend.dto.question.Open.OpenQuestionRequest;
+import gblas.books.backend.dto.question.Open.OpenQuestionResponse;
 import gblas.books.backend.entity.question.OpenQuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.question.QuestionEntity;

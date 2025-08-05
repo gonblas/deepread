@@ -1,14 +1,10 @@
 package gblas.books.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gblas.books.backend.dto.*;
-import gblas.books.backend.dto.question.OpenQuestion.OpenQuestionRequest;
+import gblas.books.backend.dto.question.Open.OpenQuestionRequest;
 import gblas.books.backend.dto.question.TrueOrFalse.TrueOrFalseQuestionRequest;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.entity.question.QuestionEntity;
-import gblas.books.backend.entity.question.TrueOrFalseQuestionEntity;
-import gblas.books.backend.mapper.question.QuestionMapper;
-import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.*;
 import gblas.books.backend.service.*;
 import org.junit.jupiter.api.AfterEach;

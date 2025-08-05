@@ -1,7 +1,7 @@
 package gblas.books.backend.mapper.answer;
 
-import gblas.books.backend.dto.answer.OpenAnswer.OpenAnswerRequest;
-import gblas.books.backend.dto.answer.OpenAnswer.OpenAnswerResponse;
+import gblas.books.backend.dto.answer.Open.OpenAnswerRequest;
+import gblas.books.backend.dto.answer.Open.OpenAnswerResponse;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.OpenAnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;

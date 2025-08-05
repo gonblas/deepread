@@ -3,10 +3,8 @@ package gblas.books.backend.entity.question;
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.QuizVersionEntity;
-import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,8 @@ public abstract class QuestionEntity {
 
     public enum QuestionType {
         TRUE_FALSE,
-        OPEN
+        OPEN,
+        MULTIPLE_CHOICE
     }
 
     public abstract Boolean validate(AnswerRequest request);

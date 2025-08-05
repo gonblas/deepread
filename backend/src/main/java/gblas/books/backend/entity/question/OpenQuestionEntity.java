@@ -1,10 +1,7 @@
 package gblas.books.backend.entity.question;
 
 import gblas.books.backend.dto.answer.AnswerRequest;
-import gblas.books.backend.dto.answer.OpenAnswer.OpenAnswerRequest;
-import gblas.books.backend.entity.answer.AnswerEntity;
-import gblas.books.backend.entity.answer.OpenAnswerEntity;
-import gblas.books.backend.entity.answer.TrueOrFalseAnswerEntity;
+import gblas.books.backend.dto.answer.Open.OpenAnswerRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OpenQuestionEntity extends QuestionEntity {
+    @Column(nullable = false)
     private String expectedAnswer;
 
     @Override
