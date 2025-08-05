@@ -1,12 +1,11 @@
 package gblas.books.backend.dto.answer;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gblas.books.backend.dto.answer.MultipleChoice.MultipleChoiceAnswerRequest;
 import gblas.books.backend.dto.answer.Open.OpenAnswerRequest;
 import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
 import gblas.books.backend.entity.question.QuestionEntity.QuestionType;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.UUID;
 

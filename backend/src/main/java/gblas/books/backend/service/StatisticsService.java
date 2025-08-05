@@ -8,7 +8,6 @@ import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.QuizAttemptRepository;
 import gblas.books.backend.repository.QuizRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

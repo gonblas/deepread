@@ -7,7 +7,10 @@ import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.mapper.answer.AnswerMapper;
 import gblas.books.backend.mapper.answer.AnswerMapperFactory;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
-import org.mapstruct.*;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;

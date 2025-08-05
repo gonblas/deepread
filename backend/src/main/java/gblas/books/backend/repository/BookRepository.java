@@ -1,6 +1,6 @@
 package gblas.books.backend.repository;
-import gblas.books.backend.entity.BookEntity;
 
+import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

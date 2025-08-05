@@ -1,17 +1,13 @@
 package gblas.books.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

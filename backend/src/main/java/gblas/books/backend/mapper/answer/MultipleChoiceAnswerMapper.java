@@ -6,7 +6,6 @@ import gblas.books.backend.entity.OptionEntity;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.MultipleChoiceAnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
-import gblas.books.backend.mapper.OptionMapper;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import gblas.books.backend.repository.OptionRepository;
 import org.mapstruct.Context;

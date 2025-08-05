@@ -2,10 +2,11 @@ package gblas.books.backend.mapper.question;
 
 import gblas.books.backend.dto.question.Open.OpenQuestionRequest;
 import gblas.books.backend.dto.question.Open.OpenQuestionResponse;
-import gblas.books.backend.entity.question.OpenQuestionEntity;
 import gblas.books.backend.entity.QuizEntity;
+import gblas.books.backend.entity.question.OpenQuestionEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", config = QuestionConfig.class)
 public interface OpenQuestionMapper extends TypedQuestionMapper<OpenQuestionRequest, OpenQuestionEntity, OpenQuestionResponse> {

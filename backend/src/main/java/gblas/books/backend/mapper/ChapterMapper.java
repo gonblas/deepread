@@ -1,6 +1,5 @@
 package gblas.books.backend.mapper;
 
-import gblas.books.backend.dto.BookResponse;
 import gblas.books.backend.dto.ChapterRequest;
 import gblas.books.backend.dto.ChapterResponse;
 import gblas.books.backend.dto.UpdateChapterRequest;

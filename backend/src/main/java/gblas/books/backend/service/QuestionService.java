@@ -2,9 +2,9 @@ package gblas.books.backend.service;
 
 import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
+import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.QuizVersionEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
-import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
@@ -14,8 +14,6 @@ import gblas.books.backend.repository.QuizVersionRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

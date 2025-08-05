@@ -1,16 +1,19 @@
 package gblas.books.backend.service;
 
-import gblas.books.backend.dto.*;
+import gblas.books.backend.dto.AuthResponse;
+import gblas.books.backend.dto.DeleteAccountRequest;
+import gblas.books.backend.dto.LoginRequest;
+import gblas.books.backend.dto.RegisterRequest;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.exceptions.UserAlreadyExistsException;
 import gblas.books.backend.mapper.UserMapper;
 import gblas.books.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

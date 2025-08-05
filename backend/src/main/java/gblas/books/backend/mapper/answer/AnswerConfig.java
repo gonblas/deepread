@@ -6,7 +6,10 @@ import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
-import org.mapstruct.*;
+import org.mapstruct.Context;
+import org.mapstruct.MapperConfig;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingInheritanceStrategy;
 
 @MapperConfig(
         mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG

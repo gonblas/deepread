@@ -2,17 +2,14 @@ package gblas.books.backend.mapper.answer;
 
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.AnswerResponse;
-import gblas.books.backend.dto.question.QuestionRequest;
 import gblas.books.backend.dto.question.QuestionResponse;
 import gblas.books.backend.entity.QuizAttemptEntity;
-import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
 import gblas.books.backend.mapper.question.QuestionMapper;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
 import org.hibernate.Hibernate;
 import org.mapstruct.Context;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 public interface TypedAnswerMapper<

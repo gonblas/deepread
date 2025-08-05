@@ -10,7 +10,6 @@ import gblas.books.backend.mapper.QuizAttemptMapper;
 import gblas.books.backend.mapper.answer.AnswerMapper;
 import gblas.books.backend.mapper.answer.AnswerMapperFactory;
 import gblas.books.backend.mapper.question.QuestionMapperFactory;
-import org.springframework.transaction.annotation.Transactional;
 import gblas.books.backend.repository.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;

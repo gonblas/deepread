@@ -1,6 +1,5 @@
 package gblas.books.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
 import gblas.books.backend.entity.*;
@@ -28,7 +27,8 @@ import java.util.UUID;
 import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
 import static gblas.books.backend.util.RepositoryAssertions.assertIsEmpty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
