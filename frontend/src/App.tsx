@@ -2,10 +2,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider } from "@/contexts/themeContext"
 import { AuthProvider, useAuth } from '@/contexts/authContext'
 import LoginPage from '@/pages/LoginPage'
+import SignUpPage from '@/pages/SignUpPage'
 import { Loader2 } from 'lucide-react'
 
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
+  const { user, isLoading } = useAuth()  
 
   if (isLoading) {
     return (
@@ -18,7 +20,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     )
   }
 
-  return user ? <>{children}</> : <Navigate to="/login" replace />
+  return user ? <>{children}</> : <Navigate to="/auth/login" replace />
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
@@ -42,10 +44,18 @@ function AppRoutes() {
   return (
     <Routes>
       <Route 
-        path="/login" 
+        path="/auth/login" 
         element={
           <PublicRoute>
             <LoginPage />
+          </PublicRoute>
+        } 
+      />
+      <Route 
+        path="/auth/register" 
+        element={
+          <PublicRoute>
+            <SignUpPage />
           </PublicRoute>
         } 
       />
@@ -66,7 +76,6 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-
       <Router>
         <AppRoutes />
       </Router>

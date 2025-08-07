@@ -1,75 +1,98 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useAuth } from "@/contexts/authContext"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/authContext";
+import { useForm } from "@/hooks/useForm";
+import FormField from "@/components/form/FormField";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { login } = useAuth();
+
+  const { values, handleChange, errors, setErrors, resetForm } = useForm({
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { email, password } = values;
+    const newErrors: { email?: string; password?: string } = {};
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email address is invalid";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8 || password.length > 64) {
+      newErrors.password = "Password must be between 8 and 64 characters";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    try {
+      await login(email, password);
+      resetForm();
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
-          {/* <CardDescription>
-            Login with your Google or Kindle account
-          </CardDescription> */}
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="grid gap-6">
-              {/* <div className="flex flex-col gap-4">
-                <OAuthLoginButton
-                  name="Google"
-                  logo={<GoogleIcon />}
-                />
-              </div>
-              <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                <span className="bg-card text-muted-foreground relative z-10 px-2">
-                  Or continue with
-                </span>
-              </div> */}
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="email@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input id="password" type="password" required />
-                </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Sign up
-                </a>
-              </div>
+          <form className="grid gap-6">
+            <div className="grid gap-8">
+              <FormField
+                label="Email"
+                id="email"
+                name="email"
+                type="email"
+                placeholder="email@example.com"
+                value={values.email}
+                onChange={handleChange}
+                error={errors.email}
+              />
+              <FormField
+                label="Password"
+                id="password"
+                name="password"
+                type="password"
+                value={values.password}
+                onChange={handleChange}
+                error={errors.password}
+                labelSuffix={
+                  <a
+                    href="#"
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
+                }
+              />
+              <Button type="submit" className="w-full" onClick={handleSubmit}>
+                Login
+              </Button>
+            </div>
+            <div className="text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <a href="/auth/register" className="underline underline-offset-4">
+                Sign up
+              </a>
             </div>
           </form>
         </CardContent>
@@ -79,5 +102,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }
