@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { customFetch } from '@/lib/customFetch'
+import axios from '@/lib/axios.config'
 
 interface User {
   id: string
@@ -34,7 +34,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true)
-    
   
     setIsLoading(false)
     return true
@@ -43,6 +42,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string, username: string): Promise<boolean> => {
     setIsLoading(true)
     
+    axios.post('/auth/signup', { email, password, username })
+      .then((response: { data: { token: React.SetStateAction<string | null> } }) => {
+        setToken(response.data.token)
+      }
+      )
+      .catch((error: any) => {
+        throw new Error(`Signup failed: ${error.message}`)
+      }
+    )
 
     setIsLoading(false)
     return true

@@ -50,7 +50,6 @@ export function SignUpForm({
     setErrors({});
     try {
       await signup(email, password, username);
-      alert("Registration successful!");
       resetForm();
     } catch (error) {
       console.error("Login failed:", error);
