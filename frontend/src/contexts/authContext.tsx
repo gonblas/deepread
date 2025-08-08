@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import axios from '@/lib/axios.config'
+import Cookies from 'js-cookie';
 
 interface User {
-  id: string
   email: string
   username: string
-  token: string
 }
 
 interface AuthContextType {
@@ -22,7 +20,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [token, setToken] = useState<string | null>(null)
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user')
@@ -32,9 +29,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false)
   }, [])
 
+  const saveUser = (email: string, username: string, token: string) => {
+    setUser({
+      email: email,
+      username: username
+    })
+    console.log('User set:', { email, username });
+    localStorage.setItem('user', JSON.stringify(
+      { "email": email, "username": username }
+    ));
+    console.log('User saved:', localStorage.getItem('user'));
+    Cookies.set('token', token, {
+      expires: 7, 
+      path: '/',
+    });
+  }
+
+
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true)
-  
+
+    fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        saveUser(data.email, data.username, data.token)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    
     setIsLoading(false)
     return true
   }
@@ -42,15 +71,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string, username: string): Promise<boolean> => {
     setIsLoading(true)
     
-    axios.post('/auth/signup', { email, password, username })
-      .then((response: { data: { token: React.SetStateAction<string | null> } }) => {
-        setToken(response.data.token)
-      }
-      )
-      .catch((error: any) => {
-        throw new Error(`Signup failed: ${error.message}`)
-      }
-    )
+    fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, username }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        saveUser(data.email, data.username, data.token)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
 
     setIsLoading(false)
     return true
@@ -58,7 +92,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null)
-    setToken(null)
     localStorage.removeItem('token')
   }
 
