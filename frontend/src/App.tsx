@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/contexts/themeContext"
 import { AuthProvider, useAuth } from '@/contexts/authContext'
 import LoginPage from '@/pages/LoginPage'
 import SignUpPage from '@/pages/SignUpPage'
+import HomePage from '@/pages/HomePage'
 import { Loader2 } from 'lucide-react'
 
 
@@ -60,10 +61,10 @@ function AppRoutes() {
         } 
       />
       <Route 
-        path="/dashboard" 
+        path="/home" 
         element={
           <ProtectedRoute>
-            <div>Dashboard Content</div>
+            <HomePage />
           </ProtectedRoute>
         }
       />

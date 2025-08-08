@@ -20,5 +20,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "src/components/sidebar/.tsx", "src/components/sidebar/.tsx"]
 }

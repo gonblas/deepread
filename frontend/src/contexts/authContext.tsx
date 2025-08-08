@@ -92,7 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem('token')
+    Cookies.remove('token', { path: '/' });
+    localStorage.removeItem('user')
   }
 
   return (
