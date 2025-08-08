@@ -32,7 +32,7 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token);
+        return new AuthResponse(user.getEmail(), user.getUsername(), token);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -43,7 +43,7 @@ public class AuthService {
         UserEntity user = userRepository.findByEmail(request.email()).orElseThrow();
 
         String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token);
+        return new AuthResponse(user.getEmail(), user.getUsername(), token);
     }
 
     public void deleteAccount(DeleteAccountRequest request, UserEntity user) {
