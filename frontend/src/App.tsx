@@ -38,7 +38,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     )
   }
 
-  return user ? <Navigate to="/dashboard" replace /> : <>{children}</>
+  return user ? <Navigate to="/home" replace /> : <>{children}</>
 }
 
 function AppRoutes() {
@@ -68,7 +68,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/home" replace />} />
     </Routes>
   )
 }
