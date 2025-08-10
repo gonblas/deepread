@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
 import { useAuth } from "./authContext";
 
@@ -19,16 +19,16 @@ export type Stats = {
 };
 
 interface StatisticsContextValue {
-  stats: Stats;
   loading: boolean;
   error: string | null;
-  refresh: () => void;
+  stats: Stats;
+  fetchUserStats: () => void;
 }
 
 const StatisticsContext = createContext<StatisticsContextValue | undefined>(undefined);
 
 export function StatisticsProvider({ children }: { children: React.ReactNode }) {
-  const { logout, user } = useAuth();
+  const { logout, isLoading } = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalAttempts: 0,
     totalQuizzesAttempted: 0,
@@ -42,11 +42,14 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchStats = () => {
+  const fetchUserStats = () => {
     setLoading(true);
     setError(null);
 
-    if (user === null) {return;}
+    if (isLoading) {
+      setLoading(false);
+      return;
+    }
 
     fetch("http://localhost:8080/api/statistics/user", {
       method: "GET",
@@ -58,7 +61,10 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
       .then(async (response) => {
         if (!response.ok) {
           const text = await response.text();
-          throw new Error(text || "Failed to fetch stats");
+          throw {
+            status: response.status,
+            message: text || "Failed to fetch stats",
+          };
         }
         return response.json();
       })
@@ -70,7 +76,6 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
           logout();
           return;
         }
-        console.error("Error fetching user stats:", err);
         setError(err.message || "Unknown error");
       })
       .finally(() => {
@@ -78,12 +83,8 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
       });
   };
 
-  useEffect(() => {
-    fetchStats();
-  }, [user]);
-
   return (
-    <StatisticsContext.Provider value={{ stats, loading, error, refresh: fetchStats }}>
+    <StatisticsContext.Provider value={{ loading, error, stats, fetchUserStats }}>
       {children}
     </StatisticsContext.Provider>
   );

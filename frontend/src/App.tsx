@@ -70,7 +70,9 @@ function AppRoutes() {
         path="/Dashboard"
         element={
           <ProtectedRoute>
-            <HomePage />
+            <StatisticsProvider>
+              <HomePage />
+            </StatisticsProvider>
           </ProtectedRoute>
         }
       />
@@ -82,14 +84,12 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <StatisticsProvider>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <Toaster />
-          <Router>
-            <AppRoutes />
-          </Router>
-        </ThemeProvider>
-      </StatisticsProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Toaster />
+        <Router>
+          <AppRoutes />
+        </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 }
