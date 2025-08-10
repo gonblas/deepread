@@ -11,6 +11,7 @@ import SignUpPage from "@/pages/SignUpPage";
 import HomePage from "@/pages/HomePage";
 import { Loader2 } from "lucide-react";
 import { StatisticsProvider } from "./contexts/statisticsContext";
+import { Toaster } from "sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -83,6 +84,7 @@ function App() {
     <AuthProvider>
       <StatisticsProvider>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster />
           <Router>
             <AppRoutes />
           </Router>

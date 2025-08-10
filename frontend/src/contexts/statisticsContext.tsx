@@ -28,7 +28,7 @@ interface StatisticsContextValue {
 const StatisticsContext = createContext<StatisticsContextValue | undefined>(undefined);
 
 export function StatisticsProvider({ children }: { children: React.ReactNode }) {
-  const { logout, isLoading } = useAuth();
+  const { logout, user } = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalAttempts: 0,
     totalQuizzesAttempted: 0,
@@ -45,6 +45,8 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   const fetchStats = () => {
     setLoading(true);
     setError(null);
+
+    if (user === null) {return;}
 
     fetch("http://localhost:8080/api/statistics/user", {
       method: "GET",
@@ -78,7 +80,7 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     fetchStats();
-  }, [isLoading]);
+  }, [user]);
 
   return (
     <StatisticsContext.Provider value={{ stats, loading, error, refresh: fetchStats }}>

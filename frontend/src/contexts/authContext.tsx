@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 interface User {
   email: string;
@@ -53,9 +54,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            toast.error("Login failed", {
+              description: "Invalid email or password. Please try again.",
+            });
+            throw new Error("Invalid email or password");
+          }
+        }
+        return response.json();
+      })
       .then((data) => {
         saveUser(data.email, data.username, data.token);
+        toast.success("Login successful", {
+          description: `Welcome back, ${data.username}!`,
+        });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -79,7 +93,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       body: JSON.stringify({ email, password, username }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 409) {
+            toast.error("Signup failed", {
+              description: "Email already exists.",
+            });
+            throw new Error("Email already exists");
+          }
+        }
+        return response.json();
+      })
       .then((data) => {
         saveUser(data.email, data.username, data.token);
       })

@@ -12,6 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/contexts/authContext"
+import DeepReadHorizontalIcon from "../icons/DeepReadhorizontalIcon"
 
 const data = {
   navMain: [
@@ -84,7 +85,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center justify-between">
+        <DeepReadHorizontalIcon className="text-sidebar w-3/5 h-auto"/>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
