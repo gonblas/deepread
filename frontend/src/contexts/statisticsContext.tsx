@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
 import { useAuth } from "./authContext";
 
-interface BarChartInteractiveProps {
+export type BarChartInteractiveProps = {
   date: string;
   attempts: number;
   averageScore: number;
@@ -15,13 +15,13 @@ export type Stats = {
   bestScore: number;
   worstScore: number;
   averageTimeSeconds: number;
-  dailyStatsTimeline: BarChartInteractiveProps[];
 };
 
 interface StatisticsContextValue {
   loading: boolean;
   error: string | null;
   stats: Stats;
+  dailyStatsTimeline: BarChartInteractiveProps[];
   fetchUserStats: () => void;
 }
 
@@ -29,6 +29,8 @@ const StatisticsContext = createContext<StatisticsContextValue | undefined>(unde
 
 export function StatisticsProvider({ children }: { children: React.ReactNode }) {
   const { logout, isLoading } = useAuth();
+
+  // Estado separado para las estadísticas generales
   const [stats, setStats] = useState<Stats>({
     totalAttempts: 0,
     totalQuizzesAttempted: 0,
@@ -36,8 +38,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
     bestScore: 0,
     worstScore: 0,
     averageTimeSeconds: 0,
-    dailyStatsTimeline: [],
   });
+
+  const [dailyStatsTimeline, setDailyStatsTimeline] = useState<BarChartInteractiveProps[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +72,18 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
         return response.json();
       })
       .then((data) => {
-        setStats(data.stats);
+        // Guardamos stats generales
+        setStats({
+          totalAttempts: data.stats.totalAttempts,
+          totalQuizzesAttempted: data.stats.totalQuizzesAttempted,
+          averageScore: data.stats.averageScore,
+          bestScore: data.stats.bestScore,
+          worstScore: data.stats.worstScore,
+          averageTimeSeconds: data.stats.averageTimeSeconds,
+        });
+
+        // Guardamos timeline separado
+        setDailyStatsTimeline(data.stats.dailyStatsTimeline || []);
       })
       .catch((err) => {
         if (err.status === 401) {
@@ -84,7 +98,7 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <StatisticsContext.Provider value={{ loading, error, stats, fetchUserStats }}>
+    <StatisticsContext.Provider value={{ loading, error, stats, dailyStatsTimeline, fetchUserStats }}>
       {children}
     </StatisticsContext.Provider>
   );

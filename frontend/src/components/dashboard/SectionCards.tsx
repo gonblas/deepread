@@ -14,11 +14,6 @@ type Stats = {
   bestScore: number;
   worstScore: number;
   averageTimeSeconds: number;
-  dailyStatsTimeline: {
-    date: string;
-    attempts: number;
-    averageScore: number;
-  }[];
 };
 
 export function SectionCards({ stats }: { stats: Stats }) {

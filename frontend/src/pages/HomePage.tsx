@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/authContext";
 
 function HomePage() {
-  const { fetchUserStats, stats, loading, error } = useStatistics();
+  const { fetchUserStats, stats, dailyStatsTimeline, loading, error } = useStatistics();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function HomePage() {
           {!loading && !error && (
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4">
               <SectionCards stats={stats} />
-              <BarChartInteractive data={stats.dailyStatsTimeline} />
+              <BarChartInteractive chartData={dailyStatsTimeline} />
               <RecentAttemptsTable />
             </div>
           )}

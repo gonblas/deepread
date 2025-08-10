@@ -16,6 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { BarChartInteractiveProps } from "@/contexts/statisticsContext";
 
 export const description = "An interactive bar chart"
 
@@ -33,15 +34,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-interface BarChartInteractiveProps {
-  data?: {
-    date: string
-    attempts: number
-    averageScore: number
-  }[]
-}
-
-export function BarChartInteractive({ chartData = [] }: BarChartInteractiveProps) {
+export function BarChartInteractive({ chartData }: { chartData: BarChartInteractiveProps[] }) {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("attempts")
 
