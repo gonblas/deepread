@@ -1,12 +1,11 @@
-import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { BarChart3, Clock, AlertTriangle, Award } from "lucide-react"
+} from "@/components/ui/card";
+import { BarChart3, Clock, AlertTriangle, Award } from "lucide-react";
 
 type Stats = {
   totalAttempts: number;
@@ -23,20 +22,11 @@ type Stats = {
 };
 
 export function SectionCards({ stats }: { stats: Stats }) {
-
   const cardConfig = [
     {
       key: "attempts",
       description: "Attempts",
       icon: <BarChart3 className="w-6 h-6 text-primary" />,
-      badge: (stats: Stats) => (
-        <span>
-          <span className="font-bold">{stats.totalAttempts}</span> attempts
-          <Badge className="ml-2" variant="secondary">
-            {stats.totalQuizzesAttempted} quizzes
-          </Badge>
-        </span>
-      ),
       value: (stats: Stats) => stats.totalAttempts,
       footerMain: `Across ${stats.totalQuizzesAttempted} quizzes`,
     },
@@ -44,7 +34,6 @@ export function SectionCards({ stats }: { stats: Stats }) {
       key: "averageScore",
       description: "Average Score",
       icon: <Award className="w-6 h-6 text-primary" />,
-      badge: (stats: Stats) => `${stats.averageScore}`,
       value: (stats: Stats) => stats.averageScore,
       footerMain: "All quizzes",
     },
@@ -52,12 +41,6 @@ export function SectionCards({ stats }: { stats: Stats }) {
       key: "bestWorstScore",
       description: "Extreme Results",
       icon: <AlertTriangle className="w-6 h-6 text-primary" />,
-      badge: (stats: Stats) => (
-        <div className="flex flex-col items-center gap-2">
-          <Badge variant="default" className="mx-auto">Best: {stats.bestScore}</Badge>
-          <Badge variant="destructive" className="mx-auto">Worst: {stats.worstScore}</Badge>
-        </div>
-      ),
       value: (stats: Stats) => `${stats.bestScore} / ${stats.worstScore}`,
       footerMain: "Best & Worst",
     },
@@ -65,7 +48,6 @@ export function SectionCards({ stats }: { stats: Stats }) {
       key: "averageTimeSeconds",
       description: "Average Time",
       icon: <Clock className="w-6 h-6 text-primary" />,
-      badge: (stats: Stats) => `${stats.averageTimeSeconds}s`,
       value: (stats: Stats) => stats.averageTimeSeconds,
       footerMain: "Avg. time per quiz",
     },
@@ -80,10 +62,9 @@ export function SectionCards({ stats }: { stats: Stats }) {
               <CardDescription>{item.description}</CardDescription>
               {item.icon}
             </div>
-            <CardTitle className="text-2xl font-semibold tabular-nums">
+            <CardTitle className="text-2xl font-semibold tabular-nums truncate">
               {item.value(stats)}
             </CardTitle>
-            
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm font-medium">
             {item.footerMain}

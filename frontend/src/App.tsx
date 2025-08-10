@@ -1,14 +1,19 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { ThemeProvider } from "@/contexts/themeContext"
-import { AuthProvider, useAuth } from '@/contexts/authContext'
-import LoginPage from '@/pages/LoginPage'
-import SignUpPage from '@/pages/SignUpPage'
-import HomePage from '@/pages/HomePage'
-import { Loader2 } from 'lucide-react'
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider } from "@/contexts/themeContext";
+import { AuthProvider, useAuth } from "@/contexts/authContext";
+import LoginPage from "@/pages/LoginPage";
+import SignUpPage from "@/pages/SignUpPage";
+import HomePage from "@/pages/HomePage";
+import { Loader2 } from "lucide-react";
+import { StatisticsProvider } from "./contexts/statisticsContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()  
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -18,14 +23,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
           <p className="text-ctp-subtext1">Cargando...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  return user ? <>{children}</> : <Navigate to="/auth/login" replace />
+  return user ? <>{children}</> : <Navigate to="/auth/login" replace />;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -35,33 +40,33 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
           <p className="text-ctp-subtext1">Cargando...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  return user ? <Navigate to="/Dashboard" replace /> : <>{children}</>
+  return user ? <Navigate to="/Dashboard" replace /> : <>{children}</>;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route 
-        path="/auth/login" 
+      <Route
+        path="/auth/login"
         element={
           <PublicRoute>
             <LoginPage />
           </PublicRoute>
-        } 
+        }
       />
-      <Route 
-        path="/auth/register" 
+      <Route
+        path="/auth/register"
         element={
           <PublicRoute>
             <SignUpPage />
           </PublicRoute>
-        } 
+        }
       />
-      <Route 
-        path="/Dashboard" 
+      <Route
+        path="/Dashboard"
         element={
           <ProtectedRoute>
             <HomePage />
@@ -70,19 +75,21 @@ function AppRoutes() {
       />
       <Route path="/Dashboard" element={<Navigate to="/Dashboard" replace />} />
     </Routes>
-  )
+  );
 }
 
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Router>
-        <AppRoutes />
-      </Router>
-      </ThemeProvider>
+      <StatisticsProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Router>
+            <AppRoutes />
+          </Router>
+        </ThemeProvider>
+      </StatisticsProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
