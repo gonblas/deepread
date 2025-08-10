@@ -119,7 +119,7 @@ const chartConfig = {
   },
   attempts: {
     label: "Attempts",
-    color: "var(--chart-5)",
+    color: "var(--chart-3)",
   },
   averageScore: {
     label: "Average Score",

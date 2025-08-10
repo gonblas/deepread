@@ -54,7 +54,7 @@ export function SectionCards({ stats }: { stats: Stats }) {
       icon: <AlertTriangle className="w-6 h-6 text-primary" />,
       badge: (stats: Stats) => (
         <div className="flex flex-col items-center gap-2">
-          <Badge variant="success" className="mx-auto">Best: {stats.bestScore}</Badge>
+          <Badge variant="default" className="mx-auto">Best: {stats.bestScore}</Badge>
           <Badge variant="destructive" className="mx-auto">Worst: {stats.worstScore}</Badge>
         </div>
       ),
