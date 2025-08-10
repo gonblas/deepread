@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/authContext";
 
 function HomePage() {
-  const { fetchUserStats, stats, dailyStatsTimeline, loading, error } = useStatistics();
+  const { fetchUserStats, stats, dailyStatsTimeline, loading, error } =
+    useStatistics();
   const { user } = useAuth();
 
   useEffect(() => {

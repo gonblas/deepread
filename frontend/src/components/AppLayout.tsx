@@ -14,15 +14,20 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { useLocation, Link } from "react-router-dom"
+import { SidebarItemsData } from "./sidebar/NavMain"
 
-function AppLayout({ children }: { children: React.ReactNode }) {
+interface AppLayoutProps {
+  children?: React.ReactNode;
+}
+
+function AppLayout({ children  }: AppLayoutProps) {
   const location = useLocation()
 
   const pathParts = location.pathname.split("/").filter(Boolean)
 
   function formatBreadcrumbPart(part: string) {
   return part
-    .split("-") // separa en palabras
+    .split("-")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ")
 }
@@ -59,7 +64,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link to="/">Home</Link>
+                    <Link to="/Dashboard">Home</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 {pathParts.length > 0 && <BreadcrumbSeparator />}

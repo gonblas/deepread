@@ -17,34 +17,20 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { useSidebar } from "@/contexts/sidebarContext"
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    items?: {
-      title: string
-      url: string
-      icon?: LucideIcon
-      isActive?: boolean
-    }[]
-    collapsible?: boolean
-    icon?: LucideIcon
-    url?: string
-    isActive?: boolean
-  }[]
-}) {
+
+export function NavMain() {
+  const { sidebarItems } = useSidebar()
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((group) => (
+        {sidebarItems.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarMenu>
               {group.items?.map((item) =>
                 item.collapsible && item.items?.length ? (
-                  // 🔽 Collapsible item
                   <Collapsible
                     key={item.title}
                     asChild
@@ -76,7 +62,6 @@ export function NavMain({
                     </SidebarMenuItem>
                   </Collapsible>
                 ) : (
-                  // 🔹 Normal link
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={item.isActive}>
                       <a href={item.url!}>

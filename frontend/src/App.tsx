@@ -12,6 +12,60 @@ import HomePage from "@/pages/HomePage";
 import { Loader2 } from "lucide-react";
 import { StatisticsProvider } from "./contexts/statisticsContext";
 import { Toaster } from "sonner";
+import { SidebarProvider } from "./contexts/sidebarContext";
+
+import { BookOpen, Brain, Home, Settings, Plus } from "lucide-react";
+import BookPage from "./pages/BookPage";
+
+const sidebarItemsData = [
+  {
+    title: "Principal",
+    items: [
+      {
+        title: "Dashboard",
+        url: "/Dashboard",
+        icon: Home,
+        isActive: true,
+      },
+      {
+        title: "My Books",
+        url: "/books",
+        icon: BookOpen,
+      },
+      {
+        title: "My Quizzes",
+        url: "/my-quizzes",
+        icon: Brain,
+      },
+    ],
+  },
+  {
+    title: "Estadísticas",
+    collapsible: true,
+    items: [
+      {
+        title: "Mis Estadísticas",
+        url: "/statistics",
+        icon: Brain,
+      },
+    ],
+  },
+  {
+    title: "Gestión",
+    items: [
+      {
+        title: "Crear Quiz",
+        url: "/create",
+        icon: Plus,
+      },
+      {
+        title: "Configuración",
+        url: "/settings",
+        icon: Settings,
+      },
+    ],
+  },
+];
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -27,7 +81,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return user ? <>{children}</> : <Navigate to="/auth/login" replace />;
+  return user ? (
+    <SidebarProvider initialItems={sidebarItemsData}>
+      {children}
+    </SidebarProvider>
+  ) : (
+    <Navigate to="/auth/login" replace />
+  );
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
@@ -76,6 +136,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/books" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
       <Route path="/Dashboard" element={<Navigate to="/Dashboard" replace />} />
     </Routes>
   );
