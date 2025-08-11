@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { LucideIcon } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { LucideIcon, Settings } from "lucide-react";
+import { defaultSidebar, booksSidebar, selectedBookSidebar } from "@/config/sidebar.config";
 
 export interface SidebarItem {
   title: string;
@@ -26,27 +27,47 @@ interface SidebarContextType {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export function SidebarProvider({
-  children,
-  initialItems = [],
-}: {
-  children: React.ReactNode;
-  initialItems?: SidebarItemsData;
-}) {
-  const [sidebarItems, setSidebarItems] = useState<SidebarItemsData>(initialItems);
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const params = useParams();
+  const [sidebarItems, setSidebarItems] = useState<SidebarItemsData>(defaultSidebar);
   
+  // Simulación de capítulos, en la realidad esto vendría de API o estado global
+  const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
+
   useEffect(() => {
-    setSidebarItems((prev) =>
-      prev.map(section => ({
-        ...section,
-        items: section.items.map(item => ({
-          ...item,
-          isActive: item.url === location.pathname
-        }))
-      }))
-    );
-  }, [location.pathname, setSidebarItems]);
+    let config: SidebarItemsData;
+
+    if (params.bookId) {
+      config = selectedBookSidebar(params.bookId, chapters);
+    } else if (location.pathname.startsWith("/books")) {
+      config = booksSidebar;
+    } else {
+      config = defaultSidebar;
+    }
+
+    config = config.map(section => ({
+      ...section,
+      items: section.items.map(item => ({
+        ...item,
+        isActive: item.url === location.pathname,
+      })),
+    }));
+
+    setSidebarItems(config);
+  }, [location.pathname, params.bookId, chapters]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin")) {
+      setSidebarItems(prev => [
+        ...prev,
+        {
+          title: "Admin",
+          items: [{ title: "Panel", url: "/admin", icon: Settings }],
+        },
+      ]);
+    }
+  }, [location.pathname]);
 
   return (
     <SidebarContext.Provider value={{ sidebarItems, setSidebarItems }}>
