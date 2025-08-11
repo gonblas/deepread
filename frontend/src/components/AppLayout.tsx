@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { useLocation, Link } from "react-router-dom"
-import { SidebarItemsData } from "./sidebar/NavMain"
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -73,7 +72,7 @@ function AppLayout({ children  }: AppLayoutProps) {
             </Breadcrumb>
           </div>
         </header>
-        <main className="flex min-h-svh flex-col">{children}</main>
+        <main className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-6 min-h-svh">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )

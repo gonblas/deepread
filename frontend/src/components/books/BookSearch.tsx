@@ -8,13 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookCard } from "@/components/books/BookCard"
-import { getAllGenresWithLabels, getGenreLabel, type BookGenre } from "@/lib/genres"
-import { Skeleton } from "@/components/ui/skeleton"
+import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres"
 import Cookies from "js-cookie";
 import { ErrorCard } from "../ErrorCard"
 import { Pagination } from "../Pagination"
 import { BookSectionSkeleton } from "./BookSectionSkeleton"
 import { useAuth } from "@/contexts/authContext"
+import { SectionHeader } from "../SectionHeader"
 
 interface Book {
   id: string
@@ -154,25 +154,18 @@ export function BooksSearch() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Book Library</h1>
-            <p className="text-muted-foreground">
-              {loading
-                ? "Loading books..."
-                : error
-                  ? "Error loading books"
-                  : `Explore our collection of available books`}
-            </p>
-          </div>
-          <Button size="lg" className="shrink-0" onClick={handleCreateBook}>
-            <Plus className="mr-2 h-5 w-5" />
-            Create Book
-          </Button>
-        </div>
-
+    <>
+      <>
+        <SectionHeader 
+          title="Book Library"
+          loading={loading}
+          error={error}
+          description="Explore our collection of available books"
+          buttonText="Create Book"
+          onButtonClick={handleCreateBook}
+          buttonIcon={<Plus className="mr-1 size-6" />}
+        />
+          
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col lg:flex-row gap-4">
@@ -230,7 +223,7 @@ export function BooksSearch() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </>
 
       <ErrorCard
         error={error || ""}
@@ -275,6 +268,6 @@ export function BooksSearch() {
           maxVisiblePages={5}
         />
       )}
-    </div>
+    </>
   )
 }
