@@ -91,6 +91,14 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  .form-field {
+    @apply grid gap-3;
+  }
+  
+  .label-field {
+    @apply flex items-center;
+  }
 }
 
 @theme inline {

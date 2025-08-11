@@ -1,20 +1,20 @@
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TextAreaFieldProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   id: string;
   error?: string;
   labelSuffix?: React.ReactNode;
 }
 
-export default function FormField({
+export default function TextAreaField({
   label,
   id,
   error,
   labelSuffix,
   ...props
-}: FormFieldProps) {
+}: TextAreaFieldProps) {
   return (
     <div className="form-field">
       <div className="label-field">
@@ -23,7 +23,7 @@ export default function FormField({
         </Label>
         {labelSuffix}
       </div>
-      <Input id={id} {...props} />
+      <Textarea id={id} {...props} />
       <div className="h-4">
         {error && <p className="text-xs text-red-500">{error}</p>}
       </div>

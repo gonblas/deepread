@@ -1,0 +1,176 @@
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useForm } from "@/hooks/useForm";
+import FormField from "@/components/form/FormField";
+
+import { BOOK_GENRES, getGenreLabel } from "@/lib/genres";
+import SelectField from "../form/SelectField";
+import TextAreaField from "../form/TextAreaField";
+import { Plus, User, X } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "../ui/input";
+
+export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
+  const { values, handleChange, errors, setErrors, resetForm } = useForm({
+    title: "",
+    description: "",
+    genre: "",
+    authors: [] as string[],
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors: { title?: string; genre?: string } = {};
+
+    if (!values.title.trim()) {
+      newErrors.title = "Title is required";
+    }
+
+    if (!values.genre) {
+      newErrors.genre = "Genre is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+
+    try {
+      // Aquí iría la lógica para enviar el formulario
+      console.log("Submit book form", values);
+      resetForm();
+    } catch (error) {
+      console.error("Submit failed:", error);
+    }
+  };
+
+  function updateAuthor(index: number, value: string): void {
+    const newAuthors = [...values.authors];
+    newAuthors[index] = value;
+    handleChange({ target: { name: "authors", value: newAuthors } } as any);
+  }
+
+  function removeAuthor(index: number): void {
+    const newAuthors = values.authors.filter((_, i) => i !== index);
+    handleChange({ target: { name: "authors", value: newAuthors } } as any);
+  }
+
+  function addAuthor(): void {
+    handleChange({
+      target: { name: "authors", value: [...values.authors, ""] },
+    } as any);
+  }
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Create or Edit Book</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form className="grid gap-6" onSubmit={handleSubmit}>
+            <div className="grid gap-8">
+              <div className="grid gap-4 grid-rows-1 lg:grid-cols-[75%_23.5%] w-full">
+                <FormField
+                  label="Title"
+                  id="title"
+                  name="title"
+                  type="text"
+                  placeholder="Book title"
+                  value={values.title}
+                  onChange={handleChange}
+                  error={errors.title}
+                  required
+                />
+                <SelectField
+                  label="Genre"
+                  id="genre"
+                  name="genre"
+                  value={values.genre}
+                  onValueChange={(value) =>
+                    handleChange({ target: { name: "genre", value } } as any)
+                  }
+                  required
+                  error={errors.genre}
+                  options={BOOK_GENRES.map((genre) => ({
+                    value: genre,
+                    label: getGenreLabel(genre),
+                  }))}
+                />
+              </div>
+
+              <TextAreaField
+                label="Description"
+                id="description"
+                name="description"
+                placeholder="Book description"
+                value={values.description}
+                onChange={(e) => handleChange(e as any)}
+                error={errors.description}
+                className="min-h-20 h-36"
+              />
+
+              <div className="space-y-2">
+                <Label>Autores</Label>
+                <div className="space-y-3">
+                  {values.authors.map((author, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <div className="flex-1">
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Input
+                            value={author}
+                            onChange={(e) =>
+                              updateAuthor(index, e.target.value)
+                            }
+                            placeholder={`Nombre del autor ${index + 1}`}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                      {values.authors.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeAuthor(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addAuthor}
+                  className="gap-2 bg-transparent"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Author
+                </Button>
+
+                {errors.authors && (
+                  <p className="text-sm text-red-500">{errors.authors}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full">
+                Save Book
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

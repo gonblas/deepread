@@ -15,6 +15,7 @@ import { Toaster } from "sonner";
 import { SidebarProvider } from "./contexts/sidebarContext";
 
 import BookPage from "./pages/BookPage";
+import CreateBookPage from "./pages/CreateBookPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -86,6 +87,7 @@ function AppRoutes() {
         }
       />
       <Route path="/books" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
+      <Route path="/books/create" element={<ProtectedRoute><CreateBookPage /></ProtectedRoute>} />
       <Route path="/Dashboard" element={<Navigate to="/Dashboard" replace />} />
     </Routes>
   );
