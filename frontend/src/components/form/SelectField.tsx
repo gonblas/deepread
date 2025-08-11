@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import FormFieldStructure from "./FormFieldStructure"
 
 interface SelectFieldProps {
   label: string
@@ -33,13 +34,7 @@ export default function SelectField({
   ariaDescribedById,
 }: SelectFieldProps) {
   return (
-    <div className="form-field">
-      <div className="label-field">
-        <Label htmlFor={id}>
-          {label} {required && <span className="text-red-500">*</span>}
-        </Label>
-        {labelSuffix}
-      </div>
+    <FormFieldStructure label={label} id={id} error={error} labelSuffix={labelSuffix}>
       <Select
         id={id}
         name={name}
@@ -60,17 +55,6 @@ export default function SelectField({
           ))}
         </SelectContent>
       </Select>
-      <div className="h-4">
-        {error && (
-          <p
-            id={ariaDescribedById || `${id}-error`}
-            className="mt-1 text-sm text-red-500"
-            role="alert"
-          >
-            {error}
-          </p>
-        )}
-      </div>
-    </div>
+    </FormFieldStructure>
   )
 }

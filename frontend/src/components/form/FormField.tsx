@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import FormFieldStructure from "./FormFieldStructure";
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -16,17 +16,8 @@ export default function FormField({
   ...props
 }: FormFieldProps) {
   return (
-    <div className="form-field">
-      <div className="label-field">
-        <Label htmlFor={id}>
-          {label} {props.required && <span className="text-red-500">*</span>}
-        </Label>
-        {labelSuffix}
-      </div>
+    <FormFieldStructure label={label} id={id} error={error} labelSuffix={labelSuffix}>
       <Input id={id} {...props} />
-      <div className="h-4">
-        {error && <p className="text-xs text-red-500">{error}</p>}
-      </div>
-    </div>
+    </FormFieldStructure>
   );
 }

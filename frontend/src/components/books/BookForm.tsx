@@ -9,8 +9,8 @@ import { BOOK_GENRES, getGenreLabel } from "@/lib/genres";
 import SelectField from "../form/SelectField";
 import TextAreaField from "../form/TextAreaField";
 import { Plus, User, X } from "lucide-react";
-import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
+import FormFieldStructure from "../form/FormFieldStructure";
 
 export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
   const { values, handleChange, errors, setErrors, resetForm } = useForm({
@@ -41,7 +41,7 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
     setErrors({});
 
     try {
-      // Aquí iría la lógica para enviar el formulario
+      // Here you would typically send the form data to your API
       console.log("Submit book form", values);
       resetForm();
     } catch (error) {
@@ -115,8 +115,12 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
                 className="min-h-20 h-36"
               />
 
-              <div className="space-y-2">
-                <Label>Autores</Label>
+              <FormFieldStructure
+                label="Authors"
+                id="authors"
+                name="authors"
+                error={errors.authors}
+              >
                 <div className="space-y-3">
                   {values.authors.map((author, index) => (
                     <div key={index} className="flex gap-2 items-center">
@@ -139,9 +143,9 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
                           variant="outline"
                           size="sm"
                           onClick={() => removeAuthor(index)}
-                          className="text-red-500 hover:text-red-700"
+                          className="h-9 text-red-500 hover:bg-red-50 hover:text-red-600"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="size-5" />
                         </Button>
                       )}
                     </div>
@@ -153,16 +157,12 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
                   variant="outline"
                   size="sm"
                   onClick={addAuthor}
-                  className="gap-2 bg-transparent"
+                  className="gap-2 bg-transparent mr-auto"
                 >
                   <Plus className="h-4 w-4" />
                   Add Author
                 </Button>
-
-                {errors.authors && (
-                  <p className="text-sm text-red-500">{errors.authors}</p>
-                )}
-              </div>
+              </FormFieldStructure>
 
               <Button type="submit" className="w-full">
                 Save Book
