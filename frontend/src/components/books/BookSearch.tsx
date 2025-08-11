@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Search, Plus, Filter, BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, Plus, Filter, BookOpen, Book } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,10 @@ import { BookCard } from "@/components/books/BookCard"
 import { getAllGenresWithLabels, getGenreLabel, type BookGenre } from "@/lib/genres"
 import { Skeleton } from "@/components/ui/skeleton"
 import Cookies from "js-cookie";
+import { ErrorCard } from "../ErrorCard"
+import { Pagination } from "../Pagination"
+import { BookSectionSkeleton } from "./BookSectionSkeleton"
+import { useAuth } from "@/contexts/authContext"
 
 interface Book {
   id: string
@@ -59,27 +63,29 @@ export function BooksSearch() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const genresWithLabels = getAllGenresWithLabels()
+  const { logout } = useAuth()
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
-
+  const maxTotalElements = 12 
   const fetchBooks = async (page = 0, search = "", genre = "all") => {
     setLoading(true)
     setError(null)
 
     try {
       const params = new URLSearchParams({
-        size: "10",
+        size: maxTotalElements.toString(),
         page: page.toString(),
       })
 
       if (genre !== "all") {
-        params.append("genre", genre)
+        params.append("genres", genre)
       }
 
       if (search.trim()) {
         params.append("search", search.trim())
       }
 
+      console.log(`Fetching books with params: http://localhost:8080/api/book?${params.toString()}`)
       const response = await fetch(`http://localhost:8080/api/book?${params.toString()}`, {
         method: "GET",
         headers: {
@@ -89,6 +95,10 @@ export function BooksSearch() {
       })
 
       if (!response.ok) {
+        if(response.status === 401) {
+          logout()
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
@@ -133,14 +143,6 @@ export function BooksSearch() {
     }
   }
 
-  const handleOpenBook = (bookId: string) => {
-    alert(`Opening book with ID: ${bookId}`)
-  }
-
-  const handleEditBook = (bookId: string) => {
-    alert(`Editing book with ID: ${bookId}`)
-  }
-
   const handleCreateBook = () => {
     alert("Navigating to create new book...")
   }
@@ -149,23 +151,6 @@ export function BooksSearch() {
     setSearchTerm("")
     setSelectedGenre("all")
     setCurrentPage(0)
-  }
-
-  const getPageNumbers = () => {
-    const pages = []
-    const maxVisiblePages = 5
-    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2))
-    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1)
-
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(0, endPage - maxVisiblePages + 1)
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i)
-    }
-
-    return pages
   }
 
   return (
@@ -179,7 +164,7 @@ export function BooksSearch() {
                 ? "Loading books..."
                 : error
                   ? "Error loading books"
-                  : `Explore our collection of ${totalElements} available books`}
+                  : `Explore our collection of available books`}
             </p>
           </div>
           <Button size="lg" className="shrink-0" onClick={handleCreateBook}>
@@ -233,23 +218,8 @@ export function BooksSearch() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-4 w-4" />
-                  {loading ? "Loading..." : `${books.length} books found`}
-                  {!loading && totalElements > 0 && (
-                    <span className="ml-1">
-                      (Page {currentPage + 1} of {totalPages})
-                    </span>
-                  )}
+                  {loading ? "Loading..." : `${totalElements} books found`}
                 </span>
-                {searchTerm && !loading && (
-                  <span>
-                    Search: "<strong>{searchTerm}</strong>"
-                  </span>
-                )}
-                {selectedGenre !== "all" && !loading && (
-                  <span>
-                    Genre: <strong>{getGenreLabel(selectedGenre as BookGenre)}</strong>
-                  </span>
-                )}
               </div>
 
               {(searchTerm || selectedGenre !== "all") && !loading && (
@@ -262,43 +232,14 @@ export function BooksSearch() {
         </Card>
       </div>
 
-      {error && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="text-red-500 mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold mb-2 text-red-600">Error Loading Books</h3>
-            <p className="text-muted-foreground text-center mb-4">{error}</p>
-            <Button onClick={() => fetchBooks(currentPage, searchTerm, selectedGenre)}>Try Again</Button>
-          </CardContent>
-        </Card>
-      )}
+      <ErrorCard
+        error={error || ""}
+        title="Error Loading Books"
+        onRetry={() => fetchBooks(currentPage, searchTerm, selectedGenre)}
+        retryButtonText="Try Again"
+      />
 
-      {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <Card key={index} className="h-full flex flex-col">
-              <div className="p-6 pb-3 flex-shrink-0">
-                <Skeleton className="h-4 w-20 mb-3" />
-                <Skeleton className="h-6 w-full mb-2" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-              <div className="px-6 pb-6 flex flex-col flex-grow">
-                <div className="flex-grow">
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-                <div className="mt-4 pt-4 border-t flex-shrink-0">
-                  <div className="flex gap-2">
-                    <Skeleton className="h-8 flex-1" />
-                    <Skeleton className="h-8 flex-1" />
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+      <BookSectionSkeleton isLoading={loading} />
 
       {!loading && !error && books.length === 0 && (
         <Card>
@@ -321,49 +262,18 @@ export function BooksSearch() {
       {!loading && !error && books.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} onOpenBook={handleOpenBook} onEditBook={handleEditBook} />
+            <BookCard key={book.id} book={book}/>
           ))}
         </div>
       )}
 
-      {!loading && !error && totalElements > 10 && totalPages > 1 && (
-        <div className="flex justify-center pt-6">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 0}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
-
-            <div className="flex items-center gap-1">
-              {getPageNumbers().map((pageNum) => (
-                <Button
-                  key={pageNum}
-                  variant={currentPage === pageNum ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handlePageChange(pageNum)}
-                  className="min-w-[40px]"
-                >
-                  {pageNum + 1}
-                </Button>
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages - 1}
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
+      {!loading && !error && totalElements > maxTotalElements && totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          maxVisiblePages={5}
+        />
       )}
     </div>
   )

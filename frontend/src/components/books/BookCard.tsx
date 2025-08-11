@@ -1,5 +1,4 @@
-"use client"
-
+import { useNavigate } from "react-router-dom"
 import { BookOpen, Edit, Users, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,17 +15,17 @@ interface Book {
 
 interface BookCardProps {
   book: Book
-  onOpenBook?: (bookId: string) => void
-  onEditBook?: (bookId: string) => void
 }
 
-export function BookCard({ book, onOpenBook, onEditBook }: BookCardProps) {
+export function BookCard({ book }: BookCardProps) {
+  const navigate = useNavigate()
+
   const handleOpenBook = () => {
-    onOpenBook?.(book.id)
+    navigate(`/books/${book.id}`)
   }
 
   const handleEditBook = () => {
-    onEditBook?.(book.id)
+    navigate(`/books/${book.id}/edit`)
   }
 
   return (
