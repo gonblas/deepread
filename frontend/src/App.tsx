@@ -17,6 +17,8 @@ import { SidebarProvider } from "./contexts/sidebarContext";
 import BookPage from "./pages/BookPage";
 import CreateBookPage from "./pages/CreateBookPage";
 import BookListPage from "./pages/BookListPage";
+import { NotificationProvider } from "./contexts/notificationContext";
+import { DataRefreshProvider } from "./contexts/dataRefreshContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -33,9 +35,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return user ? (
-    <SidebarProvider>
-      {children}
-    </SidebarProvider>
+    <SidebarProvider>{children}</SidebarProvider>
   ) : (
     <Navigate to="/auth/login" replace />
   );
@@ -87,7 +87,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/books" element={<ProtectedRoute><BookListPage /></ProtectedRoute>} />
+      <Route
+        path="/books"
+        element={
+          <ProtectedRoute>
+            <BookListPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/books/:bookId"
         element={
@@ -96,7 +103,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/books/create" element={<ProtectedRoute><CreateBookPage /></ProtectedRoute>} />
+      <Route
+        path="/books/create"
+        element={
+          <ProtectedRoute>
+            <CreateBookPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/" element={<Navigate to="/Dashboard" replace />} />
     </Routes>
   );
@@ -106,10 +120,14 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Toaster />
-        <Router>
-          <AppRoutes />
-        </Router>
+        <NotificationProvider>
+          <Toaster />
+          <Router>
+            <DataRefreshProvider>
+              <AppRoutes />
+            </DataRefreshProvider>
+          </Router>
+        </NotificationProvider>
       </ThemeProvider>
     </AuthProvider>
   );

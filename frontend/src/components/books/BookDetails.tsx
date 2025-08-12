@@ -33,10 +33,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getGenreLabel, getGenreColor, type BookGenre } from "@/lib/genres";
 import { EditBookDialog } from "./EditBookDialog";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { DeleteBookDialog } from "./DeleteBookDialog";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/authContext";
 
 interface Book {
