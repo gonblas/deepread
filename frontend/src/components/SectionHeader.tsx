@@ -33,7 +33,7 @@ export function SectionHeader({
       </div>
       {buttonText && onButtonClick && (
         <Button size="lg" className="shrink-0" onClick={onButtonClick}>
-          {buttonIcon && <span className="mr-2 h-5 w-5 flex items-center">{buttonIcon}</span>}
+          {buttonIcon && <span className="mr-1 size-4 flex items-center">{buttonIcon}</span>}
           {buttonText}
         </Button>
       )}

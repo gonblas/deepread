@@ -5,7 +5,7 @@ export const defaultSidebar: SidebarItemsData = [
   {
     title: "Main",
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: Home },
+      { title: "Dashboard", url: "/", icon: Home },
       { title: "My Books", url: "/books", icon: BookOpen },
       { title: "My Quizzes", url: "/my-quizzes", icon: Brain },
     ],
@@ -23,7 +23,7 @@ export const booksSidebar: SidebarItemsData = [
   {
     title: "Main",
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: Home },
+      { title: "Dashboard", url: "/", icon: Home },
       { title: "My Quizzes", url: "/my-quizzes", icon: Brain },
     ],
   },

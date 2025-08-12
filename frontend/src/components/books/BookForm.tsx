@@ -12,8 +12,29 @@ import { Plus, User, X } from "lucide-react";
 import { Input } from "../ui/input";
 import FormFieldStructure from "../form/FormFieldStructure";
 
-export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { values, handleChange, errors, setErrors, resetForm } = useForm({
+interface SendFunction {
+  (data: {
+    title: string;
+    description: string;
+    genre: string;
+    authors: string[];
+  }): Promise<boolean>;
+}
+
+interface BookFormProps {
+  formTitle?: string;
+  className?: string;
+  sendFunction: SendFunction;
+  initialValue?: {
+    title: string;
+    description: string;
+    genre: string;
+    authors: string[];
+  };
+}
+
+export function BookForm({ formTitle, className, sendFunction, initialValue, ...props }: BookFormProps) {
+  const { values, handleChange, errors, setErrors, resetForm } = useForm(initialValue || {
     title: "",
     description: "",
     genre: "",
@@ -40,12 +61,17 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
 
     setErrors({});
 
-    try {
-      // Here you would typically send the form data to your API
-      console.log("Submit book form", values);
+    const isCorrect = await sendFunction({
+      title: values.title,
+      description: values.description,
+      genre: values.genre,
+      authors: values.authors.filter((author) => author.trim() !== ""),
+    });
+    console.log("Book saved:", isCorrect);
+    if (isCorrect) {
       resetForm();
-    } catch (error) {
-      console.error("Submit failed:", error);
+    } else {
+      setErrors({ title: "Failed to save book" });
     }
   };
 
@@ -69,9 +95,11 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create or Edit Book</CardTitle>
-        </CardHeader>
+        {formTitle &&
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl sm:text-2xl">{formTitle}</CardTitle>
+          </CardHeader>
+        }
         <CardContent>
           <form className="grid gap-6" onSubmit={handleSubmit}>
             <div className="grid gap-8">
@@ -112,7 +140,7 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
                 value={values.description}
                 onChange={(e) => handleChange(e as any)}
                 error={errors.description}
-                className="min-h-20 h-36"
+                className="min-h-20 h-36 max-h-52"
               />
 
               <FormFieldStructure
@@ -164,7 +192,7 @@ export function BookForm({ className, ...props }: React.ComponentProps<"div">) {
                 </Button>
               </FormFieldStructure>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" onClick={handleSubmit}>
                 Save Book
               </Button>
             </div>

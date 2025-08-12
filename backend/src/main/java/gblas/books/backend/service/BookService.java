@@ -34,6 +34,11 @@ public class BookService {
         return books_page.map(BookMapper.INSTANCE::toDto);
     }
 
+    public BookResponse getBookDetails(UUID bookId) {
+        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        return BookMapper.INSTANCE.toDto(bookEntity);
+    }
+
     public BookResponse addBook(UserEntity user, BookRequest bookRequest) {
         BookEntity bookEntity = BookMapper.INSTANCE.toEntity(bookRequest, user);
         bookRepository.save(bookEntity);

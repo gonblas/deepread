@@ -31,8 +31,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const params = useParams();
   const [sidebarItems, setSidebarItems] = useState<SidebarItemsData>(defaultSidebar);
-  
-  // Simulación de capítulos, en la realidad esto vendría de API o estado global
   const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
@@ -56,18 +54,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
     setSidebarItems(config);
   }, [location.pathname, params.bookId, chapters]);
-
-  useEffect(() => {
-    if (location.pathname.startsWith("/admin")) {
-      setSidebarItems(prev => [
-        ...prev,
-        {
-          title: "Admin",
-          items: [{ title: "Panel", url: "/admin", icon: Settings }],
-        },
-      ]);
-    }
-  }, [location.pathname]);
 
   return (
     <SidebarContext.Provider value={{ sidebarItems, setSidebarItems }}>

@@ -51,6 +51,20 @@ public class BookController {
     }
 
     @Operation(
+            summary = "Get book details",
+            description = "Retrieves a book details.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Books retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Book not found", content = @Content)
+            }
+    )
+    @GetMapping("/{bookId}")
+    public BookResponse getBookDetails(@PathVariable UUID bookId) {
+        return bookService.getBookDetails(bookId);
+    }
+
+    @Operation(
             summary = "Add a new book",
             description = "Creates a new book associated with the authenticated user.",
             responses = {

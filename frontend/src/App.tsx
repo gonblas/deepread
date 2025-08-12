@@ -16,6 +16,7 @@ import { SidebarProvider } from "./contexts/sidebarContext";
 
 import BookPage from "./pages/BookPage";
 import CreateBookPage from "./pages/CreateBookPage";
+import BookListPage from "./pages/BookListPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -54,7 +55,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return user ? <Navigate to="/Dashboard" replace /> : <>{children}</>;
+  return user ? <Navigate to="/" replace /> : <>{children}</>;
 }
 
 function AppRoutes() {
@@ -77,7 +78,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/Dashboard"
+        path="/"
         element={
           <ProtectedRoute>
             <StatisticsProvider>
@@ -86,9 +87,17 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/books" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
+      <Route path="/books" element={<ProtectedRoute><BookListPage /></ProtectedRoute>} />
+      <Route
+        path="/books/:bookId"
+        element={
+          <ProtectedRoute>
+            <BookPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/books/create" element={<ProtectedRoute><CreateBookPage /></ProtectedRoute>} />
-      <Route path="/Dashboard" element={<Navigate to="/Dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/Dashboard" replace />} />
     </Routes>
   );
 }

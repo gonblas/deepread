@@ -1,10 +1,10 @@
 import AppLayout from "@/components/AppLayout";
-import { BooksSearch } from "@/components/books/BookSearch";
+import { BookDetails } from "@/components/books/BookDetails";
 
 function BookPage() {
   return (
     <AppLayout>
-      <BooksSearch />
+      <BookDetails />
     </AppLayout>
   );
 }

@@ -69,7 +69,7 @@ function AppLayout({ children }: AppLayoutProps) {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link to="/Dashboard">Home</Link>
+                    <Link to="/">Home</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 {pathParts.length > 0 && <BreadcrumbSeparator />}

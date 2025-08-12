@@ -1,162 +1,185 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Search, Plus, Filter, BookOpen, Book } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookCard } from "@/components/books/BookCard"
-import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres"
+import { useState, useEffect, useRef } from "react";
+import { Search, Plus, Filter, BookOpen, Book } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { BookCard } from "@/components/books/BookCard";
+import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres";
 import Cookies from "js-cookie";
-import { ErrorCard } from "../ErrorCard"
-import { Pagination } from "../Pagination"
-import { BookSectionSkeleton } from "./BookSectionSkeleton"
-import { useAuth } from "@/contexts/authContext"
-import { SectionHeader } from "../SectionHeader"
+import { ErrorCard } from "../ErrorCard";
+import { Pagination } from "../Pagination";
+import { BookSectionSkeleton } from "./BookSectionSkeleton";
+import { useAuth } from "@/contexts/authContext";
+import { SectionHeader } from "../SectionHeader";
+import { toast } from "sonner";
 
 interface Book {
-  id: string
-  title: string
-  description: string
-  genre: BookGenre
-  authors: string[]
+  id: string;
+  title: string;
+  description: string;
+  genre: BookGenre;
+  authors: string[];
 }
 
 interface ApiResponse {
-  totalElements: number
-  totalPages: number
+  totalElements: number;
+  totalPages: number;
   pageable: {
-    paged: boolean
-    pageNumber: number
-    pageSize: number
-    unpaged: boolean
-    offset: number
+    paged: boolean;
+    pageNumber: number;
+    pageSize: number;
+    unpaged: boolean;
+    offset: number;
     sort: {
-      sorted: boolean
-      unsorted: boolean
-      empty: boolean
-    }
-  }
-  size: number
-  content: Book[]
-  number: number
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+  };
+  size: number;
+  content: Book[];
+  number: number;
   sort: {
-    sorted: boolean
-    unsorted: boolean
-    empty: boolean
-  }
-  first: boolean
-  last: boolean
-  numberOfElements: number
-  empty: boolean
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
 }
 
 export function BooksSearch() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedGenre, setSelectedGenre] = useState<string>("all")
-  const [currentPage, setCurrentPage] = useState(0)
-  const [books, setBooks] = useState<Book[]>([])
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalElements, setTotalElements] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const genresWithLabels = getAllGenresWithLabels()
-  const { logout } = useAuth()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const genresWithLabels = getAllGenresWithLabels();
+  const { logout } = useAuth();
 
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
-  const maxTotalElements = 12 
+  useEffect(() => {
+    const updatedBook = localStorage.getItem("bookUpdated");
+    if (updatedBook) {
+      toast.success("Book updated successfully", {
+        description: `Book "${updatedBook}" has been updated.`,
+      });
+      localStorage.removeItem("bookUpdated");
+    }
+  }, []);
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const maxTotalElements = 12;
   const fetchBooks = async (page = 0, search = "", genre = "all") => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const params = new URLSearchParams({
         size: maxTotalElements.toString(),
         page: page.toString(),
-      })
+      });
 
       if (genre !== "all") {
-        params.append("genres", genre)
+        params.append("genres", genre);
       }
 
       if (search.trim()) {
-        params.append("search", search.trim())
+        params.append("search", search.trim());
       }
 
-      console.log(`Fetching books with params: http://localhost:8080/api/book?${params.toString()}`)
-      const response = await fetch(`http://localhost:8080/api/book?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      })
+      const response = await fetch(
+        `http://localhost:8080/api/book?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
 
       if (!response.ok) {
-        if(response.status === 401) {
-          logout()
-          return
+        if (response.status === 401) {
+          logout();
+          return;
         }
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data: ApiResponse = await response.json()
+      const data: ApiResponse = await response.json();
 
-      setBooks(data.content || [])
-      setTotalPages(data.totalPages || 0)
-      setTotalElements(data.totalElements || 0)
-      setCurrentPage(data.number || 0)
+      setBooks(data.content || []);
+      setTotalPages(data.totalPages || 0);
+      setTotalElements(data.totalElements || 0);
+      setCurrentPage(data.number || 0);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while fetching books")
-      setBooks([])
-      setTotalPages(0)
-      setTotalElements(0)
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching books"
+      );
+      setBooks([]);
+      setTotalPages(0);
+      setTotalElements(0);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    setCurrentPage(0)
-  }, [searchTerm, selectedGenre])
+    setCurrentPage(0);
+  }, [searchTerm, selectedGenre]);
 
   useEffect(() => {
     if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current)
+      clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      fetchBooks(currentPage, searchTerm, selectedGenre)
-    }, 500)
+      fetchBooks(currentPage, searchTerm, selectedGenre);
+    }, 500);
 
     return () => {
       if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current)
+        clearTimeout(debounceTimeout.current);
       }
-    }
-  }, [currentPage, searchTerm, selectedGenre])
+    };
+  }, [currentPage, searchTerm, selectedGenre]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
-      setCurrentPage(newPage)
+      setCurrentPage(newPage);
     }
-  }
+  };
 
   const handleCreateBook = () => {
-    alert("Navigating to create new book...")
-  }
+    alert("Navigating to create new book...");
+  };
 
   const clearFilters = () => {
-    setSearchTerm("")
-    setSelectedGenre("all")
-    setCurrentPage(0)
-  }
+    setSearchTerm("");
+    setSelectedGenre("all");
+    setCurrentPage(0);
+  };
 
   return (
     <>
       <>
-        <SectionHeader 
+        <SectionHeader
           title="Book Library"
           loading={loading}
           error={error}
@@ -165,7 +188,7 @@ export function BooksSearch() {
           onButtonClick={handleCreateBook}
           buttonIcon={<Plus className="mr-1 size-6" />}
         />
-          
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col lg:flex-row gap-4">
@@ -190,7 +213,11 @@ export function BooksSearch() {
                 <Label htmlFor="genre" className="text-sm font-medium">
                   Filter by genre
                 </Label>
-                <Select value={selectedGenre} onValueChange={setSelectedGenre} disabled={loading}>
+                <Select
+                  value={selectedGenre}
+                  onValueChange={setSelectedGenre}
+                  disabled={loading}
+                >
                   <SelectTrigger>
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue placeholder="All genres" />
@@ -255,19 +282,22 @@ export function BooksSearch() {
       {!loading && !error && books.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {books.map((book) => (
-            <BookCard key={book.id} book={book}/>
+            <BookCard key={book.id} book={book} />
           ))}
         </div>
       )}
 
-      {!loading && !error && totalElements > maxTotalElements && totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          maxVisiblePages={5}
-        />
-      )}
+      {!loading &&
+        !error &&
+        totalElements > maxTotalElements &&
+        totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            maxVisiblePages={5}
+          />
+        )}
     </>
-  )
+  );
 }

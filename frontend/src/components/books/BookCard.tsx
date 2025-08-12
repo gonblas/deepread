@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom"
-import { BookOpen, Edit, Users, Tag } from "lucide-react"
+import { BookOpen, Users, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { getGenreLabel, getGenreColor, type BookGenre } from "@/lib/genres"
+import { EditBookDialog } from "./EditBookDialog"
 
-interface Book {
+export interface Book {
   id: string
   title: string
   description: string
@@ -22,10 +23,6 @@ export function BookCard({ book }: BookCardProps) {
 
   const handleOpenBook = () => {
     navigate(`/books/${book.id}`)
-  }
-
-  const handleEditBook = () => {
-    navigate(`/books/${book.id}/edit`)
   }
 
   return (
@@ -69,14 +66,11 @@ export function BookCard({ book }: BookCardProps) {
 
         <div className="mt-4 pt-4 border-t flex-shrink-0">
           <div className="flex gap-2">
-            <Button size="sm" className="flex-1 text-xs" onClick={handleOpenBook}>
-              <BookOpen className="w-3 h-3 mr-1" />
+            <Button className="flex-1 text-xs" onClick={handleOpenBook}>
+              <BookOpen className="size-4 mr-1" />
               Open Book
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 text-xs bg-transparent" onClick={handleEditBook}>
-              <Edit className="w-3 h-3 mr-1" />
-              Edit
-            </Button>
+            <EditBookDialog book={book} />
           </div>
         </div>
       </CardContent>
