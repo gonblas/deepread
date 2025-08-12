@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { useLocation, Link } from "react-router-dom";
-
+import { ThemeToggle } from "./sidebar/ThemeToggle";
 interface AppLayoutProps {
   children?: React.ReactNode;
 }
@@ -58,8 +58,8 @@ function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+        <header className="flex h-16 w-full px-6 justify-between shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator
               orientation="vertical"
@@ -77,6 +77,7 @@ function AppLayout({ children }: AppLayoutProps) {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <ThemeToggle />
         </header>
         <main className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-6 min-h-svh">
           {children}
