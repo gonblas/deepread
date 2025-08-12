@@ -24,8 +24,8 @@ import java.util.UUID;
 public class BookService {
     private final BookRepository bookRepository;
 
-    public Page<BookResponse> getBooks(UserEntity user, Pageable pageable, List<BookGenre> genres, String subString) {
-        Page<BookEntity> books_page = bookRepository.findByOwnerAndOptionalGenreAndTitle(user, genres, subString, pageable);
+    public Page<BookResponse> getBooks(UserEntity user, Pageable pageable, List<BookGenre> genres, String search) {
+        Page<BookEntity> books_page = bookRepository.findByOwnerAndOptionalGenreAndTitle(user, genres, search, pageable);
         return books_page.map(BookMapper.INSTANCE::toDto);
     }
 

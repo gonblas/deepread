@@ -44,11 +44,11 @@ public class BookController {
     @GetMapping
     public Page<BookResponse> getBooks(
             @Valid @RequestParam(required = false) List<BookGenre> genres,
-            @Valid @RequestParam(required = false) String subString,
+            @Valid @RequestParam(required = false) String search,
             @AuthenticationPrincipal UserEntity user,
             Pageable pageable
     ) {
-        return bookService.getBooks(user, pageable, genres, subString);
+        return bookService.getBooks(user, pageable, genres, search);
     }
 
     @Operation(
