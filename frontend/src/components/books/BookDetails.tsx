@@ -37,6 +37,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { DeleteBookDialog } from "./DeleteBookDialog";
 import { useAuth } from "@/contexts/authContext";
+import { useSidebar } from "@/contexts/sidebarContext";
 
 interface Book {
   id: string;
@@ -55,6 +56,7 @@ interface Chapter {
 
 export function BookDetails() {
   const { bookId } = useParams();
+  const { setChaptersSidebarItems } = useSidebar();
   const [book, setBook] = useState<Book>({
     id: "",
     title: "",
@@ -97,6 +99,11 @@ export function BookDetails() {
         .then((response) => response.json())
         .then((data) => {
           setChapters(data.content);
+          setChaptersSidebarItems(data.content.map((chapter: Chapter) => ({
+            id: chapter.id,
+            number: chapter.number,
+            title: chapter.title,
+          })));
         })
         .catch((error) => {
           console.error("Error fetching chapters:", error);

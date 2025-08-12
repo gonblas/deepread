@@ -38,7 +38,7 @@ export const booksSidebar: SidebarItemsData = [
 
 export const selectedBookSidebar = (
   bookId: string,
-  chapters: { id: string; title: string }[]
+  chapters: { id: string; number: number; title: string }[]
 ): SidebarItemsData => [
   {
     title: "Books",
@@ -49,14 +49,14 @@ export const selectedBookSidebar = (
   },
   {
     title: "Chapters",
-    collapsible: true,
     items: [
-      { title: "Add Chapter", url: `/books/${bookId}/chapters/create`, icon: Plus },
-      ...chapters.map((chapter) => ({
-        title: chapter.title,
-        url: `/books/${bookId}/chapters/${chapter.id}`,
-        icon: FileText,
-      })),
+      {title: "Add Chapter", url: `/books/${bookId}/chapters/create`, icon: Plus },
+      {title: "All Chapters", url: `/books/${bookId}/chapters`, collapsible: true, icon: FileText, items: [
+        ...chapters.map((chapter) => ({
+          title: `${chapter.number}. ${chapter.title}`,
+          url: `/books/${bookId}/chapters/${chapter.id}`,
+        })),
+      ]},
     ],
   },
   {

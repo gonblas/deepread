@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { LucideIcon, Settings } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { defaultSidebar, booksSidebar, selectedBookSidebar } from "@/config/sidebar.config";
 
 export interface SidebarItem {
@@ -23,6 +23,7 @@ export type SidebarItemsData = SidebarSection[];
 interface SidebarContextType {
   sidebarItems: SidebarItemsData;
   setSidebarItems: React.Dispatch<React.SetStateAction<SidebarItemsData>>;
+  setChaptersSidebarItems: React.Dispatch<React.SetStateAction<{ id: string; number: number; title: string }[]>>;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -31,13 +32,13 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const params = useParams();
   const [sidebarItems, setSidebarItems] = useState<SidebarItemsData>(defaultSidebar);
-  const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
+  const [chaptersSidebarItems, setChaptersSidebarItems] = useState<{ id: string; number: number; title: string }[]>([]);
 
   useEffect(() => {
     let config: SidebarItemsData;
 
     if (params.bookId) {
-      config = selectedBookSidebar(params.bookId, chapters);
+      config = selectedBookSidebar(params.bookId, chaptersSidebarItems);
     } else if (location.pathname.startsWith("/books")) {
       config = booksSidebar;
     } else {
@@ -53,10 +54,10 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     }));
 
     setSidebarItems(config);
-  }, [location.pathname, params.bookId, chapters]);
+  }, [location.pathname, params.bookId, chaptersSidebarItems]);
 
   return (
-    <SidebarContext.Provider value={{ sidebarItems, setSidebarItems }}>
+    <SidebarContext.Provider value={{ sidebarItems, setSidebarItems, setChaptersSidebarItems }}>
       {children}
     </SidebarContext.Provider>
   );
