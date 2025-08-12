@@ -22,6 +22,7 @@ import { BookSectionSkeleton } from "./BookSectionSkeleton";
 import { useAuth } from "@/contexts/authContext";
 import { SectionHeader } from "../SectionHeader";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Book {
   id: string;
@@ -71,6 +72,7 @@ export function BooksSearch() {
   const [error, setError] = useState<string | null>(null);
   const genresWithLabels = getAllGenresWithLabels();
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const updatedBook = localStorage.getItem("bookUpdated");
@@ -167,7 +169,7 @@ export function BooksSearch() {
   };
 
   const handleCreateBook = () => {
-    alert("Navigating to create new book...");
+    navigate("/books/create")
   };
 
   const clearFilters = () => {

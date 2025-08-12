@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { toast } from "sonner";
+import { useNotification } from "./notificationContext";
 
 interface User {
   email: string;
@@ -24,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { showSuccess, showWarning } = useNotification();
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -57,9 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 401) {
-            toast.error("Login failed", {
-              description: "Invalid email or password. Please try again.",
-            });
+            showWarning("Login failed", "Invalid email or password. Please try again");
             throw new Error("Invalid email or password");
           }
         }
@@ -67,9 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then((data) => {
         saveUser(data.email, data.username, data.token);
-        toast.success("Login successful", {
-          description: `Welcome back, ${data.username}!`,
-        });
+        showSuccess("Login successful", `Welcome back, ${data.username}!`);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -96,9 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 409) {
-            toast.error("Signup failed", {
-              description: "Email already exists.",
-            });
+            showWarning("Signup failed", "Email already exists. Please use a different email or login.");
             throw new Error("Email already exists");
           }
         }
@@ -106,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then((data) => {
         saveUser(data.email, data.username, data.token);
+        showSuccess("Signup successful", `Welcome, ${data.username}!`);
       })
       .catch((error) => {
         console.error("Error:", error);

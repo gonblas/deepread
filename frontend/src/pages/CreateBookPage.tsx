@@ -1,11 +1,12 @@
 import AppLayout from "@/components/AppLayout";
 import { BookForm } from "@/components/books/BookForm";
 import { useAuth } from "@/contexts/authContext";
+import { useNotification } from "@/contexts/notificationContext";
 import Cookies from "js-cookie";
-import { toast } from "sonner";
 
 function CreateBookPage() {
   const { logout } = useAuth(); 
+  const { showSuccess, showError } = useNotification();
 
   const sendFunction = async (data: {
     title: string;
@@ -31,13 +32,11 @@ function CreateBookPage() {
         return response.json();
       })
       .then((data) => {
-        toast.success("Book created successfully", {
-          description: `Book "${data.title}" has been created.`,
-        });
+        showSuccess("Book created successfully", `Book "${data.title}" has been created.`);
         return true;
       })
       .catch((error) => {
-        console.error("Error:", error);
+        showError("Failed to create book", error.message || "Unknown error");
         return false;
       });
     return true;

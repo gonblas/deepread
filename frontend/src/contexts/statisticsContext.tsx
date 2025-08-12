@@ -6,7 +6,7 @@ export type BarChartInteractiveProps = {
   date: string;
   attempts: number;
   averageScore: number;
-}
+};
 
 export type Stats = {
   totalAttempts: number;
@@ -25,9 +25,15 @@ interface StatisticsContextValue {
   fetchUserStats: () => void;
 }
 
-const StatisticsContext = createContext<StatisticsContextValue | undefined>(undefined);
+const StatisticsContext = createContext<StatisticsContextValue | undefined>(
+  undefined
+);
 
-export function StatisticsProvider({ children }: { children: React.ReactNode }) {
+export function StatisticsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { logout, isLoading } = useAuth();
 
   // Estado separado para las estadísticas generales
@@ -40,7 +46,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
     averageTimeSeconds: 0,
   });
 
-  const [dailyStatsTimeline, setDailyStatsTimeline] = useState<BarChartInteractiveProps[]>([]);
+  const [dailyStatsTimeline, setDailyStatsTimeline] = useState<
+    BarChartInteractiveProps[]
+  >([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,10 +77,21 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
             message: text || "Failed to fetch stats",
           };
         }
+        if (response.status === 204) {
+          return {
+            stats: {
+              totalAttempts: 0,
+              totalQuizzesAttempted: 0,
+              averageScore: 0,
+              bestScore: 0,
+              worstScore: 0,
+              averageTimeSeconds: 0,
+            },
+            dailyStatsTimeline: [],};
+        }
         return response.json();
       })
       .then((data) => {
-        // Guardamos stats generales
         setStats({
           totalAttempts: data.stats.totalAttempts,
           totalQuizzesAttempted: data.stats.totalQuizzesAttempted,
@@ -81,9 +100,7 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
           worstScore: data.stats.worstScore,
           averageTimeSeconds: data.stats.averageTimeSeconds,
         });
-
-        // Guardamos timeline separado
-        setDailyStatsTimeline(data.stats.dailyStatsTimeline || []);
+        setDailyStatsTimeline(data.stats.setDailyStatsTimeline || []);
       })
       .catch((err) => {
         if (err.status === 401) {
@@ -98,7 +115,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <StatisticsContext.Provider value={{ loading, error, stats, dailyStatsTimeline, fetchUserStats }}>
+    <StatisticsContext.Provider
+      value={{ loading, error, stats, dailyStatsTimeline, fetchUserStats }}
+    >
       {children}
     </StatisticsContext.Provider>
   );

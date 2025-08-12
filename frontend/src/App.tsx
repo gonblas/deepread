@@ -118,18 +118,18 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <NotificationProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Toaster />
           <Router>
             <DataRefreshProvider>
               <AppRoutes />
             </DataRefreshProvider>
           </Router>
-        </NotificationProvider>
-      </ThemeProvider>
-    </AuthProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </NotificationProvider>
   );
 }
 
