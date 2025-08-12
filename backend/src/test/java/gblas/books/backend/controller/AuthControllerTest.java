@@ -53,6 +53,8 @@ class AuthControllerTest {
                         .content(registerRequest))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(registeredEmail))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(registeredUsername))
                 .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
@@ -70,7 +72,10 @@ class AuthControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("email@gmail.com"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("best_username"));
         assertCountEquals(userRepository, 2);
         assertNotNull(userRepository.findByEmail(registeredEmail));
 
@@ -135,7 +140,10 @@ class AuthControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(registeredEmail))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(registeredUsername));
     }
 
     @Test
