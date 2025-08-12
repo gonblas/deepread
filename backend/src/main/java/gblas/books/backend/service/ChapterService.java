@@ -9,6 +9,7 @@ import gblas.books.backend.exceptions.NotFoundException;
 import gblas.books.backend.mapper.ChapterMapper;
 import gblas.books.backend.repository.BookRepository;
 import gblas.books.backend.repository.ChapterRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,12 @@ public class ChapterService {
         Page<ChapterEntity> chapters_page = chapterRepository.findByBook(book, pageable);
 
         return chapters_page.map(ChapterMapper.INSTANCE::toDto);
+    }
+
+    public ChapterResponse getChapterDetails(@Valid UUID bookId, @Valid UUID chapterId, Pageable pageable) {
+        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
+        ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
+        return ChapterMapper.INSTANCE.toDto(chapter);
     }
 
     public ChapterResponse addChapter(UUID bookId, ChapterRequest chapterRequest) {
@@ -88,4 +95,5 @@ public class ChapterService {
 
         return chapterEntity;
     }
+
 }

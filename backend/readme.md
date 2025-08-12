@@ -111,6 +111,13 @@ A key challenge in the application is handling different question types (e.g., `
 
 This approach makes the system highly extensible. To add a new question type, one only needs to create its DTO and Entity classes and a new `TypedQuestionMapper` implementation, without modifying any existing mapping code.
 
+#### How to Add a New Question
+
+1. **Add the entity** for the new question type.
+2. **Add the enum type** for this entity. If needed, also create any additional helper entities.
+3. **Add the DTOs** for both question and answer. If new entities were added in step 2, create any extra DTOs required for them.
+
+
 ### Quiz Versioning for Historical Integrity
 
 To ensure that user quiz attempts remain accurate over time, the application implements a transparent versioning system for quizzes.

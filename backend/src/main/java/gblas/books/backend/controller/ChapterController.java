@@ -39,6 +39,20 @@ public class ChapterController {
     }
 
     @Operation(
+            summary = "Get chapter details",
+            description = "Retrieves a set of details from chapter for a given id.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Chapters retrieved successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid book ID - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Book or Chapter not found - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/{chapterId}")
+    public ChapterResponse getChapterDetails(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
+        return chapterService.getChapterDetails(bookId, chapterId, pageable);
+    }
+
+    @Operation(
             summary = "Create a new chapter",
             description = "Adds a new chapter to the specified book.",
             responses = {
