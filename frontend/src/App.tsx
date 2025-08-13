@@ -16,7 +16,7 @@ import { SidebarProvider } from "./contexts/sidebarContext";
 
 import BookPage from "./pages/BookPage";
 import CreateBookPage from "./pages/CreateBookPage";
-import { BookListPage } from "./pages/BookListPage";
+import BookListPage from "./pages/BookListPage";
 import { NotificationProvider } from "./contexts/notificationContext";
 import { DataRefreshProvider } from "./contexts/dataRefreshContext";
 import { ChapterPage } from "./pages/ChapterPage";

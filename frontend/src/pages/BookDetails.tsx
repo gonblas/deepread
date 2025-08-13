@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getGenreLabel, getGenreColor, type BookGenre } from "@/lib/genres";
-import { EditBookDialog } from "./EditBookDialog";
+import { EditBookDialog } from "../components/books/EditBookDialog";
 import { useParams, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { DeleteBookDialog } from "./DeleteBookDialog";
+import { DeleteBookDialog } from "../components/books/DeleteBookDialog";
 import { useAuth } from "@/contexts/authContext";
-import { ChapterListSection } from "./ChapterListSection";
+import { ChapterListSection } from "../components/books/ChapterListSection";
 
 interface Book {
   id: string;
@@ -28,7 +28,7 @@ interface Chapter {
   summary: string;
 }
 
-export function BookDetails() {
+export default function BookPage() {
   const { bookId } = useParams();
   const [book, setBook] = useState<Book>({
     id: "",
