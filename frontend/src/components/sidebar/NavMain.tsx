@@ -17,11 +17,11 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { useSidebar } from "@/contexts/sidebarContext"
+import { useCustomSidebar } from "@/contexts/sidebarContext"
 
 
 export function NavMain() {
-  const { sidebarItems } = useSidebar()
+  const { sidebarItems } = useCustomSidebar()
   return (
     <SidebarGroup>
       <SidebarMenu>

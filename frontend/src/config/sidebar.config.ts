@@ -38,7 +38,8 @@ export const booksSidebar: SidebarItemsData = [
 
 export const selectedBookSidebar = (
   bookId: string,
-  chapters: { id: string; number: number; title: string }[]
+  chapters: { id: string; number: number; title: string }[],
+  chapterId?: string
 ): SidebarItemsData => [
   {
     title: "Books",
@@ -60,6 +61,7 @@ export const selectedBookSidebar = (
             items: chapters.map((chapter) => ({
               title: `${chapter.number}. ${chapter.title}`,
               url: `/books/${bookId}/chapters/${chapter.id}`,
+              active: (chapterId === chapter.id ? true : undefined),
             })),
           }]
         : []

@@ -1,11 +1,10 @@
-import AppLayout from "@/components/AppLayout";
 import { BookForm } from "@/components/books/BookForm";
 import { useAuth } from "@/contexts/authContext";
 import { useNotification } from "@/contexts/notificationContext";
 import Cookies from "js-cookie";
 
 function CreateBookPage() {
-  const { logout } = useAuth(); 
+  const { logout } = useAuth();
   const { showSuccess, showError } = useNotification();
 
   const sendFunction = async (data: {
@@ -24,20 +23,23 @@ function CreateBookPage() {
     })
       .then((response) => {
         if (!response.ok) {
-          if(response.status === 401) {
+          if (response.status === 401) {
             logout();
           }
           if (response.status === 404) {
             showError("Book not found");
             return false;
           }
-          
+
           throw new Error("Network response was not ok");
         }
         return response.json();
       })
       .then((data) => {
-        showSuccess("Book created successfully", `Book "${data.title}" has been created.`);
+        showSuccess(
+          "Book created successfully",
+          `Book "${data.title}" has been created.`
+        );
         return true;
       })
       .catch((error) => {
@@ -45,13 +47,9 @@ function CreateBookPage() {
         return false;
       });
     return true;
-  }
+  };
 
-  return (
-    <AppLayout>
-      <BookForm formTitle="Create a new book" sendFunction={sendFunction} />
-    </AppLayout>
-  );
+  return <BookForm formTitle="Create a new book" sendFunction={sendFunction} />;
 }
 
 export default CreateBookPage;

@@ -1,4 +1,3 @@
-import AppLayout from "@/components/AppLayout";
 import { SectionCards } from "@/components/dashboard/SectionCards";
 import { BarChartInteractive } from "@/components/dashboard/BarChartInteractive";
 import { RecentAttemptsTable } from "@/components/dashboard/RecentAttemptsTable";
@@ -19,7 +18,7 @@ function HomePage() {
   }, [user]);
 
   return (
-    <AppLayout>
+    <>
       <SectionHeader
         title="Dashboard"
         loading={loading}
@@ -35,7 +34,7 @@ function HomePage() {
           <RecentAttemptsTable />
         </>
       )}
-    </AppLayout>
+    </>
   );
 }
 

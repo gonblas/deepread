@@ -16,10 +16,11 @@ import { SidebarProvider } from "./contexts/sidebarContext";
 
 import BookPage from "./pages/BookPage";
 import CreateBookPage from "./pages/CreateBookPage";
-import BookListPage from "./pages/BookListPage";
+import { BookListPage } from "./pages/BookListPage";
 import { NotificationProvider } from "./contexts/notificationContext";
 import { DataRefreshProvider } from "./contexts/dataRefreshContext";
 import { ChapterPage } from "./pages/ChapterPage";
+import AppLayout from "./components/AppLayout";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -36,7 +37,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return user ? (
-    <SidebarProvider>{children}</SidebarProvider>
+    <SidebarProvider><AppLayout>{children}</AppLayout></SidebarProvider>
   ) : (
     <Navigate to="/auth/login" replace />
   );
