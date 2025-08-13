@@ -15,12 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 import static gblas.books.backend.util.RepositoryAssertions.assertCountEquals;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -62,7 +59,7 @@ class BookControllerTest {
 
     @Test
     void getBooks_withBooksSaved_returnAPageNotEmpty() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
                 .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -72,7 +69,7 @@ class BookControllerTest {
 
     @Test
     void getBooks_withoutToken_returnAnUnauthorizedError() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/book"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -92,7 +89,7 @@ class BookControllerTest {
         }
     """, expectedTitle, expectedGenre, expectedDescription, expectedAuthor);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -121,7 +118,7 @@ class BookControllerTest {
         }
     """, expectedTitle, expectedGenre, expectedDescription, expectedAuthor);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
@@ -130,7 +127,7 @@ class BookControllerTest {
 
     @Test
     void addBook_withoutBodyRequest_shouldReturnAnBadRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -148,7 +145,7 @@ class BookControllerTest {
         }
     """, invalidTitle);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -169,7 +166,7 @@ class BookControllerTest {
         }
     """, validTitle, invalidGenre);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -180,7 +177,7 @@ class BookControllerTest {
 
     @Test
     void deleteBook_withValidData_shouldDeleteBook() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/" +  book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/books/" +  book.getId())
                 .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
     }
@@ -188,7 +185,7 @@ class BookControllerTest {
     @Test
     void deleteBook_withInvalidBookId_shouldReturnABadRequest() throws Exception {
         String wrongId = book.getId() + "wrong part";
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/" +  wrongId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/books/" +  wrongId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Invalid UUID format: " + wrongId));
@@ -197,7 +194,7 @@ class BookControllerTest {
     @Test
     void deleteBook_withFakeId_shouldReturnABadRequest() throws Exception {
         String fakeId = UUID.randomUUID().toString();
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/" +  fakeId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/books/" +  fakeId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Book not found"));
@@ -206,7 +203,7 @@ class BookControllerTest {
     @Test
     void deleteBook_withoutToken_shouldReturnAUnauthorizedRequest() throws Exception {
         String fakeId = UUID.randomUUID().toString();
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/" +  fakeId))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/books/" +  fakeId))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -226,7 +223,7 @@ class BookControllerTest {
         }
         """, newTitle, newGenre, newDescription, newAuthor);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -251,7 +248,7 @@ class BookControllerTest {
         }
         """, invalidTitle);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -262,7 +259,7 @@ class BookControllerTest {
 
     @Test
     void changeBook_withoutBody_shouldReturnBadRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -282,7 +279,7 @@ class BookControllerTest {
         }
         """, validTitle);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/books/" + book.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
@@ -299,7 +296,7 @@ class BookControllerTest {
         }
         """, newDescription);
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -322,7 +319,7 @@ class BookControllerTest {
         }
         """, invalidTitle);
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -333,7 +330,7 @@ class BookControllerTest {
 
     @Test
     void updateBook_withoutBody_shouldReturnBadRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/books/" + book.getId())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -350,7 +347,7 @@ class BookControllerTest {
         }
         """, updatedTitle);
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/book/" + book.getId())
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/books/" + book.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());

@@ -16,7 +16,7 @@ export function DeleteBookDialog({ bookTitle, bookId }: DeleteBookDialogProps) {
 
   const handleDelete = async () => {
     const responseFunc = async () => {
-      const response = await fetch(`http://localhost:8080/api/book/${bookId}`, {
+      const response = await fetch(`http://localhost:8080/api/books/${bookId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

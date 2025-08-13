@@ -14,7 +14,7 @@ function CreateBookPage() {
     genre: string;
     authors: string[];
   }) => {
-    fetch("http://localhost:8080/api/book", {
+    fetch("http://localhost:8080/api/books", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,6 +27,11 @@ function CreateBookPage() {
           if(response.status === 401) {
             logout();
           }
+          if (response.status === 404) {
+            showError("Book not found");
+            return false;
+          }
+          
           throw new Error("Network response was not ok");
         }
         return response.json();

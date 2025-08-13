@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/book/{bookId}/chapters")
+@RequestMapping("/api/books/{bookId}/chapters")
 @Tag(name = "Chapter Management", description = "APIs for managing chapters within books")
 public class ChapterController {
     private ChapterService chapterService;
@@ -48,8 +48,8 @@ public class ChapterController {
             }
     )
     @GetMapping("/{chapterId}")
-    public ChapterResponse getChapterDetails(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
-        return chapterService.getChapterDetails(bookId, chapterId, pageable);
+    public ChapterResponse getChapterDetails(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
+        return chapterService.getChapterDetails(bookId, chapterId);
     }
 
     @Operation(

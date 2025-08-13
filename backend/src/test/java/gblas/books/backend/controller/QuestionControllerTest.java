@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,7 +102,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + quizId + "/questions")
+        mockMvc.perform(post("/api/quizzes/" + quizId + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -126,7 +125,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + quizId + "/questions")
+        mockMvc.perform(post("/api/quizzes/" + quizId + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -158,7 +157,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + quizId + "/questions")
+        mockMvc.perform(post("/api/quizzes/" + quizId + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -182,7 +181,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/" + UUID.randomUUID() + "/questions")
+        mockMvc.perform(post("/api/quizzes/" + UUID.randomUUID() + "/questions")
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -193,7 +192,7 @@ class QuestionControllerTest {
 
     @Test
     void deleteTrueOrFalseQuestion_shouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/" + quizId + "/questions/" + trueOrFalseQuestionId)
+        mockMvc.perform(delete("/api/quizzes/" + quizId + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
         assertCountEquals(questionRepository, 3);
@@ -203,7 +202,7 @@ class QuestionControllerTest {
 
     @Test
     void deleteOpenQuestion_shouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/" + quizId + "/questions/" + openQuestionId)
+        mockMvc.perform(delete("/api/quizzes/" + quizId + "/questions/" + openQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
         assertCountEquals(questionRepository, 3);
@@ -213,7 +212,7 @@ class QuestionControllerTest {
 
     @Test
     void deleteMultipleChoiceQuestion_shouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/" + quizId + "/questions/" + multipleChoiceQuestionId)
+        mockMvc.perform(delete("/api/quizzes/" + quizId + "/questions/" + multipleChoiceQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNoContent());
         assertCountEquals(questionRepository, 3);
@@ -223,7 +222,7 @@ class QuestionControllerTest {
 
     @Test
     void deleteQuestion_withInvalidId_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/" + quizId + "/questions/" + UUID.randomUUID())
+        mockMvc.perform(delete("/api/quizzes/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
         assertCountEquals(questionRepository, 3);
@@ -232,7 +231,7 @@ class QuestionControllerTest {
 
     @Test
     void deleteQuestion_withInvalidQuiz_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
+        mockMvc.perform(delete("/api/quizzes/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isNotFound());
         assertCountEquals(questionRepository, 3);
@@ -250,7 +249,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + quizId + "/questions/" + trueOrFalseQuestionId)
+        mockMvc.perform(put("/api/quizzes/" + quizId + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedJson))
@@ -270,7 +269,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
+        mockMvc.perform(put("/api/quizzes/" + UUID.randomUUID() + "/questions/" + trueOrFalseQuestionId)
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -289,7 +288,7 @@ class QuestionControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/" + quizId + "/questions/" + UUID.randomUUID())
+        mockMvc.perform(put("/api/quizzes/" + quizId + "/questions/" + UUID.randomUUID())
                         .header("Authorization", "Bearer " + authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))

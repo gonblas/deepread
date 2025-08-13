@@ -27,7 +27,7 @@ export function EditBookDialog({ book }: EditBookDialogProps) {
     genre: string;
     authors: string[];
   }) => {
-    fetch(`http://localhost:8080/api/book/${book.id}`, {
+    fetch(`http://localhost:8080/api/books/${book.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

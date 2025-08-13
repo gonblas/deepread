@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/{quizId}/questions")
+@RequestMapping("/api/quizzes/{quizId}/questions")
 @AllArgsConstructor
 @Tag(name = "Question Management", description = "APIs for managing questions within quizzes")
 public class QuestionController {

@@ -19,6 +19,7 @@ import CreateBookPage from "./pages/CreateBookPage";
 import BookListPage from "./pages/BookListPage";
 import { NotificationProvider } from "./contexts/notificationContext";
 import { DataRefreshProvider } from "./contexts/dataRefreshContext";
+import { ChapterPage } from "./pages/ChapterPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -108,6 +109,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CreateBookPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/books/:bookId/chapters/:chapterId"
+        element={
+          <ProtectedRoute>
+            <ChapterPage />
           </ProtectedRoute>
         }
       />

@@ -105,7 +105,7 @@ export function BooksSearch() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/book?${params.toString()}`,
+        `http://localhost:8080/api/books?${params.toString()}`,
         {
           method: "GET",
           headers: {

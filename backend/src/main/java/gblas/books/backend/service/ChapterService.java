@@ -36,7 +36,7 @@ public class ChapterService {
         return chapters_page.map(ChapterMapper.INSTANCE::toDto);
     }
 
-    public ChapterResponse getChapterDetails(@Valid UUID bookId, @Valid UUID chapterId, Pageable pageable) {
+    public ChapterResponse getChapterDetails(@Valid UUID bookId, @Valid UUID chapterId) {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
         ChapterEntity chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
         return ChapterMapper.INSTANCE.toDto(chapter);

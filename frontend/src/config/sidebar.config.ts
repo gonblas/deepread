@@ -50,13 +50,20 @@ export const selectedBookSidebar = (
   {
     title: "Chapters",
     items: [
-      {title: "Add Chapter", url: `/books/${bookId}/chapters/create`, icon: Plus },
-      {title: "All Chapters", url: `/books/${bookId}/chapters`, collapsible: true, icon: FileText, items: [
-        ...chapters.map((chapter) => ({
-          title: `${chapter.number}. ${chapter.title}`,
-          url: `/books/${bookId}/chapters/${chapter.id}`,
-        })),
-      ]},
+      { title: "Add Chapter", url: `/books/${bookId}/chapters/create`, icon: Plus },
+      ...(chapters.length > 0
+        ? [{
+            title: "All Chapters",
+            url: `/books/${bookId}/chapters`,
+            collapsible: true,
+            icon: FileText,
+            items: chapters.map((chapter) => ({
+              title: `${chapter.number}. ${chapter.title}`,
+              url: `/books/${bookId}/chapters/${chapter.id}`,
+            })),
+          }]
+        : []
+      ),
     ],
   },
   {
