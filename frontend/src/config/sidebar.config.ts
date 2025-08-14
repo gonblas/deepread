@@ -52,7 +52,7 @@ export const selectedBookSidebar = (
     title: "Chapters",
     items: [
       { title: "Add Chapter", url: `/books/${bookId}/chapters/create`, icon: Plus },
-      ...(chapters.length > 0
+      ...(chapters.sort((a, b) => a.number - b.number).length > 0
         ? [{
             title: "All Chapters",
             url: `/books/${bookId}/chapters`,

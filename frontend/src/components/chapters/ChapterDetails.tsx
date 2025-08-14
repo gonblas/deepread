@@ -1,34 +1,40 @@
-import { useParams } from "react-router-dom";
-import { ModernChapterEditor } from "./ModernChapterEditor";
-import { ChapterSkeleton } from "./ChapterSkeleton";
-import { ChapterNotFound } from "./ChapterNotFound";
-import { useEffect } from "react";
-import { useChapter } from "@/contexts/chapterContext";
+"use client"
 
-export default function ChapterDetails({ isNew }: { isNew: boolean }) {
-  const { bookId, chapterId } = useParams<{ bookId: string , chapterId: string}>();
-  const { chapter, setChapter, loading, isSaving, fetchChapter, createChapter, updateChapter } = useChapter();
+import { useParams } from "react-router-dom"
+import { ModernChapterEditor } from "./ModernChapterEditor"
+import { ChapterSkeleton } from "./ChapterSkeleton"
+import { ChapterNotFound } from "./ChapterNotFound"
+import { useEffect } from "react"
+import { useChapter } from "@/contexts/chapterContext"
+
+export default function ChapterDetails() {
+  const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>()
+  const { chapter, setChapter, loading, isSaving, fetchChapter, createChapter, updateChapter } = useChapter()
+  const isNew = (chapterId === "create")
 
   useEffect(() => {
-    if (bookId && chapterId) {
-      fetchChapter(bookId, chapterId);
+    if (bookId && chapterId && !isNew) {
+      fetchChapter(bookId, chapterId)
     } else if (isNew) {
-      setChapter({ id: "new", title: "", number: 1, summary: "" });
+      setChapter({ id: "new", title: "", number: 1, summary: "" })
     }
-  }, [isNew, bookId, chapterId, fetchChapter]);
+  }, [isNew, bookId, chapterId, fetchChapter])
 
-  if (loading) return <ChapterSkeleton />;
-  if (!chapter) return <ChapterNotFound />;
+  if (loading) return <ChapterSkeleton />
+  if (!chapter) return <ChapterNotFound />
 
-  const handleSave = async () => {
-    if (isNew && bookId) {
-      await createChapter(bookId, chapter);
-    } else {
-      if(bookId){
-        await updateChapter(bookId, chapter);
+  const handleSave = async (updatedChapter: typeof chapter): Promise<boolean> => {
+    try {
+      if (isNew && bookId) {
+        await createChapter(bookId, updatedChapter)
+      } else if (bookId && chapterId) {
+        await updateChapter(bookId, chapterId, updatedChapter)
       }
+      return true
+    } catch (error) {
+      return false
     }
-  };
+  }
 
   return (
     <ModernChapterEditor
@@ -43,5 +49,5 @@ export default function ChapterDetails({ isNew }: { isNew: boolean }) {
       onDelete={() => {}}
       isSaving={isSaving}
     />
-  );
+  )
 }
