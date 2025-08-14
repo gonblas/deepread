@@ -13,7 +13,7 @@ export const defaultSidebar: SidebarItemsData = [
   {
     title: "Management",
     items: [
-      { title: "Create Quiz", url: "/create", icon: Plus },
+      { title: "Create Quiz", url: "/quizzes/create", icon: Plus },
       { title: "Settings", url: "/settings", icon: Settings },
     ],
   },

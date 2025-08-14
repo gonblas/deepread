@@ -21,6 +21,8 @@ import { NotificationProvider } from "./contexts/notificationContext";
 import { DataRefreshProvider } from "./contexts/dataRefreshContext";
 import { ChapterPage } from "./pages/ChapterPage";
 import AppLayout from "./components/AppLayout";
+import CreateQuizPage from "./pages/CreateQuizPage";
+import QuizEditPage from "./pages/QuizEditPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -118,6 +120,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <ChapterPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/books/:bookId/chapters/:chapterId/quiz/create"
+        element={
+          <ProtectedRoute>
+            <CreateQuizPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quizzes/:quizId/edit"
+        element={
+          <ProtectedRoute>
+            <QuizEditPage />
           </ProtectedRoute>
         }
       />
