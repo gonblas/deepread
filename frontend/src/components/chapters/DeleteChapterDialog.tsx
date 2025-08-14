@@ -2,21 +2,22 @@
 
 import { useAuth } from "@/contexts/authContext";
 import { DeleteElementDialog } from "../DeleteElementDialog";
-import Cookies from "js-cookie";
 import { useDataRefresh } from "@/contexts/dataRefreshContext";
+import Cookies from "js-cookie";
 
-interface DeleteBookDialogProps {
-  bookTitle: string;
+interface DeleteChapterDialogProps {
+  chapterTitle: string;
   bookId: string;
+  chapterId: string;
 }
 
-export function DeleteBookDialog({ bookTitle, bookId }: DeleteBookDialogProps) {
+export function DeleteChapterDialog({ chapterTitle, bookId, chapterId }: DeleteChapterDialogProps) {
   const { logout } = useAuth();
   const { deleteResource } = useDataRefresh();
 
   const handleDelete = async () => {
     const responseFunc = async () => {
-      const response = await fetch(`http://localhost:8080/api/books/${bookId}`, {
+      const response = await fetch(`http://localhost:8080/api/books/${bookId}/chapters/${chapterId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +31,7 @@ export function DeleteBookDialog({ bookTitle, bookId }: DeleteBookDialogProps) {
           throw new Error("Authentication failed");
         } else {
           throw new Error(
-            `Failed to delete book: ${response.status} ${response.statusText}`
+            `Failed to delete book: ${response.statusText}`
           );
         }
       }
@@ -45,10 +46,10 @@ export function DeleteBookDialog({ bookTitle, bookId }: DeleteBookDialogProps) {
 
     try {
       await deleteResource(
-        "book",
+        "chapter",
         responseFunc,
-        `Book "${bookTitle}" has been deleted successfully`,
-        "/books"
+        `Chapter "${chapterTitle}" has been deleted successfully`,
+        "/books/" + bookId
       );
     } catch (error) {
       console.error("Delete operation failed:", error);
@@ -56,6 +57,6 @@ export function DeleteBookDialog({ bookTitle, bookId }: DeleteBookDialogProps) {
   };
 
   return (
-    <DeleteElementDialog onDelete={handleDelete} elementName={bookTitle} resourceName="Book" />
+    <DeleteElementDialog onDelete={handleDelete} elementName={chapterTitle} resourceName="Chapter" fullWidth={true} />
   );
 }
