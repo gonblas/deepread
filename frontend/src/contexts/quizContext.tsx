@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
 import Cookies from "js-cookie";
+import { useNotification } from "./notificationContext";
 
 export type QuestionType = "TRUE_FALSE" | "OPEN" | "MULTIPLE_CHOICE"
 
@@ -79,6 +80,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const { showErrorFromHttpResponse } = useNotification()
 
   const setQuiz = useCallback((newQuiz: Quiz) => {
     setQuizState(newQuiz)
@@ -122,6 +124,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
       })
 
       if (!response.ok) {
+        showErrorFromHttpResponse("Failed to create quiz", await response.json())
         throw new Error("Failed to create quiz")
       }
 
