@@ -420,7 +420,7 @@ export function ModernChapterEditor({
           className="relative"
         >
           <h2 className="text-2xl font-semibold mb-6 text-foreground">
-            Content
+            Summary
           </h2>
 
           {isEditing ? (
@@ -431,22 +431,21 @@ export function ModernChapterEditor({
                   value={localSummary}
                   onChange={(e) => setLocalSummary(e.target.value)}
                   placeholder="Start writing your chapter content in markdown...
+                              You can use markdown:
+                              # Heading 1
+                              ## Heading 2  
+                              ### Heading 3
 
-You can use markdown:
-# Heading 1
-## Heading 2  
-### Heading 3
+                              **Bold text**
+                              *Italic text*
+                              `Code`
 
-**Bold text**
-*Italic text*
-`Code`
+                              > Quote
 
-> Quote
+                              - List item
+                              1. Numbered list
 
-- List item
-1. Numbered list
-
-[Link](url)"
+                              [Link](url)"
                   className={cn(
                     "w-full min-h-[600px] resize-none border-none bg-transparent",
                     "text-foreground placeholder:text-muted-foreground/50 focus:outline-none",
@@ -481,12 +480,6 @@ You can use markdown:
                     ⌘S
                   </kbd>
                   Save
-                </span>
-                <span className="flex items-center gap-2">
-                  <kbd className="px-2 py-1 bg-background rounded border">
-                    ⌘E
-                  </kbd>
-                  Toggle edit
                 </span>
               </motion.div>
             </div>

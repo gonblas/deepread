@@ -32,40 +32,16 @@ The application configuration is located in `src/main/resources/application.prop
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/gonblas/books-app
-    cd books-app/backend
+    cd books-app
     ```
 
 2.  **Build the project:** This will download dependencies and compile the source code.
     ```bash
-    mvn clean install
+    docker-compose up db backend --build
     ```
 
-3.  **Run the application:**
-    ```bash
-    mvn spring-boot:run
-    ```
-    The application will start on `http://localhost:8080`.
+The application will start on `http://localhost:8080`.
 
-### Running with Docker
-
-The project includes a `docker-compose.yml` file to easily run the application and a PostgreSQL database in containers.
-
-1.  **Build the Docker image:**
-    From the `backend` directory, run:
-    ```bash
-    docker build -t books-app-backend .
-    ```
-
-2.  **Start the services:**
-    This command will start the backend application and the database.
-    ```bash
-    docker-compose up -d
-    ```
-
-3.  **Stop the services:**
-    ```bash
-    docker-compose down
-    ```
 
 ## API Documentation (Swagger)
 
