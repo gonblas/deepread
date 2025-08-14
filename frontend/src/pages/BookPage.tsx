@@ -63,7 +63,7 @@ export default function BookPage() {
           if (data) setBook(data);
         });
 
-      fetch(`http://localhost:8080/api/books/${bookId}/chapters`, {
+      fetch(`http://localhost:8080/api/books/${bookId}/chapters?sort=number`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,

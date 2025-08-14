@@ -7,10 +7,17 @@ import { toast } from "sonner"
 interface NotificationContextType {
   showSuccess: (message: string, description?: string) => void
   showError: (message: string, description?: string) => void
+  showErrorFromHttpResponse: (title: string, error: ErrorResponse) => void
   showInfo: (message: string, description?: string) => void
   showWarning: (message: string, description?: string) => void
   showLoading: (message: string) => string | number
   dismissToast: (toastId: string | number) => void
+}
+
+export interface ErrorResponse {
+  message: string
+  statusCode: number
+  details: string
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
@@ -26,6 +33,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const showError = (message: string, description?: string) => {
     toast.error(message, {
       description,
+      duration: 5000,
+    })
+  }
+
+  const showErrorFromHttpResponse = (title: string, error: ErrorResponse) => {
+    toast.error(title, {
+      description: error.message || "Unknown error",
       duration: 5000,
     })
   }
@@ -55,6 +69,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const value: NotificationContextType = {
     showSuccess,
     showError,
+    showErrorFromHttpResponse,
     showInfo,
     showWarning,
     showLoading,

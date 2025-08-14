@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useCallback } from "react"
 import { useNotification } from "@/contexts/notificationContext"
 import { useAuth } from "./authContext"
+import type { ErrorResponse } from "@/contexts/notificationContext"
 import Cookies from "js-cookie"
 
 export interface Chapter {
@@ -23,16 +24,10 @@ interface ChapterContextType {
   setChapter: React.Dispatch<React.SetStateAction<Chapter | null>>
 }
 
-interface ErrorResponse {
-  message: string
-  statusCode: number
-  details: string
-}
-
 const ChapterContext = createContext<ChapterContextType | undefined>(undefined)
 
 export function ChapterProvider({ children }: { children: React.ReactNode }) {
-  const { showSuccess, showError } = useNotification()
+  const { showSuccess, showError, showErrorFromHttpResponse } = useNotification()
   const { logout } = useAuth()
 
   const [chapter, setChapter] = useState<Chapter | null>(null)
@@ -56,11 +51,11 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
               return null
             }
             if (response.status === 404) {
-              showError("Chapter not found")
+              showError("Chapter not found", "The requested chapter does not exist.")
               setChapter(null)
               return null
             }
-            throw new Error(`Request failed with status ${response.status}`)
+            throw response
           }
           return response.json()
         })
@@ -68,7 +63,7 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
           setChapter(data)
         })
         .catch((error) => {
-          showError("Failed to fetch chapter", error.message || "Unknown error")
+          showErrorFromHttpResponse("Failed to fetch chapter", error as ErrorResponse)
           setChapter(null)
         })
         .finally(() => {
@@ -106,7 +101,7 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
       showSuccess("Chapter created successfully", `Chapter "${result.title}" has been created.`)
       return result
     } catch (error) {
-      showError("Failed to create chapter", error.message || "Unknown error")
+      showErrorFromHttpResponse("Failed to create chapter", error as ErrorResponse)
       throw error
     } finally {
       setIsSaving(false)
@@ -117,7 +112,7 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
     setIsSaving(true)
     try {
       const response = await fetch(`http://localhost:8080/api/books/${bookId}/chapters/${chapterId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
@@ -140,7 +135,7 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
       showSuccess("Chapter updated successfully", `Chapter "${result.title}" has been updated.`)
       return result
     } catch (error) {
-      showError("Failed to update chapter", error.message || "Unknown error")
+      showErrorFromHttpResponse("Failed to update chapter", error as ErrorResponse)
       throw error
     } finally {
       setIsSaving(false)

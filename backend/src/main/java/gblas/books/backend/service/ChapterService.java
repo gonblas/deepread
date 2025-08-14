@@ -88,8 +88,8 @@ public class ChapterService {
 
         Optional<ChapterEntity> chapter = chapterRepository
                 .findByBookAndNumber(book, number);
-
-        if(chapter.isPresent()) {
+        boolean thereIsADifferentChapterWithSameChapter = chapter.isPresent() && !(chapterEntity.getNumber() == chapter.get().getNumber());
+        if(thereIsADifferentChapterWithSameChapter) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Chapter number already exists for this book");
         }
 

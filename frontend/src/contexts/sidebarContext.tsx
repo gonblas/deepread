@@ -45,7 +45,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if(bookId === undefined) {setChaptersSidebarItems([]); return;}
-    fetch(`http://localhost:8080/api/books/${bookId}/chapters`, {
+    fetch(`http://localhost:8080/api/books/${bookId}/chapters?sort=number`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("token")}`,

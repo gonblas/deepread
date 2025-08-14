@@ -43,7 +43,6 @@ export function ChapterListSection({
   chapters: { id: string; number: number; title: string }[];
 }) {
   const navigate = useNavigate();
-  const sortedChapters = chapters.sort((a, b) => a.number - b.number);
   return (
     <Card>
       <CardHeader>
@@ -71,7 +70,7 @@ export function ChapterListSection({
           <NoChaptersPlaceholder bookId={bookId}/>
         ) : (
           <ul className="space-y-3">
-            {sortedChapters.map((chapter) => (
+            {chapters.map((chapter) => (
               <li key={chapter.id}>
                 <div className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors">
                   <div className="flex items-center gap-4">
