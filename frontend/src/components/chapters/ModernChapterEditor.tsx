@@ -30,7 +30,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { DeleteChapterDialog } from "./DeleteChapterDialog";
 import { useNavigate, useParams } from "react-router-dom";
-
+import Cookies from "js-cookie";
+import { useNotification } from "@/contexts/notificationContext";
 interface ModernChapterEditorProps {
   title: string;
   summary: string;
@@ -69,7 +70,39 @@ export function ModernChapterEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const { bookId, chapterId } = useParams();
+  const { showWarning } = useNotification();
   const navigate = useNavigate();
+
+  const handleQuizClick = async () => {
+  if (!bookId || !chapterId) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/books/${bookId}/chapters/${chapterId}/quiz`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      const quizId = data.id;
+      navigate(`/quizzes/${quizId}`);
+    } else if (response.status === 404) {
+      showWarning("No quiz found for this chapter. You can create one now.");
+      navigate(`/books/${bookId}/chapters/${chapterId}/quiz/create`);
+    } else {
+      console.error("Error checking quiz", response.status);
+    }
+  } catch (err) {
+    console.error("Error connecting to server", err);
+  }
+};
+
 
   useEffect(() => {
     setLocalTitle(title);
@@ -304,15 +337,16 @@ export function ModernChapterEditor({
                       <Edit3 className="size-4 mr-2" />
                       Edit
                     </Button>
+                    {!isNew &&
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`${window.location.pathname.replace(/\/$/, "")}/quiz`)}
+                      onClick={handleQuizClick}
                       className="bg-background/50 hover:bg-primary/10 hover:border-primary/20"
                     >
                       <MessageCircleQuestionMark className="size-5 mr-1" />
                       Quiz
-                    </Button>
+                    </Button>}
                     {!isNew && bookId && chapterId && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

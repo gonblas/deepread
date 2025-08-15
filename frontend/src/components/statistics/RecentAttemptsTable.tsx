@@ -1,48 +1,8 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-const recentAttempts = [
-  {
-    id: 1,
-    bookTitle: "One Hundred Years of Solitude",
-    chapterNumber: 1,
-    score: 85,
-    date: "2025-08-09T09:00:00"
-  },
-  {
-    id: 2,
-    bookTitle: "Don Quixote",
-    chapterNumber: 2,
-    score: 72,
-    date: "2025-08-09T07:00:00"
-  },
-  {
-    id: 3,
-    bookTitle: "Hopscotch",
-    chapterNumber: 3,
-    score: 45,
-    date: "2025-08-08T10:00:00"
-  },
-  {
-    id: 4,
-    bookTitle: "The House of the Spirits",
-    chapterNumber: 4,
-    score: 88,
-    date: "2025-08-08T09:00:00"
-  },
-  {
-    id: 5,
-    bookTitle: "Love in the Time of Cholera",
-    chapterNumber: 2,
-    score: 91,
-    date: "2025-08-07T10:00:00"
-  },
-]
-
-// "Time ago" function in English
 function timeAgo(dateString: string) {
   const now = new Date();
   const date = new Date(dateString);
@@ -58,7 +18,14 @@ function timeAgo(dateString: string) {
   return "a few seconds ago";
 }
 
-export function RecentAttemptsTable() {
+export function RecentAttemptsTable({ recentAttempts }: { recentAttempts: Array<{
+  id: string;
+  bookTitle: string;
+  chapterNumber: number;
+  score: number;
+  date: string;
+}> }
+) {
   return (
     <Card>
       <CardHeader>

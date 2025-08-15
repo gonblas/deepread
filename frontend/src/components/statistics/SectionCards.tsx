@@ -15,14 +15,14 @@ export function SectionCards({ stats }: { stats: Stats }) {
       description: "Attempts",
       icon: <BarChart3 className="w-6 h-6 text-primary" />,
       value: (stats: Stats) => stats.totalAttempts,
-      footerMain: `Across ${stats.totalQuizzesAttempted} quizzes`,
+      footerMain: `${stats.totalQuizzesAttempted > 0 ? `Across ${stats.totalQuizzesAttempted} quizzes` : "No quizzes attempted"}`,
     },
     {
       key: "averageScore",
       description: "Average Score",
       icon: <Award className="w-6 h-6 text-primary" />,
       value: (stats: Stats) => stats.averageScore,
-      footerMain: "All quizzes",
+      footerMain: "All attempts averaged",
     },
     {
       key: "bestWorstScore",
@@ -36,7 +36,7 @@ export function SectionCards({ stats }: { stats: Stats }) {
       description: "Average Time",
       icon: <Clock className="w-6 h-6 text-primary" />,
       value: (stats: Stats) => stats.averageTimeSeconds,
-      footerMain: "Avg. time per quiz",
+      footerMain: "Avg. time per quiz attempt",
     },
   ];
 

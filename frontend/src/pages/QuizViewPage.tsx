@@ -20,6 +20,7 @@ import {
   useStatistics,
 } from "@/contexts/statisticsContext";
 import { Play, Edit, Clock, Hash, BookOpen, FileQuestion } from "lucide-react";
+import { RecentAttemptsTable } from "@/components/statistics/RecentAttemptsTable";
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -27,6 +28,44 @@ interface StatCardProps {
   value: string | number;
   iconBgColor: string;
 }
+
+const recentAttempts = [
+  {
+    id: "1",
+    bookTitle: "One Hundred Years of Solitude",
+    chapterNumber: 1,
+    score: 85,
+    date: "2025-08-09T09:00:00"
+  },
+  {
+    id: "2",
+    bookTitle: "Don Quixote",
+    chapterNumber: 2,
+    score: 72,
+    date: "2025-08-09T07:00:00"
+  },
+  {
+    id: "3",
+    bookTitle: "Hopscotch",
+    chapterNumber: 3,
+    score: 45,
+    date: "2025-08-08T10:00:00"
+  },
+  {
+    id: "4",
+    bookTitle: "The House of the Spirits",
+    chapterNumber: 4,
+    score: 88,
+    date: "2025-08-08T09:00:00"
+  },
+  {
+    id: "5",
+    bookTitle: "Love in the Time of Cholera",
+    chapterNumber: 2,
+    score: 91,
+    date: "2025-08-07T10:00:00"
+  },
+]
 
 function StatCard({ icon, title, value, iconBgColor }: StatCardProps) {
   return (
@@ -214,6 +253,7 @@ function QuizViewContent({ quizId }: { quizId: string }) {
           <h2 className="text-2xl font-bold">Quiz Performance Statistics</h2>
           <SectionCards stats={quizStats.stats} />
           <BarChartInteractive chartData={quizStats.dailyStatsTimeline} />
+          <RecentAttemptsTable recentAttempts={recentAttempts} />
         </div>
       )}
     </div>

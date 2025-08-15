@@ -6,6 +6,44 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/authContext";
 import { SectionHeader } from "@/components/SectionHeader";
 
+const recentAttempts = [
+  {
+    id: "1",
+    bookTitle: "One Hundred Years of Solitude",
+    chapterNumber: 1,
+    score: 85,
+    date: "2025-08-09T09:00:00"
+  },
+  {
+    id: "2",
+    bookTitle: "Don Quixote",
+    chapterNumber: 2,
+    score: 72,
+    date: "2025-08-09T07:00:00"
+  },
+  {
+    id: "3",
+    bookTitle: "Hopscotch",
+    chapterNumber: 3,
+    score: 45,
+    date: "2025-08-08T10:00:00"
+  },
+  {
+    id: "4",
+    bookTitle: "The House of the Spirits",
+    chapterNumber: 4,
+    score: 88,
+    date: "2025-08-08T09:00:00"
+  },
+  {
+    id: "5",
+    bookTitle: "Love in the Time of Cholera",
+    chapterNumber: 2,
+    score: 91,
+    date: "2025-08-07T10:00:00"
+  },
+]
+
 function HomePage() {
   const { fetchUserStats, userStats, loading, error } =
     useStatistics();
@@ -31,7 +69,7 @@ function HomePage() {
         <>
           <SectionCards stats={userStats.stats} />
           <BarChartInteractive chartData={userStats.dailyStatsTimeline} />
-          <RecentAttemptsTable />
+          <RecentAttemptsTable recentAttempts={recentAttempts} />
         </>
       )}
     </>
