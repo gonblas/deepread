@@ -24,6 +24,7 @@ import AppLayout from "./components/AppLayout";
 import CreateQuizPage from "./pages/CreateQuizPage";
 import QuizEditPage from "./pages/QuizEditPage";
 import QuizViewPage from "./pages/QuizViewPage";
+import QuizzesPage from "./pages/QuizzesPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -40,7 +41,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return user ? (
-    <SidebarProvider><AppLayout>{children}</AppLayout></SidebarProvider>
+    <SidebarProvider>
+      <AppLayout>{children}</AppLayout>
+    </SidebarProvider>
   ) : (
     <Navigate to="/auth/login" replace />
   );
@@ -121,6 +124,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <ChapterPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quizzes"
+        element={
+          <ProtectedRoute>
+            <QuizzesPage />
           </ProtectedRoute>
         }
       />

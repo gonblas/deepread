@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -21,19 +22,18 @@ public interface QuizRepository extends CrudRepository<QuizEntity, UUID> {
     SELECT q FROM QuizEntity q
     JOIN q.chapter c
     JOIN c.book b
-    JOIN b.owner u
-    WHERE u = :user
+    WHERE b = :book
     """)
-    Page<QuizEntity> findAllQuizzesByUser(UserEntity user, Pageable pageable);
+    Page<QuizEntity> findAllQuizzesByBook(BookEntity book, Pageable pageable);
 
     @Query("""
     SELECT q FROM QuizEntity q
     JOIN q.chapter c
     JOIN c.book b
-    WHERE b = :book
+    JOIN b.owner u
+    WHERE u = :user
+    AND (LOWER(c.title) LIKE LOWER(CONCAT('%',:search,'%')) OR :search IS NULL)
     """)
-    Page<QuizEntity> findAllQuizzesByBook(BookEntity book, Pageable pageable);
-
-    QuizEntity getById(UUID id);
+    Page<QuizEntity> findAllQuizzesByUserAndOptionalChapterTitle(@Param("user") UserEntity user, @Param("search") String search, Pageable pageable);
 }
 

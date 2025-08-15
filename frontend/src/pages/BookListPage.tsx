@@ -18,10 +18,9 @@ import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres";
 import Cookies from "js-cookie";
 import { ErrorCard } from "../components/ErrorCard";
 import { Pagination } from "../components/Pagination";
-import { BookSectionSkeleton } from "../components/books/BookSectionSkeleton";
+import { SearchSectionSkeleton } from "../components/SearchSectionSkeleton";
 import { useAuth } from "@/contexts/authContext";
 import { SectionHeader } from "../components/SectionHeader";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 interface Book {
@@ -73,16 +72,6 @@ export default function BookListPage() {
   const genresWithLabels = getAllGenresWithLabels();
   const { logout } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const updatedBook = localStorage.getItem("bookUpdated");
-    if (updatedBook) {
-      toast.success("Book updated successfully", {
-        description: `Book "${updatedBook}" has been updated.`,
-      });
-      localStorage.removeItem("bookUpdated");
-    }
-  }, []);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const maxTotalElements = 12;
@@ -265,7 +254,7 @@ export default function BookListPage() {
         retryButtonText="Try Again"
       />
 
-      <BookSectionSkeleton isLoading={loading} />
+      <SearchSectionSkeleton isLoading={loading} />
 
       {!loading && !error && books.length === 0 && (
         <Card>

@@ -39,8 +39,8 @@ public class QuizService {
     private final QuizVersionService quizVersionService;
 
 
-    public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable) {
-        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByUser(user, pageable);
+    public Page<QuizResponse> getAllQuizzesFromUser(UserEntity user, Pageable pageable, String search) {
+        Page<QuizEntity> quizzesPage = quizRepository.findAllQuizzesByUserAndOptionalChapterTitle(user, search, pageable);
         return quizzesPage.map(quiz -> {
             QuizVersionEntity currentVersion = quizVersionService.getLastQuizVersionEntity(quiz);
             return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);

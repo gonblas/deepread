@@ -1,7 +1,7 @@
-import { Card } from "../ui/card";
-import { Skeleton } from "../ui/skeleton";
+import { Card } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
-export function BookSectionSkeleton({ isLoading }: { isLoading: boolean }) {
+export function SearchSectionSkeleton({ isLoading }: { isLoading: boolean }) {
   return (
     <>
       {isLoading && (

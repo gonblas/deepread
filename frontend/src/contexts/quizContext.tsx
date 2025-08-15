@@ -170,12 +170,11 @@ export function QuizProvider({ children }: QuizProviderProps) {
       };
 
       try {
-        // Usamos redirectPath como función para capturar el id
         await createResource(
           "quiz",
           createQuizRequest,
           "Quiz created successfully",
-          (result) => `/quizzes/${result.id}` // ✅ dinámico usando result.id
+          (result) => `/quizzes/${result.id}`
         );
       } catch (err) {
         const errorMessage =
