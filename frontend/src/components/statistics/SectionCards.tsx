@@ -6,15 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BarChart3, Clock, AlertTriangle, Award } from "lucide-react";
-
-type Stats = {
-  totalAttempts: number;
-  totalQuizzesAttempted: number;
-  averageScore: number;
-  bestScore: number;
-  worstScore: number;
-  averageTimeSeconds: number;
-};
+import type { Stats } from "@/contexts/statisticsContext";
 
 export function SectionCards({ stats }: { stats: Stats }) {
   const cardConfig = [

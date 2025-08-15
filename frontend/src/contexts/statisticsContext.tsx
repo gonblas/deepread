@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+"use client";
+
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
 import { useAuth } from "./authContext";
 
@@ -17,41 +20,56 @@ export type Stats = {
   averageTimeSeconds: number;
 };
 
-interface StatisticsContextValue {
-  loading: boolean;
-  error: string | null;
+export type StatsWithTimeline = {
   stats: Stats;
   dailyStatsTimeline: BarChartInteractiveProps[];
+};
+
+export type QuizStatsResponse = StatsWithTimeline & {
+  chapterId?: string;
+  chapterTitle?: string;
+};
+
+interface StatisticsContextValue {
+  // User stats
+  loading: boolean;
+  error: string | null;
+  userStats: StatsWithTimeline;
   fetchUserStats: () => void;
+
+  // Quiz specific stats
+  quizLoading: boolean;
+  quizError: string | null;
+  quizStats: QuizStatsResponse | null;
+  fetchQuizStats: (chapterId: string) => void;
 }
 
-const StatisticsContext = createContext<StatisticsContextValue | undefined>(
-  undefined
-);
+const StatisticsContext = createContext<StatisticsContextValue | undefined>(undefined);
 
-export function StatisticsProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function StatisticsProvider({ children }: { children: React.ReactNode }) {
   const { logout, isLoading } = useAuth();
 
-  // Estado separado para las estadísticas generales
-  const [stats, setStats] = useState<Stats>({
+  const emptyStats: Stats = {
     totalAttempts: 0,
     totalQuizzesAttempted: 0,
     averageScore: 0,
     bestScore: 0,
     worstScore: 0,
     averageTimeSeconds: 0,
-  });
+  };
 
-  const [dailyStatsTimeline, setDailyStatsTimeline] = useState<
-    BarChartInteractiveProps[]
-  >([]);
+  const emptyStatsWithTimeline: StatsWithTimeline = {
+    stats: emptyStats,
+    dailyStatsTimeline: [],
+  };
 
+  const [userStats, setUserStats] = useState<StatsWithTimeline>(emptyStatsWithTimeline);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [quizStats, setQuizStats] = useState<QuizStatsResponse | null>(null);
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [quizError, setQuizError] = useState<string | null>(null);
 
   const fetchUserStats = () => {
     setLoading(true);
@@ -78,29 +96,14 @@ export function StatisticsProvider({
           };
         }
         if (response.status === 204) {
-          return {
-            stats: {
-              totalAttempts: 0,
-              totalQuizzesAttempted: 0,
-              averageScore: 0,
-              bestScore: 0,
-              worstScore: 0,
-              averageTimeSeconds: 0,
-            },
-            dailyStatsTimeline: [],};
+          return emptyStatsWithTimeline;
         }
-        return response.json();
+        const text = await response.text();
+        if (!text) return emptyStatsWithTimeline;
+        return JSON.parse(text);
       })
-      .then((data) => {
-        setStats({
-          totalAttempts: data.stats.totalAttempts,
-          totalQuizzesAttempted: data.stats.totalQuizzesAttempted,
-          averageScore: data.stats.averageScore,
-          bestScore: data.stats.bestScore,
-          worstScore: data.stats.worstScore,
-          averageTimeSeconds: data.stats.averageTimeSeconds,
-        });
-        setDailyStatsTimeline(data.stats.setDailyStatsTimeline || []);
+      .then((data: StatsWithTimeline) => {
+        setUserStats(data);
       })
       .catch((err) => {
         if (err.status === 401) {
@@ -114,9 +117,75 @@ export function StatisticsProvider({
       });
   };
 
+  const fetchQuizStats = (chapterId: string) => {
+    setQuizLoading(true);
+    setQuizError(null);
+
+    if (isLoading) {
+      setQuizLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/statistics/chapters/${chapterId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const text = await response.text();
+          throw {
+            status: response.status,
+            message: text || "Failed to fetch quiz stats",
+          };
+        }
+        if (response.status === 204) {
+          return {
+            chapterId,
+            chapterTitle: "",
+            ...emptyStatsWithTimeline,
+          };
+        }
+        const text = await response.text();
+        if (!text) return {
+          chapterId,
+          chapterTitle: "",
+          ...emptyStatsWithTimeline,
+        };
+        return JSON.parse(text);
+      })
+      .then((data: QuizStatsResponse) => {
+        setQuizStats(data);
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          logout();
+          return;
+        }
+        setQuizError(err.message || "Unknown error");
+      })
+      .finally(() => {
+        setQuizLoading(false);
+      });
+    setQuizLoading(false);
+  };
+
   return (
     <StatisticsContext.Provider
-      value={{ loading, error, stats, dailyStatsTimeline, fetchUserStats }}
+      value={{
+        // User stats
+        loading,
+        error,
+        userStats,
+        fetchUserStats,
+        // Quiz stats
+        quizLoading,
+        quizError,
+        quizStats,
+        fetchQuizStats,
+      }}
     >
       {children}
     </StatisticsContext.Provider>

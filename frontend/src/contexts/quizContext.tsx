@@ -37,7 +37,15 @@ export type Question = TrueFalseQuestion | OpenQuestion | MultipleChoiceQuestion
 
 export interface Quiz {
   id?: string
+  chapter?: Chapter
   questions: Question[]
+}
+
+export interface Chapter {
+  id: string
+  title: string
+  number: number
+  summary: string
 }
 
 interface QuizContextType {
@@ -194,36 +202,21 @@ export function QuizProvider({ children }: QuizProviderProps) {
     setError(null)
 
     try {
-      // Simulate API call - replace with actual endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const response = await fetch(`http://localhost:8080/api/quizzes/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      })
 
-      // Mock quiz data - replace with actual API call
-      const mockQuiz = {
-        id,
-        questions: [
-          {
-            id: "1",
-            type: "MULTIPLE_CHOICE" as QuestionType,
-            prompt: "What is the capital of France?",
-            explanation: "Paris is the capital and largest city of France.",
-            options: [
-              { text: "London", isCorrect: false },
-              { text: "Berlin", isCorrect: false },
-              { text: "Paris", isCorrect: true },
-              { text: "Madrid", isCorrect: false },
-            ],
-          } as MultipleChoiceQuestion,
-          {
-            id: "2",
-            type: "TRUE_FALSE" as QuestionType,
-            prompt: "The Earth is flat.",
-            explanation: "The Earth is actually spherical in shape.",
-            isAnswerTrue: false,
-          } as TrueFalseQuestion,
-        ],
+      if (!response.ok) {
+        showErrorFromHttpResponse("Failed to fetch quiz", await response.json())
+        throw new Error("Failed to create quiz")
       }
 
-      setQuizState(mockQuiz)
+      const quiz = await response.json()
+      setQuizState(quiz)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch quiz"
       setError(errorMessage)

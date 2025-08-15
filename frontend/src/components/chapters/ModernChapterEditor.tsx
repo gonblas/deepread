@@ -5,17 +5,16 @@ import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Save,
   FileText,
   Clock,
+  MessageCircleQuestionMark,
   MoreHorizontal,
   Edit3,
   Sparkles,
   Check,
   Loader2,
-  Copy,
   Download,
 } from "lucide-react";
 import {
@@ -30,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { DeleteChapterDialog } from "./DeleteChapterDialog";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface ModernChapterEditorProps {
   title: string;
@@ -45,8 +44,6 @@ interface ModernChapterEditorProps {
     number: number;
   }) => Promise<boolean>;
   isNew?: boolean;
-  onDelete?: () => void;
-  onDuplicate?: () => void;
   onExport?: () => void;
   isSaving?: boolean;
 }
@@ -60,8 +57,6 @@ export function ModernChapterEditor({
   onNumberChange,
   onSave,
   isNew = false,
-  onDelete,
-  onDuplicate,
   onExport,
   isSaving = false,
 }: ModernChapterEditorProps) {
@@ -74,6 +69,7 @@ export function ModernChapterEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const { bookId, chapterId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLocalTitle(title);
@@ -211,22 +207,9 @@ export function ModernChapterEditor({
         animate={{ y: 0, opacity: 1 }}
         className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50"
       >
-        <div className="max-w-5xl mx-auto px-6 py-4">
+        <div className="mx-auto py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Badge
-                  variant="outline"
-                  className="bg-primary/10 border-primary/20 text-primary font-medium"
-                >
-                  Chapter {localNumber}
-                </Badge>
-              </motion.div>
-
               <div className="flex items-center gap-6 text-sm text-muted-foreground">
                 <motion.span
                   initial={{ opacity: 0 }}
@@ -318,8 +301,17 @@ export function ModernChapterEditor({
                       onClick={() => setIsEditing(true)}
                       className="bg-background/50 hover:bg-primary/10 hover:border-primary/20"
                     >
-                      <Edit3 className="w-4 h-4 mr-2" />
+                      <Edit3 className="size-4 mr-2" />
                       Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`${window.location.pathname.replace(/\/$/, "")}/quiz`)}
+                      className="bg-background/50 hover:bg-primary/10 hover:border-primary/20"
+                    >
+                      <MessageCircleQuestionMark className="size-5 mr-1" />
+                      Quiz
                     </Button>
                     {!isNew && bookId && chapterId && (
                       <DropdownMenu>
@@ -356,7 +348,7 @@ export function ModernChapterEditor({
       </motion.div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-12" onKeyDown={handleKeyDown}>
+      <div className="mx-auto px-6 py-12" onKeyDown={handleKeyDown}>
         {/* Chapter Number and Title Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

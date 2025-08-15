@@ -5,7 +5,7 @@ export function ChapterSkeleton() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         {/* Loading Header */}
         <div className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50">
-          <div className="max-w-5xl mx-auto px-6 py-4">
+          <div className="mx-auto py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Skeleton className="h-6 w-20" />
@@ -24,7 +24,7 @@ export function ChapterSkeleton() {
         </div>
 
         {/* Loading Content */}
-        <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="mx-auto px-6 py-12">
           <div className="mb-16">
             <Skeleton className="h-16 w-3/4 mb-4" />
           </div>

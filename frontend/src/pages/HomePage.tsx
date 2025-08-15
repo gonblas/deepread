@@ -1,13 +1,13 @@
-import { SectionCards } from "@/components/dashboard/SectionCards";
-import { BarChartInteractive } from "@/components/dashboard/BarChartInteractive";
-import { RecentAttemptsTable } from "@/components/dashboard/RecentAttemptsTable";
+import { SectionCards } from "@/components/statistics/SectionCards";
+import { BarChartInteractive } from "@/components/statistics/BarChartInteractive";
+import { RecentAttemptsTable } from "@/components/statistics/RecentAttemptsTable";
 import { useStatistics } from "@/contexts/statisticsContext";
-import { useEffect } from "react";
+import { useEffect } from "react"; 
 import { useAuth } from "@/contexts/authContext";
 import { SectionHeader } from "@/components/SectionHeader";
 
 function HomePage() {
-  const { fetchUserStats, stats, dailyStatsTimeline, loading, error } =
+  const { fetchUserStats, userStats, loading, error } =
     useStatistics();
   const { user } = useAuth();
 
@@ -29,8 +29,8 @@ function HomePage() {
       {error && <div className="p-4 text-red-500">{error}</div>}
       {!loading && !error && (
         <>
-          <SectionCards stats={stats} />
-          <BarChartInteractive chartData={dailyStatsTimeline} />
+          <SectionCards stats={userStats.stats} />
+          <BarChartInteractive chartData={userStats.dailyStatsTimeline} />
           <RecentAttemptsTable />
         </>
       )}

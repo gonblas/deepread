@@ -38,6 +38,20 @@ public class QuizController {
     }
 
     @Operation(
+            summary = "Get quiz from quiz id",
+            description = "Retrieves a quiz associated with its id.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/api/quizzes/{quizId}")
+    public QuizResponse getQuizDetailsFromId(@Valid @PathVariable UUID quizId) {
+        return quizService.getQuizDetailsFromId(quizId);
+    }
+
+    @Operation(
             summary = "Get paginated quizzes for a book",
             description = "Retrieves paginated quizzes related to a specific book.",
             responses = {

@@ -12,6 +12,7 @@ import gblas.books.backend.repository.ChapterRepository;
 import gblas.books.backend.repository.QuizRepository;
 import gblas.books.backend.repository.QuizVersionRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,12 @@ public class QuizService {
             QuizVersionEntity currentVersion = quizVersionService.getLastQuizVersionEntity(quiz);
             return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);
         });
+    }
+
+    public QuizResponse getQuizDetailsFromId(@Valid UUID quizId) {
+        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizVersionEntity currentVersion = quizVersionService.getLastQuizVersionEntity(quiz);
+        return QuizMapper.INSTANCE.toDto(currentVersion, questionMapperFactory);
     }
 
     public Page<QuizResponse> getAllQuizzesFromBook(UUID bookId, Pageable pageable) {
