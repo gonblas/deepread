@@ -19,7 +19,7 @@ export function QuizPreview({ questions, onAddQuestions }: QuizPreviewProps) {
           <Eye className="w-5 h-5" />
           Quiz Preview
         </CardTitle>
-        <CardDescription>See how your quiz will appear to students</CardDescription>
+        <CardDescription>See how your quiz will appear to you</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {questions.length === 0 ? (
@@ -105,8 +105,8 @@ export function QuizPreview({ questions, onAddQuestions }: QuizPreviewProps) {
                       )}
 
                       {question.explanation && (
-                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                          <p className="text-sm text-blue-800">
+                        <div className="mt-3 p-3 bg-card border border-border rounded-md">
+                          <p className="text-sm text-card-foreground">
                             <strong>Explanation:</strong> {question.explanation}
                           </p>
                         </div>

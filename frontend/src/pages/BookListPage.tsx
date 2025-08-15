@@ -169,7 +169,7 @@ export default function BookListPage() {
   };
 
   const handleCreateBook = () => {
-    navigate("/books/create")
+    navigate("/books/create");
   };
 
   const clearFilters = () => {
@@ -186,10 +186,14 @@ export default function BookListPage() {
           loading={loading}
           error={error}
           description="Explore our collection of available books"
-          buttonText="Create Book"
-          onButtonClick={handleCreateBook}
-          buttonIcon={<Plus className="mr-1 size-6" />}
-        />
+        >
+          <Button size="lg" className="shrink-0" onClick={handleCreateBook}>
+            <span className="mr-1 size-4 flex items-center">
+              <Plus className="mr-1 size-6" />
+            </span>
+            Create Book
+          </Button>
+        </SectionHeader>
 
         <Card>
           <CardContent className="pt-6">

@@ -1,21 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save } from "lucide-react"
-import { useQuiz, type Question, type MultipleChoiceQuestion } from "@/contexts/quizContext"
-import { QuizQuestionEditor } from "@/components/quizzes/QuizQuestionEditor"
-import { QuizQuestionsList } from "@/components/quizzes/QuizQuestionsList"
-import { QuizPreview } from "@/components/quizzes/QuizPreview"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save } from "lucide-react";
+import {
+  useQuiz,
+  type Question,
+  type MultipleChoiceQuestion,
+} from "@/contexts/quizContext";
+import { QuizQuestionEditor } from "@/components/quizzes/QuizQuestionEditor";
+import { QuizQuestionsList } from "@/components/quizzes/QuizQuestionsList";
+import { QuizPreview } from "@/components/quizzes/QuizPreview";
+import { SectionHeader } from "../SectionHeader";
 
 interface QuizCreatorProps {
-  onSave?: () => void
-  isEditing?: boolean
+  onSave?: () => void;
+  isEditing?: boolean;
 }
 
 export function QuizCreator({ onSave, isEditing = false }: QuizCreatorProps) {
-  const { quiz, saving, addQuestion, updateQuestion, deleteQuestion, duplicateQuestion } = useQuiz()
+  const {
+    quiz,
+    saving,
+    addQuestion,
+    updateQuestion,
+    deleteQuestion,
+    duplicateQuestion,
+  } = useQuiz();
 
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
     id: crypto.randomUUID(),
@@ -28,10 +40,10 @@ export function QuizCreator({ onSave, isEditing = false }: QuizCreatorProps) {
       { text: "", isCorrect: false },
       { text: "", isCorrect: false },
     ],
-  } as MultipleChoiceQuestion)
+  } as MultipleChoiceQuestion);
 
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  const [activeTab, setActiveTab] = useState("editor")
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("editor");
 
   const resetCurrentQuestion = () => {
     setCurrentQuestion({
@@ -45,89 +57,100 @@ export function QuizCreator({ onSave, isEditing = false }: QuizCreatorProps) {
         { text: "", isCorrect: false },
         { text: "", isCorrect: false },
       ],
-    } as MultipleChoiceQuestion)
-    setEditingIndex(null)
-  }
+    } as MultipleChoiceQuestion);
+    setEditingIndex(null);
+  };
 
   const validateQuestion = (question: Question): boolean => {
-    if (!question.prompt.trim()) return false
+    if (!question.prompt.trim()) return false;
 
     switch (question.type) {
       case "TRUE_FALSE":
-        return true
+        return true;
       case "OPEN":
-        return question.expectedAnswer?.trim() !== ""
+        return question.expectedAnswer?.trim() !== "";
       case "MULTIPLE_CHOICE":
-        const mcQuestion = question as MultipleChoiceQuestion
+        const mcQuestion = question as MultipleChoiceQuestion;
         return (
           mcQuestion.options.length >= 2 &&
           mcQuestion.options.every((opt) => opt.text.trim() !== "") &&
           mcQuestion.options.some((opt) => opt.isCorrect)
-        )
+        );
     }
-  }
+  };
 
   const handleSaveQuestion = () => {
-    if (!validateQuestion(currentQuestion)) return
+    if (!validateQuestion(currentQuestion)) return;
 
     if (editingIndex !== null) {
-      updateQuestion(editingIndex, currentQuestion)
+      updateQuestion(editingIndex, currentQuestion);
     } else {
-      addQuestion(currentQuestion)
+      addQuestion(currentQuestion);
     }
 
-    resetCurrentQuestion()
-    setActiveTab("questions")
-  }
+    resetCurrentQuestion();
+    setActiveTab("questions");
+  };
 
   const handleEditQuestion = (index: number) => {
-    if (!quiz) return
-    setCurrentQuestion(quiz.questions[index])
-    setEditingIndex(index)
-    setActiveTab("editor")
-  }
+    if (!quiz) return;
+    setCurrentQuestion(quiz.questions[index]);
+    setEditingIndex(index);
+    setActiveTab("editor");
+  };
 
   const handleDeleteQuestion = (index: number) => {
-    deleteQuestion(index)
-  }
+    deleteQuestion(index);
+  };
 
   const handleDuplicateQuestion = (index: number) => {
-    duplicateQuestion(index)
-  }
+    duplicateQuestion(index);
+  };
 
   const canSaveQuiz = () => {
-    return quiz && quiz.questions.length > 0
-  }
+    return quiz && quiz.questions.length > 0;
+  };
 
   const handleSaveQuiz = () => {
     if (canSaveQuiz()) {
-      onSave?.()
+      onSave?.();
     }
-  }
+  };
 
-  const questions = quiz?.questions || []
+  const questions = quiz?.questions || [];
 
   return (
     <div className="w-full mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{isEditing ? "Edit Quiz" : "Create Quiz"}</h1>
-          <p className="text-muted-foreground">
-            {isEditing ? "Modify your quiz questions" : "Create engaging quizzes with multiple question types"}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleSaveQuiz} disabled={!canSaveQuiz() || saving} className="gap-2">
-            <Save className="w-4 h-4" />
-            {saving ? "Saving..." : isEditing ? "Update Quiz" : "Save Quiz"}
-          </Button>
-        </div>
-      </div>
+      <SectionHeader
+        title={isEditing ? "Edit Quiz" : "Create Quiz"}
+        loading={saving}
+        error={false}
+        description={
+          isEditing
+            ? "Modify your quiz questions"
+            : "Create engaging quizzes with multiple question types"
+        }
+      >
+        <Button
+          onClick={handleSaveQuiz}
+          disabled={!canSaveQuiz() || saving}
+          className="gap-2"
+        >
+          <Save className="w-4 h-4" />
+          {saving ? "Saving..." : isEditing ? "Update Quiz" : "Save Quiz"}
+        </Button>
+      </SectionHeader>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="editor">Question Editor</TabsTrigger>
-          <TabsTrigger value="questions">Questions ({questions.length})</TabsTrigger>
+          <TabsTrigger value="questions">
+            Questions ({questions.length})
+          </TabsTrigger>
           <TabsTrigger value="preview">Preview</TabsTrigger>
         </TabsList>
 
@@ -153,9 +176,12 @@ export function QuizCreator({ onSave, isEditing = false }: QuizCreatorProps) {
         </TabsContent>
 
         <TabsContent value="preview" className="space-y-6">
-          <QuizPreview questions={questions} onAddQuestions={() => setActiveTab("editor")} />
+          <QuizPreview
+            questions={questions}
+            onAddQuestions={() => setActiveTab("editor")}
+          />
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -1,13 +1,9 @@
-import { Button } from "@/components/ui/button"
-
 interface SectionHeaderProps {
   title: string
   loading: boolean
   error: boolean | string | null
   description?: string
-  buttonText?: string
-  onButtonClick?: () => void
-  buttonIcon?: React.ReactNode
+  children?: React.ReactNode
 }
 
 export function SectionHeader({
@@ -15,9 +11,7 @@ export function SectionHeader({
   loading,
   error,
   description,
-  buttonText,
-  onButtonClick,
-  buttonIcon,
+  children,
 }: SectionHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -31,12 +25,7 @@ export function SectionHeader({
               : description}
         </p>
       </div>
-      {buttonText && onButtonClick && (
-        <Button size="lg" className="shrink-0" onClick={onButtonClick}>
-          {buttonIcon && <span className="mr-1 size-4 flex items-center">{buttonIcon}</span>}
-          {buttonText}
-        </Button>
-      )}
+      {children}
     </div>
   )
 }
