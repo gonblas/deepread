@@ -88,8 +88,6 @@ export function DataRefreshProvider({
         }, 100);
 
         if (redirectPath) {
-          console.log("Result:", result);
-          console.log("typeof redirectPath:", typeof redirectPath);
           const path =
             typeof redirectPath === "function"
               ? redirectPath(result)

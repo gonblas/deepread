@@ -105,7 +105,6 @@ export function QuizProvider({ children }: QuizProviderProps) {
   const [saving, setSaving] = useState(false);
   const { createResource } = useDataRefresh();
   const { showErrorFromHttpResponse } = useNotification();
-  const navigate = useNavigate();
 
   const setQuiz = useCallback((newQuiz: Quiz) => {
     setQuizState(newQuiz);
@@ -124,7 +123,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
       setSaving(true);
       setError(null);
 
-      // Función separada que hace la petición
+      // Función que hace la petición
       const createQuizRequest = async () => {
         const response = await fetch(
           `http://localhost:8080/api/books/${bookId}/chapters/${chapterId}/quiz`,
@@ -171,12 +170,12 @@ export function QuizProvider({ children }: QuizProviderProps) {
       };
 
       try {
+        // Usamos redirectPath como función para capturar el id
         await createResource(
           "quiz",
           createQuizRequest,
           "Quiz created successfully",
-          // Redirección usando el quizId
-          `/quizzes/${(await createQuizRequest()).id}`
+          (result) => `/quizzes/${result.id}` // ✅ dinámico usando result.id
         );
       } catch (err) {
         const errorMessage =
@@ -187,7 +186,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
         setSaving(false);
       }
     },
-    [createResource]
+    [createResource, showErrorFromHttpResponse]
   );
 
   const updateQuiz = useCallback(async (id: string, quizData: Quiz) => {
