@@ -97,16 +97,9 @@ public class QuizService {
     }
 
     @Transactional
-    public void deleteQuiz(UUID bookId, UUID chapterId) {
-        BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
-        ChapterEntity chapterEntity = chapterRepository.findById(chapterId).orElseThrow(() -> new NotFoundException("Chapter not found"));
-        QuizEntity quizEntity = quizRepository.findByChapter(chapterEntity).orElseThrow(() -> new NotFoundException("Quiz not found"));
-
-        if (!chapterEntity.getBook().getId().equals(bookEntity.getId())) {
-            throw new NotFoundException("Chapter does not belong to this book");
-        }
-
-        chapterEntity.setQuiz(null);
+    public void deleteQuiz(UUID quizId) {
+        QuizEntity quizEntity = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        quizEntity.getChapter().setQuiz(null);
         quizEntity.setChapter(null);
         quizRepository.delete(quizEntity);
     }

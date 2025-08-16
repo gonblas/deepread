@@ -32,6 +32,7 @@ import { DeleteChapterDialog } from "./DeleteChapterDialog";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useNotification } from "@/contexts/notificationContext";
+import { DeleteElementDialog } from "../DeleteElementDialog";
 interface ModernChapterEditorProps {
   title: string;
   summary: string;
@@ -74,35 +75,34 @@ export function ModernChapterEditor({
   const navigate = useNavigate();
 
   const handleQuizClick = async () => {
-  if (!bookId || !chapterId) return;
+    if (!bookId || !chapterId) return;
 
-  try {
-    const response = await fetch(
-      `http://localhost:8080/api/books/${bookId}/chapters/${chapterId}/quiz`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/books/${bookId}/chapters/${chapterId}/quiz`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const quizId = data.id;
+        navigate(`/quizzes/${quizId}`);
+      } else if (response.status === 404) {
+        showWarning("No quiz found for this chapter. You can create one now.");
+        navigate(`/books/${bookId}/chapters/${chapterId}/quiz/create`);
+      } else {
+        console.error("Error checking quiz", response.status);
       }
-    );
-
-    if (response.ok) {
-      const data = await response.json();
-      const quizId = data.id;
-      navigate(`/quizzes/${quizId}`);
-    } else if (response.status === 404) {
-      showWarning("No quiz found for this chapter. You can create one now.");
-      navigate(`/books/${bookId}/chapters/${chapterId}/quiz/create`);
-    } else {
-      console.error("Error checking quiz", response.status);
+    } catch (err) {
+      console.error("Error connecting to server", err);
     }
-  } catch (err) {
-    console.error("Error connecting to server", err);
-  }
-};
-
+  };
 
   useEffect(() => {
     setLocalTitle(title);
@@ -337,16 +337,17 @@ export function ModernChapterEditor({
                       <Edit3 className="size-4 mr-2" />
                       Edit
                     </Button>
-                    {!isNew &&
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleQuizClick}
-                      className="bg-background/50 hover:bg-primary/10 hover:border-primary/20"
-                    >
-                      <MessageCircleQuestionMark className="size-5 mr-1" />
-                      Quiz
-                    </Button>}
+                    {!isNew && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleQuizClick}
+                        className="bg-background/50 hover:bg-primary/10 hover:border-primary/20"
+                      >
+                        <MessageCircleQuestionMark className="size-5 mr-1" />
+                        Quiz
+                      </Button>
+                    )}
                     {!isNew && bookId && chapterId && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -360,15 +361,20 @@ export function ModernChapterEditor({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-54">
                           <DropdownMenuLabel>Chapter Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={onExport} className="w-full gap-2 flex justify-center">
+                          <DropdownMenuItem
+                            onClick={onExport}
+                            className="w-full gap-2 flex justify-center"
+                          >
                             <Download className="size-4" />
                             Export as Markdown
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DeleteChapterDialog
-                            chapterTitle={title}
-                            bookId={bookId}
-                            chapterId={chapterId}
+                          <DeleteElementDialog
+                            deleteURL={`http://localhost:8080/api/books/${bookId}/chapters/${chapterId}`}
+                            redirectURL={`/books/${bookId}`}
+                            resourceType="chapter"
+                            resourceName={title}
+                            fullWidth={true}
                           />
                         </DropdownMenuContent>
                       </DropdownMenu>

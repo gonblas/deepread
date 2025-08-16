@@ -77,7 +77,6 @@ export default function ChapterDetails() {
       }
       onSave={handleSave}
       isNew={isNew}
-      onDelete={() => {}}
       isSaving={isSaving}
     />
   );

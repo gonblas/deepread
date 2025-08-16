@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { DeleteBookDialog } from "../components/books/DeleteBookDialog";
 import { useAuth } from "@/contexts/authContext";
 import { ChapterListSection } from "../components/books/ChapterListSection";
+import { DeleteElementDialog } from "@/components/DeleteElementDialog";
 
 interface Book {
   id: string;
@@ -99,7 +100,12 @@ export default function BookPage() {
 
         <div className="flex items-center gap-2">
           <EditBookDialog book={book} />
-          <DeleteBookDialog bookTitle={book.title} bookId={bookId} />
+          <DeleteElementDialog
+            deleteURL={`http://localhost:8080/api/books/${bookId}`}
+            redirectURL={`/books/`}
+            resourceType="book"
+            resourceName={book.title}
+          />
         </div>
       </nav>
 

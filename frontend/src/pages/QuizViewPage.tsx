@@ -19,8 +19,26 @@ import {
   StatisticsProvider,
   useStatistics,
 } from "@/contexts/statisticsContext";
-import { Play, Edit, Clock, Hash, BookOpen, FileQuestion } from "lucide-react";
+import {
+  Play,
+  Edit,
+  Clock,
+  Hash,
+  BookOpen,
+  FileQuestion,
+  Download,
+  MoreHorizontal,
+} from "lucide-react";
 import { RecentAttemptsTable } from "@/components/statistics/RecentAttemptsTable";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DeleteElementDialog } from "@/components/DeleteElementDialog";
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -35,37 +53,37 @@ const recentAttempts = [
     bookTitle: "One Hundred Years of Solitude",
     chapterNumber: 1,
     score: 85,
-    date: "2025-08-09T09:00:00"
+    date: "2025-08-09T09:00:00",
   },
   {
     id: "2",
     bookTitle: "Don Quixote",
     chapterNumber: 2,
     score: 72,
-    date: "2025-08-09T07:00:00"
+    date: "2025-08-09T07:00:00",
   },
   {
     id: "3",
     bookTitle: "Hopscotch",
     chapterNumber: 3,
     score: 45,
-    date: "2025-08-08T10:00:00"
+    date: "2025-08-08T10:00:00",
   },
   {
     id: "4",
     bookTitle: "The House of the Spirits",
     chapterNumber: 4,
     score: 88,
-    date: "2025-08-08T09:00:00"
+    date: "2025-08-08T09:00:00",
   },
   {
     id: "5",
     bookTitle: "Love in the Time of Cholera",
     chapterNumber: 2,
     score: 91,
-    date: "2025-08-07T10:00:00"
+    date: "2025-08-07T10:00:00",
   },
-]
+];
 
 function StatCard({ icon, title, value, iconBgColor }: StatCardProps) {
   return (
@@ -99,8 +117,7 @@ function QuizViewContent({ quizId }: { quizId: string }) {
 
   const chapterId = quiz?.chapter?.id;
   useEffect(() => {
-    if(chapterId)
-      fetchQuizStats(chapterId);
+    if (chapterId) fetchQuizStats(chapterId);
   }, [chapterId, quizStats]);
 
   const handleTakeQuiz = () => {
@@ -183,7 +200,6 @@ function QuizViewContent({ quizId }: { quizId: string }) {
       : []),
   ];
 
-  // Question type badges configuration
   const questionTypeBadges = [
     {
       type: "MULTIPLE_CHOICE",
@@ -215,6 +231,37 @@ function QuizViewContent({ quizId }: { quizId: string }) {
             <Play className="w-4 h-4" />
             Take Quiz
           </Button>
+          {quizId && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-background/50"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-54">
+                <DropdownMenuLabel>Quiz Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  // onClick={onExport}
+                  className="w-full gap-2 flex justify-center"
+                >
+                  <Download className="size-4" />
+                  Export as Markdown
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DeleteElementDialog
+                  deleteURL={`http://localhost:8080/api/quizzes/${quizId}`}
+                  redirectURL={`/quizzes/`}
+                  resourceType="quiz"
+                  resourceName={quiz.chapter?.title || "Unknown"}
+                  fullWidth={true}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </SectionHeader>
 

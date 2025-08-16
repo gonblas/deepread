@@ -99,17 +99,17 @@ public class QuizController {
     }
 
     @Operation(
-            summary = "Delete a quiz for a chapter",
-            description = "Deletes the quiz associated with the specified chapter of a book.",
+            summary = "Delete a quiz for a given quiz id",
+            description = "Deletes the quiz associated with the specified id.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "Quiz deleted successfully"),
-                    @ApiResponse(responseCode = "400", description = "Invalid book or chapter ID - no response body", content = @Content),
-                    @ApiResponse(responseCode = "404", description = "Book or chapter or quiz not found - no response body", content = @Content)
+                    @ApiResponse(responseCode = "400", description = "Invalid quiz ID - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found - no response body", content = @Content)
             }
     )
-    @DeleteMapping("/api/books/{bookId}/chapters/{chapterId}/quiz")
+    @DeleteMapping("/api/quizzes/{quizId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId) {
-        quizService.deleteQuiz(bookId, chapterId);
+    public void deleteChapter(@Valid @PathVariable UUID quizId) {
+        quizService.deleteQuiz(quizId);
     }
 }
