@@ -21,7 +21,6 @@ import { useNotification } from "@/contexts/notificationContext";
 import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/authContext";
 import { QuestionDisplay } from "@/components/QuestionDisplay";
-import { Badge } from "@/components/ui/badge";
 
 interface QuizAttemptResult {
   id: string;
@@ -223,18 +222,12 @@ export default function QuizResultsPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4">
-        <BackButton href="/quizzes" />
         <div className="flex-1">
           <h1 className="text-3xl font-bold">Quiz Results</h1>
-          <p className="text-muted-foreground">
-            Chapter {result.quiz.chapter.number}: {result.quiz.chapter.title}
-          </p>
         </div>
       </div>
 
-      {/* Score Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6 text-center">

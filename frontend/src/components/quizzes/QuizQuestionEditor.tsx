@@ -178,8 +178,8 @@ export function QuizQuestionEditor({
         return (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="expectedAnswer" className="text-base font-medium">
-                Expected Answer
+              <Label htmlFor="expectedAnswer">
+                Expected Answer *
               </Label>
               <Textarea
                 id="expectedAnswer"

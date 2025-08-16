@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { BarChart3, Clock, AlertTriangle, Award } from "lucide-react";
 import type { Stats } from "@/contexts/statisticsContext";
+import { formatTime } from "@/lib/formatTime";
 
 export function SectionCards({ stats }: { stats: Stats }) {
   const cardConfig = [
@@ -21,7 +22,7 @@ export function SectionCards({ stats }: { stats: Stats }) {
       key: "averageScore",
       description: "Average Score",
       icon: <Award className="w-6 h-6 text-primary" />,
-      value: (stats: Stats) => stats.averageScore,
+      value: (stats: Stats) => stats.averageScore?.toFixed(2),
       footerMain: "All attempts averaged",
     },
     {
@@ -35,7 +36,7 @@ export function SectionCards({ stats }: { stats: Stats }) {
       key: "averageTimeSeconds",
       description: "Average Time",
       icon: <Clock className="w-6 h-6 text-primary" />,
-      value: (stats: Stats) => stats.averageTimeSeconds,
+      value: (stats: Stats) => formatTime(Math.round(stats.averageTimeSeconds)),
       footerMain: "Avg. time per quiz attempt",
     },
   ];
