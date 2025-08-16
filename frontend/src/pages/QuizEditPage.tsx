@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EditQuizContent() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { quizId } = useParams();
   const { quiz, updateQuiz, fetchQuiz, loading } = useQuiz();
 
@@ -22,8 +22,10 @@ function EditQuizContent() {
     if (!quiz) return;
 
     try {
-      await updateQuiz(quizId, quiz);
-      navigate("/quizzes");
+      if(quizId) {
+        await updateQuiz(quizId, quiz);
+        //navigate("/quizzes");
+      }
     } catch (error) {
       console.error("Failed to update quiz:", error);
     }

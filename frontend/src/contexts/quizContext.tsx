@@ -103,7 +103,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const { createResource } = useDataRefresh();
+  const { createResource, updateResource } = useDataRefresh();
   const { showErrorFromHttpResponse } = useNotification();
   const { logout } = useAuth();
 
@@ -124,7 +124,6 @@ export function QuizProvider({ children }: QuizProviderProps) {
       setSaving(true);
       setError(null);
 
-      // Función que hace la petición
       const createQuizRequest = async () => {
         const response = await fetch(
           `http://localhost:8080/api/books/${bookId}/chapters/${chapterId}/quiz`,
@@ -189,58 +188,74 @@ export function QuizProvider({ children }: QuizProviderProps) {
     [createResource, showErrorFromHttpResponse]
   );
 
-  const updateQuiz = useCallback(async (id: string, quizData: Quiz) => {
-    setSaving(true);
-    setError(null);
+  const updateQuiz = useCallback(
+    async (id: string, quizData: Quiz) => {
+      setSaving(true);
+      setError(null);
 
-    try {
-      // Simulate API call - replace with actual endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const response = await fetch(`/api/quizzes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questions: quizData.questions.map((q) => ({
-            id: q.id,
-            type: q.type,
-            prompt: q.prompt,
-            explanation: q.explanation,
-            ...(q.type === "TRUE_FALSE" && {
-              isAnswerTrue: (q as TrueFalseQuestion).isAnswerTrue,
-            }),
-            ...(q.type === "OPEN" && {
-              expectedAnswer: (q as OpenQuestion).expectedAnswer,
-            }),
-            ...(q.type === "MULTIPLE_CHOICE" && {
-              options: (q as MultipleChoiceQuestion).options.map((opt) => ({
-                text: opt.text,
-                isCorrect: opt.isCorrect,
+      const updateQuizRequest = async () => {
+        const response = await fetch(
+          `http://localhost:8080/api/quizzes/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+            body: JSON.stringify({
+              questions: quizData.questions.map((q) => ({
+                id: q.id,
+                type: q.type,
+                prompt: q.prompt,
+                explanation: q.explanation,
+                ...(q.type === "TRUE_FALSE" && {
+                  isAnswerTrue: (q as TrueFalseQuestion).isAnswerTrue,
+                }),
+                ...(q.type === "OPEN" && {
+                  expectedAnswer: (q as OpenQuestion).expectedAnswer,
+                }),
+                ...(q.type === "MULTIPLE_CHOICE" && {
+                  options: (q as MultipleChoiceQuestion).options.map((opt) => ({
+                    text: opt.text,
+                    isCorrect: opt.isCorrect,
+                  })),
+                }),
               })),
             }),
-          })),
-        }),
-      });
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to update quiz");
+        if (!response.ok) {
+          showErrorFromHttpResponse(
+            "Failed to update quiz",
+            await response.json()
+          );
+          throw new Error("Failed to update quiz");
+        }
+
+        const updatedQuiz = await response.json();
+        setQuizState(updatedQuiz);
+        return updatedQuiz;
+      };
+
+      try {
+        await updateResource(
+          "quiz",
+          updateQuizRequest,
+          "Quiz updated successfully",
+          (result) => `/quizzes/${result.id}`
+        );
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to update quiz";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setSaving(false);
       }
-
-      const updatedQuiz = await response.json();
-      setQuizState(updatedQuiz);
-
-      console.log("Quiz updated successfully:", updatedQuiz);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to update quiz";
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setSaving(false);
-    }
-  }, []);
+    },
+    [createResource, showErrorFromHttpResponse]
+  );
 
   const fetchQuiz = useCallback(async (id: string) => {
     setLoading(true);
@@ -256,8 +271,8 @@ export function QuizProvider({ children }: QuizProviderProps) {
       });
 
       if (!response.ok) {
-        if(response.status === 401) {
-          logout()
+        if (response.status === 401) {
+          logout();
           return;
         }
         showErrorFromHttpResponse(
