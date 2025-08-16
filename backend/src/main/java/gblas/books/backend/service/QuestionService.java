@@ -40,22 +40,10 @@ public class QuestionService {
 
 
     public QuestionResponse addQuestion(@Valid UUID quizId, QuestionRequest questionRequest) {
-        log.info("Adding question to quiz with ID: {}", quizId);
-
         QuizEntity quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new NotFoundException("Quiz not found"));
-
         QuizVersionEntity newQuizVersion = quizVersionService.updateVersion(quiz);
-        log.info("Using new quiz version with ID: {}", newQuizVersion.getId());
-
         QuestionEntity newQuestion = createQuestion(questionRequest, newQuizVersion);
-
-        // Confirmar estado al final
-        QuizVersionEntity versionFromDb = quizVersionRepository.findById(newQuizVersion.getId())
-                .orElseThrow(() -> new IllegalStateException("Quiz version not found after update"));
-
-        log.info("Questions in DB version (post-save): {}", versionFromDb.getQuestions().stream().map(QuestionEntity::getId).toList());
-
         return QuestionMapper.INSTANCE.toDto(newQuestion, questionMapperFactory);
     }
 

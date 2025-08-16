@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class QuizVersionService {
 
     private final QuizVersionRepository quizVersionRepository;
-    private final QuizRepository quizRepository;
 
     public QuizVersionEntity getLastQuizVersionEntity(QuizEntity quizEntity) {
         return quizVersionRepository

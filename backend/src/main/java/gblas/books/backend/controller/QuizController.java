@@ -99,6 +99,21 @@ public class QuizController {
     }
 
     @Operation(
+            summary = "Create a quiz for a chapter",
+            description = "Creates a new quiz associated with the specified chapter of a book.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Quiz created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid data or IDs - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Book or chapter not found - no response body", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "Chapter Already Having Quiz - no response body", content = @Content)
+            }
+    )
+    @PutMapping("/api/quizzes/{quizId}")
+    public QuizResponse changeQuiz(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizRequest quizRequest) {
+        return quizService.changeQuiz(quizId, quizRequest);
+    }
+
+    @Operation(
             summary = "Delete a quiz for a given quiz id",
             description = "Deletes the quiz associated with the specified id.",
             responses = {

@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -125,5 +126,20 @@ public class QuizService {
         newQuizEntity.getQuestions().addAll(questions);
         newQuizEntity.getVersions().add(firstVersion);
         return QuizMapper.INSTANCE.toDto(firstVersion, questionMapperFactory);
+    }
+
+    public QuizResponse changeQuiz(@Valid UUID quizId, @Valid QuizRequest quizRequest) {
+        QuizEntity quiz =  quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        QuizVersionEntity lastQuizVersion = quizVersionService.updateVersion(quiz);
+        lastQuizVersion.setQuestions(new ArrayList<>());
+        List<QuestionEntity> questions = quizRequest.questions().stream()
+                .map(request -> {
+                    return questionService.createQuestion(request, lastQuizVersion);
+                })
+                .toList();
+
+        quiz.getQuestions().addAll(questions);
+        quiz.getVersions().add(lastQuizVersion);
+        return QuizMapper.INSTANCE.toDto(lastQuizVersion, questionMapperFactory);
     }
 }
