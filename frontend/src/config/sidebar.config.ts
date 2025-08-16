@@ -13,7 +13,6 @@ export const defaultSidebar: SidebarItemsData = [
   {
     title: "Management",
     items: [
-      { title: "Create Quiz", url: "/quizzes/create", icon: Plus },
       { title: "Settings", url: "/settings", icon: Settings },
     ],
   },
@@ -42,6 +41,13 @@ export const selectedBookSidebar = (
   chapterId?: string
 ): SidebarItemsData => [
   {
+    title: "Main",
+    items: [
+      { title: "Dashboard", url: "/", icon: Home },
+      { title: "My Quizzes", url: "/quizzes", icon: Brain },
+    ],
+  },
+  {
     title: "Books",
     items: [
       { title: "My Books", url: "/books", icon: BookOpen },
@@ -66,13 +72,6 @@ export const selectedBookSidebar = (
           }]
         : []
       ),
-    ],
-  },
-  {
-    title: "Quizzes",
-    items: [
-      { title: "All Quizzes", url: `/books/${bookId}/quizzes`, icon: Brain },
-      { title: "Create Quiz", url: `/books/${bookId}/quizzes/create`, icon: Plus },
     ],
   },
 ];

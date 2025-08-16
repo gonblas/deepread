@@ -10,7 +10,6 @@ import {
 import Cookies from "js-cookie";
 import { useNotification } from "./notificationContext";
 import { useDataRefresh } from "./dataRefreshContext";
-import { useNavigate } from "react-router-dom";
 
 export type QuestionType = "TRUE_FALSE" | "OPEN" | "MULTIPLE_CHOICE";
 

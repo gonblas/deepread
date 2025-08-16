@@ -99,4 +99,9 @@ public class QuizAttemptService {
         quizAttempt.setCorrectCountFromAnswers();
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
     }
+
+    public QuizAttemptResponse getQuizAttemptDetailsFromId(UUID attemptId) {
+        QuizAttemptEntity quizAttempt = quizAttemptRepository.findById(attemptId).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
+        return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
+    }
 }

@@ -25,6 +25,8 @@ import CreateQuizPage from "./pages/CreateQuizPage";
 import QuizEditPage from "./pages/QuizEditPage";
 import QuizViewPage from "./pages/QuizViewPage";
 import QuizzesPage from "./pages/QuizzesPage";
+import TakeQuizPage from "./pages/TakeQuizPage";
+import QuizResultsPage from "./pages/QuizResultsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -156,6 +158,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <QuizEditPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quizzes/:quizId/take"
+        element={
+          <ProtectedRoute>
+            <TakeQuizPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quizzes/attempts/:attemptId"
+        element={
+          <ProtectedRoute>
+            <QuizResultsPage />
           </ProtectedRoute>
         }
       />

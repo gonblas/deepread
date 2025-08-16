@@ -34,9 +34,23 @@ public class QuizAttemptController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
             }
     )
-    @GetMapping("/api/quiz-attempts")
+    @GetMapping("/api/attempts")
     public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
         return quizAttemptService.getQuizAttemptsFromUser(user, pageable);
+    }
+
+    @Operation(
+            summary = "Get quiz attempt from given id",
+            description = "Retrieves quiz attempt details associated with its id.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz attempts retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Quiz attempt not found - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/api/attempts/{attemptId}")
+    public QuizAttemptResponse getQuizAttemptDetailsFromId(@PathVariable UUID attemptId) {
+        return quizAttemptService.getQuizAttemptDetailsFromId(attemptId);
     }
 
     @Operation(
@@ -48,7 +62,7 @@ public class QuizAttemptController {
                     @ApiResponse(responseCode = "404", description = "Book not found - no response body", content = @Content)
             }
     )
-    @GetMapping("/api/books/{bookId}/quiz-attempts")
+    @GetMapping("/api/books/{bookId}/attempts")
     public Page<QuizAttemptResponse> getQuizAttemptsFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
         return quizAttemptService.getQuizAttemptsFromBook(bookId, pageable);
     }
@@ -62,7 +76,7 @@ public class QuizAttemptController {
                     @ApiResponse(responseCode = "404", description = "Book or chapter not found - no response body", content = @Content)
             }
     )
-    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/quiz-attempts")
+    @GetMapping("/api/books/{bookId}/chapters/{chapterId}/attempts")
     public Page<QuizAttemptResponse> getQuizAttemptFromChapter(@Valid @PathVariable UUID bookId, @Valid @PathVariable UUID chapterId, Pageable pageable) {
         return quizAttemptService.getQuizAttemptFromChapter(bookId, chapterId, pageable);
     }
@@ -76,7 +90,7 @@ public class QuizAttemptController {
                     @ApiResponse(responseCode = "404", description = "Quiz not found - no response body", content = @Content)
             }
     )
-    @PostMapping("/api/quizzes/{quizId}/quiz-attempts")
+    @PostMapping("/api/quizzes/{quizId}/attempts")
     @ResponseStatus(HttpStatus.CREATED)
     public QuizAttemptResponse createQuizAttempt(@Valid @PathVariable UUID quizId, @Valid @RequestBody QuizAttemptRequest quizAttemptRequest) {
         return quizAttemptService.createQuizAttempt(quizId, quizAttemptRequest);
@@ -91,7 +105,7 @@ public class QuizAttemptController {
                     @ApiResponse(responseCode = "404", description = "Quiz attempt not found - no response body", content = @Content)
             }
     )
-    @DeleteMapping("/api/quiz-attempts/{quizAttemptId}/")
+    @DeleteMapping("/api/attempts/{quizAttemptId}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteQuizAttempt(@Valid @PathVariable UUID quizAttemptId) {
         quizAttemptService.deleteQuizAttempt(quizAttemptId);

@@ -1,125 +1,51 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { CheckCircle, Eye, HelpCircle } from "lucide-react"
-import { EmptyState } from "@/components/ui/empty-state"
-import type { Question, MultipleChoiceQuestion, TrueFalseQuestion, OpenQuestion } from "@/contexts/quizContext"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { FileText, Eye } from "lucide-react"
+import { QuestionDisplay } from "@/components/QuestionDisplay"
+import type { Question } from "@/contexts/quizContext"
 
 interface QuizPreviewProps {
   questions: Question[]
-  onAddQuestions: () => void
+  showActions?: boolean
 }
 
-export function QuizPreview({ questions, onAddQuestions }: QuizPreviewProps) {
+export function QuizPreview({ questions, showActions = true }: QuizPreviewProps) {
+  if (questions.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No Questions Yet</h3>
+          <p className="text-muted-foreground">Add some questions to see the quiz preview.</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Eye className="w-5 h-5" />
-          Quiz Preview
-        </CardTitle>
-        <CardDescription>See how your quiz will appear to you</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {questions.length === 0 ? (
-          <EmptyState
-            icon={<HelpCircle className="w-12 h-12" />}
-            title="No questions to preview"
-            description="Add some questions to see the preview"
-            action={{
-              label: "Add Questions",
-              onClick: onAddQuestions,
-            }}
-          />
-        ) : (
-          <div className="space-y-6">
-            <div className="flex gap-4 text-sm text-muted-foreground">
-              <span>{questions.length} questions</span>
-            </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Eye className="h-6 w-6" />
+          <h2 className="text-2xl font-bold">Quiz Preview</h2>
+        </div>
+        <Badge variant="outline">{questions.length} Questions</Badge>
+      </div>
 
-            <Separator />
+      <div className="space-y-6">
+        {questions.map((question, index) => (
+          <QuestionDisplay key={question.id} question={question} index={index} mode="preview" />
+        ))}
+      </div>
 
-            <div className="space-y-6">
-              {questions.map((question, index) => (
-                <div key={question.id} className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <span className="font-medium text-sm text-muted-foreground mt-1">{index + 1}.</span>
-                    <div className="flex-1">
-                      <p className="font-medium mb-2">{question.prompt}</p>
-
-                      {question.type === "MULTIPLE_CHOICE" && (
-                        <div className="space-y-2">
-                          {(question as MultipleChoiceQuestion).options.map((option, optIndex) => (
-                            <div key={optIndex} className="flex items-center gap-2">
-                              <div className="w-4 h-4 border border-border rounded-full" />
-                              <span className={option.isCorrect ? "font-medium text-green-700" : ""}>
-                                {option.text}
-                              </span>
-                              {option.isCorrect && <CheckCircle className="w-4 h-4 text-green-600" />}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {question.type === "TRUE_FALSE" && (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border border-border rounded-full" />
-                            <span
-                              className={
-                                (question as TrueFalseQuestion).isAnswerTrue ? "font-medium text-green-700" : ""
-                              }
-                            >
-                              True
-                            </span>
-                            {(question as TrueFalseQuestion).isAnswerTrue && (
-                              <CheckCircle className="w-4 h-4 text-green-600" />
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border border-border rounded-full" />
-                            <span
-                              className={
-                                !(question as TrueFalseQuestion).isAnswerTrue ? "font-medium text-green-700" : ""
-                              }
-                            >
-                              False
-                            </span>
-                            {!(question as TrueFalseQuestion).isAnswerTrue && (
-                              <CheckCircle className="w-4 h-4 text-green-600" />
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {question.type === "OPEN" && (
-                        <div className="space-y-2">
-                          <div className="border border-border rounded-md p-3 bg-muted/50">
-                            <p className="text-sm text-muted-foreground">Open text answer</p>
-                          </div>
-                          <p className="text-sm text-green-700">
-                            Expected: {(question as OpenQuestion).expectedAnswer}
-                          </p>
-                        </div>
-                      )}
-
-                      {question.explanation && (
-                        <div className="mt-3 p-3 bg-card border border-border rounded-md">
-                          <p className="text-sm text-card-foreground">
-                            <strong>Explanation:</strong> {question.explanation}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {index < questions.length - 1 && <Separator />}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {showActions && (
+        <div className="flex justify-center pt-4">
+          <Button size="lg">Export Quiz</Button>
+        </div>
+      )}
+    </div>
   )
 }

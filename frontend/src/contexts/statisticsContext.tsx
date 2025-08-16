@@ -31,22 +31,26 @@ export type QuizStatsResponse = StatsWithTimeline & {
 };
 
 interface StatisticsContextValue {
-  // User stats
   loading: boolean;
   error: string | null;
   userStats: StatsWithTimeline;
   fetchUserStats: () => void;
 
-  // Quiz specific stats
   quizLoading: boolean;
   quizError: string | null;
   quizStats: QuizStatsResponse | null;
   fetchQuizStats: (chapterId: string) => void;
 }
 
-const StatisticsContext = createContext<StatisticsContextValue | undefined>(undefined);
+const StatisticsContext = createContext<StatisticsContextValue | undefined>(
+  undefined
+);
 
-export function StatisticsProvider({ children }: { children: React.ReactNode }) {
+export function StatisticsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { logout, isLoading } = useAuth();
 
   const emptyStats: Stats = {
@@ -63,7 +67,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
     dailyStatsTimeline: [],
   };
 
-  const [userStats, setUserStats] = useState<StatsWithTimeline>(emptyStatsWithTimeline);
+  const [userStats, setUserStats] = useState<StatsWithTimeline>(
+    emptyStatsWithTimeline
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,12 +104,15 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
         if (response.status === 204) {
           return emptyStatsWithTimeline;
         }
-        const text = await response.text();
-        if (!text) return emptyStatsWithTimeline;
-        return JSON.parse(text);
+        return response.json();
       })
-      .then((data: StatsWithTimeline) => {
-        setUserStats(data);
+      .then((data) => {
+        const mappedStats: StatsWithTimeline = {
+          stats: data.stats,
+          dailyStatsTimeline: data.stats.dailyStatsTimeline || [],
+        };
+
+        setUserStats(mappedStats);
       })
       .catch((err) => {
         if (err.status === 401) {
@@ -149,15 +158,21 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
           };
         }
         const text = await response.text();
-        if (!text) return {
-          chapterId,
-          chapterTitle: "",
-          ...emptyStatsWithTimeline,
-        };
+        if (!text)
+          return {
+            chapterId,
+            chapterTitle: "",
+            ...emptyStatsWithTimeline,
+          };
         return JSON.parse(text);
       })
-      .then((data: QuizStatsResponse) => {
-        setQuizStats(data);
+      .then((data) => {
+        const mappedStats: StatsWithTimeline = {
+          stats: data.stats,
+          dailyStatsTimeline: data.stats.dailyStatsTimeline || [],
+        };
+
+        setQuizStats(mappedStats);
       })
       .catch((err) => {
         if (err.status === 401) {
