@@ -342,9 +342,9 @@ export default function QuizResultsPage() {
 
       {/* Actions */}
       <div className="flex gap-4 justify-center">
-        <Button variant="outline" onClick={() => navigate("/quizzes")}>
+        <Button variant="outline" onClick={() => navigate(`/quizzes/${result.quiz_id}`)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Quizzes
+          Back to Quiz
         </Button>
         <Button onClick={() => navigate(`/quizzes/${result.quiz_id}/take`)}>
           <RotateCcw className="mr-2 h-4 w-4" />
