@@ -10,6 +10,7 @@ import {
 import Cookies from "js-cookie";
 import { useNotification } from "./notificationContext";
 import { useDataRefresh } from "./dataRefreshContext";
+import { useAuth } from "./authContext";
 
 export type QuestionType = "TRUE_FALSE" | "OPEN" | "MULTIPLE_CHOICE";
 
@@ -104,6 +105,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   const [saving, setSaving] = useState(false);
   const { createResource } = useDataRefresh();
   const { showErrorFromHttpResponse } = useNotification();
+  const { logout } = useAuth();
 
   const setQuiz = useCallback((newQuiz: Quiz) => {
     setQuizState(newQuiz);
@@ -254,6 +256,10 @@ export function QuizProvider({ children }: QuizProviderProps) {
       });
 
       if (!response.ok) {
+        if(response.status === 401) {
+          logout()
+          return;
+        }
         showErrorFromHttpResponse(
           "Failed to fetch quiz",
           await response.json()

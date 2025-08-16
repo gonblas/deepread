@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { formatTime } from "@/lib/formatTime";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { BackButton } from "@/components/ui/back-button";
@@ -21,6 +21,7 @@ import { useNotification } from "@/contexts/notificationContext";
 import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/authContext";
 import { QuestionDisplay } from "@/components/QuestionDisplay";
+import { Badge } from "@/components/ui/badge";
 
 interface QuizAttemptResult {
   id: string;
@@ -72,7 +73,6 @@ export default function QuizResultsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch quiz attempt results
   const fetchResults = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -99,7 +99,6 @@ export default function QuizResultsPage() {
 
       const raw = await response.json();
 
-      // Adaptar al formato que espera la UI
       const mapped: QuizAttemptResult = {
         id: raw.id,
         quiz_id: raw.quiz_id,
@@ -112,7 +111,7 @@ export default function QuizResultsPage() {
         quiz: {
           id: raw.quiz_id,
           chapter: {
-            id: "", // si no hay, poner vacío o null
+            id: "",
             title: "",
             number: 0,
             summary: "",
@@ -122,7 +121,13 @@ export default function QuizResultsPage() {
             type: a.question.type,
             prompt: a.question.prompt,
             explanation: a.question.explanation,
-            options: a.question.options,
+            options: a.question.options
+              ? a.question.options.map((opt: any) => ({
+                  id: opt.id,
+                  text: opt.text,
+                  isCorrect: opt.isCorrect,
+                }))
+              : undefined,
             isAnswerTrue: a.question.isAnswerTrue,
             expectedAnswer: a.question.expectedAnswer,
           })),
@@ -162,17 +167,12 @@ export default function QuizResultsPage() {
       ? Math.round((correctAnswers / totalQuestions) * 100)
       : 0;
 
-  // Calculate duration
-  const duration = result
-    ? Math.round(
-        (new Date(result.submittedAt).getTime() -
-          new Date(result.startedAt).getTime()) /
-          1000 /
-          60
-      )
+  const durationInSeconds = result
+    ? (new Date(result.submittedAt).getTime() -
+        new Date(result.startedAt).getTime()) /
+      1000
     : 0;
 
-  // Get performance message
   const getPerformanceMessage = (percentage: number) => {
     if (percentage >= 90)
       return {
@@ -275,8 +275,10 @@ export default function QuizResultsPage() {
             <div className="flex items-center justify-center mb-2">
               <Clock className="h-8 w-8 text-orange-500" />
             </div>
-            <div className="text-3xl font-bold mb-1">{duration}</div>
-            <div className="text-sm text-muted-foreground">Minutes</div>
+            <div className="text-3xl font-bold mb-1">
+              {formatTime(durationInSeconds)}
+            </div>
+            <div className="text-sm text-muted-foreground">Time</div>
           </CardContent>
         </Card>
       </div>
@@ -298,28 +300,33 @@ export default function QuizResultsPage() {
 
       {/* Question Breakdown */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Question Breakdown</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-3xl font-bold text-foreground">
+            Question Breakdown
+          </h2>
+        </div>
 
-        {result.quiz.questions.map((question, index) => {
-          const userAnswer = result.userAnswers.find(
-            (ua) => ua.questionId === question.id
-          );
-          const isCorrect = result.answers[index]?.correct;
+        <div className="space-y-6">
+          {result.quiz.questions.map((question, index) => {
+            const userAnswer = result.userAnswers.find(
+              (ua) => ua.questionId === question.id
+            );
+            const isCorrect = result.answers[index]?.correct;
 
-          return (
-            <QuestionDisplay
-              key={question.id}
-              question={question}
-              index={index}
-              mode="results"
-              userAnswer={userAnswer}
-              isCorrect={isCorrect}
-            />
-          );
-        })}
+            return (
+              <QuestionDisplay
+                key={question.id}
+                question={question}
+                index={index}
+                mode="results"
+                userAnswer={userAnswer}
+                isCorrect={isCorrect}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      {/* Attempt Details */}
       <Card>
         <CardHeader>
           <CardTitle>Attempt Details</CardTitle>
@@ -332,10 +339,6 @@ export default function QuizResultsPage() {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Completed:</span>
             <span>{new Date(result.submittedAt).toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Duration:</span>
-            <span>{duration} minutes</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Attempt ID:</span>

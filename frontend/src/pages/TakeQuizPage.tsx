@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { BackButton } from "@/components/ui/back-button";
-import { BookOpen, Clock, CheckCircle, Circle, Send } from "lucide-react";
+import { BookOpen, CheckCircle, Circle, Send } from "lucide-react";
 import { useNotification } from "@/contexts/notificationContext";
 import Cookies from "js-cookie";
 import {
@@ -31,6 +31,7 @@ import {
 } from "@/contexts/quizContext";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ClockCard } from "@/components/ClockCard";
+import { useAuth } from "@/contexts/authContext";
 
 interface QuizAnswer {
   type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "OPEN";
@@ -50,6 +51,7 @@ function TakeQuizComponent() {
   const navigate = useNavigate();
   const { showError, showSuccess } = useNotification();
   const { fetchQuiz, quiz, loading, error } = useQuiz();
+  const { logout } = useAuth();
 
   const [submitting, setSubmitting] = useState(false);
   const [answers, setAnswers] = useState<Record<string, QuizAnswer>>({});
@@ -60,16 +62,15 @@ function TakeQuizComponent() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setElapsedTime(Date.now() - startTime.getTime());
+      setElapsedTime(Math.floor((Date.now() - startTime.getTime()) / 1000));
     }, 1000);
 
     return () => clearInterval(interval);
   }, [startTime]);
 
   useEffect(() => {
-    if(quizId)
-      fetchQuiz(quizId);
-    }, [quizId]);
+    if (quizId) fetchQuiz(quizId);
+  }, [quizId]);
 
   const handleAnswerChange = useCallback(
     (questionId: string, answer: QuizAnswer) => {
@@ -110,6 +111,10 @@ function TakeQuizComponent() {
       );
 
       if (!response.ok) {
+        if(response.status === 401) {
+          logout();
+          return;
+        }
         throw new Error("Failed to submit quiz");
       }
 
@@ -194,7 +199,7 @@ function TakeQuizComponent() {
                 <Badge variant="outline" className="mt-1">
                   {index + 1}
                 </Badge>
-                  <CardTitle className="text-lg">{question.prompt}</CardTitle>
+                <CardTitle className="text-lg">{question.prompt}</CardTitle>
               </div>
             </CardHeader>
 
@@ -296,7 +301,9 @@ function TakeQuizComponent() {
               ) : (
                 <>
                   <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="text-muted-foreground">{totalQuestions - answeredCount} left</span>
+                  <span className="text-muted-foreground">
+                    {totalQuestions - answeredCount} left
+                  </span>
                 </>
               )}
               <span className="text-muted-foreground">•</span>
@@ -348,4 +355,3 @@ export default function TakeQuizPage() {
     </QuizProvider>
   );
 }
-

@@ -111,7 +111,6 @@ export function ChapterProvider({ children }: { children: React.ReactNode }) {
 
     const result = await response.json();
     setChapter(result);
-    console.log("Chapter created:", result);
     return result;
   };
 
