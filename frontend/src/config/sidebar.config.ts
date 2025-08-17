@@ -22,12 +22,6 @@ export const defaultSidebar: SidebarItemsData = [
       { title: "My Attempts", url: "/quizzes/attempts", icon: Target },
     ],
   },
-  // {
-  //   title: "Management",
-  //   items: [
-  //     { title: "Settings", url: "/settings", icon: Settings },
-  //   ],
-  // },
 ];
 
 export const booksSidebar: SidebarItemsData = [
@@ -35,7 +29,6 @@ export const booksSidebar: SidebarItemsData = [
     title: "Main",
     items: [
       { title: "Dashboard", url: "/", icon: Home },
-      { title: "My Quizzes", url: "/quizzes", icon: Brain },
     ],
   },
   {

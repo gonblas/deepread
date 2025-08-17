@@ -1,80 +1,81 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Search, Brain } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { QuizCard } from "@/components/quizzes/QuizCard"
-import { ErrorCard } from "@/components/ErrorCard"
-import { Pagination } from "@/components/ui/pagination"
-import { SearchSectionSkeleton } from "@/components/SearchSectionSkeleton"
-import { SectionHeader } from "@/components/SectionHeader"
-import { useAuth } from "@/contexts/authContext"
-import { toast } from "sonner"
-import Cookies from "js-cookie"
+import { useState, useEffect, useRef } from "react";
+import { Search, Brain } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { QuizCard } from "@/components/quizzes/QuizCard";
+import { ErrorCard } from "@/components/ErrorCard";
+import { Pagination } from "@/components/Pagination";
+import { SearchSectionSkeleton } from "@/components/SearchSectionSkeleton";
+import { SectionHeader } from "@/components/SectionHeader";
+import { useAuth } from "@/contexts/authContext";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
+import { CardListContainer } from "@/components/CardListContainer";
 
 interface Chapter {
-  id: string
-  title: string
-  number: number
-  summary: string
+  id: string;
+  title: string;
+  number: number;
+  summary: string;
 }
 
 interface Quiz {
-  id: string
-  chapter: Chapter
+  id: string;
+  chapter: Chapter;
   questions: Array<{
-    id: string
-    type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "OPEN"
-    prompt: string
-    explanation: string
-  }>
+    id: string;
+    type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "OPEN";
+    prompt: string;
+    explanation: string;
+  }>;
 }
 
 interface ApiResponse {
-  totalElements: number
-  totalPages: number
+  totalElements: number;
+  totalPages: number;
   pageable: {
-    paged: boolean
-    pageNumber: number
-    pageSize: number
-    unpaged: boolean
-    offset: number
+    paged: boolean;
+    pageNumber: number;
+    pageSize: number;
+    unpaged: boolean;
+    offset: number;
     sort: {
-      sorted: boolean
-      unsorted: boolean
-      empty: boolean
-    }
-  }
-  size: number
-  content: Quiz[]
-  number: number
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+  };
+  size: number;
+  content: Quiz[];
+  number: number;
   sort: {
-    sorted: boolean
-    unsorted: boolean
-    empty: boolean
-  }
-  first: boolean
-  last: boolean
-  numberOfElements: number
-  empty: boolean
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
 }
 
 export default function QuizzesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedChapter, setSelectedChapter] = useState<string>("all")
-  const [currentPage, setCurrentPage] = useState(0)
-  const [quizzes, setQuizzes] = useState<Quiz[]>([])
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalElements, setTotalElements] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const { logout } = useAuth()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedChapter, setSelectedChapter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { logout } = useAuth();
 
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
-  const maxTotalElements = 12
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const maxTotalElements = 12;
 
   const fetchQuizzes = async (page = 0, search = "") => {
     setLoading(true);
@@ -130,50 +131,50 @@ export default function QuizzesPage() {
   };
 
   useEffect(() => {
-    setCurrentPage(0)
-  }, [searchTerm, selectedChapter])
+    setCurrentPage(0);
+  }, [searchTerm, selectedChapter]);
 
   useEffect(() => {
     if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current)
+      clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      fetchQuizzes(currentPage, searchTerm)
-    }, 500)
+      fetchQuizzes(currentPage, searchTerm);
+    }, 500);
 
     return () => {
       if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current)
+        clearTimeout(debounceTimeout.current);
       }
-    }
-  }, [currentPage, searchTerm, selectedChapter])
+    };
+  }, [currentPage, searchTerm, selectedChapter]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
-      setCurrentPage(newPage)
+      setCurrentPage(newPage);
     }
-  }
+  };
 
   const clearFilters = () => {
-    setSearchTerm("")
-    setSelectedChapter("all")
-    setCurrentPage(0)
-  }
+    setSearchTerm("");
+    setSelectedChapter("all");
+    setCurrentPage(0);
+  };
 
   const handleDeleteQuiz = async (quizId: string) => {
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Remove from local state
-      setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId))
-      setTotalElements((prev) => prev - 1)
+      setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+      setTotalElements((prev) => prev - 1);
 
-      toast.success("Quiz deleted successfully")
+      toast.success("Quiz deleted successfully");
     } catch (err) {
-      toast.error("Failed to delete quiz")
+      toast.error("Failed to delete quiz");
     }
-  }
+  };
 
   return (
     <>
@@ -223,10 +224,9 @@ export default function QuizzesPage() {
       </Card>
 
       <ErrorCard
-        error={error || ""}
+        error={error}
         title="Error Loading Quizzes"
         onRetry={() => fetchQuizzes(currentPage, searchTerm)}
-        retryButtonText="Try Again"
       />
 
       <SearchSectionSkeleton isLoading={loading} />
@@ -244,23 +244,24 @@ export default function QuizzesPage() {
           </CardContent>
         </Card>
       )}
+      <CardListContainer
+        empty={quizzes.length === 0}
+        loading={loading}
+        error={!!error}
+      >
+        {quizzes.map((quiz) => (
+          <QuizCard key={quiz.id} quiz={quiz} onDelete={handleDeleteQuiz} />
+        ))}
+      </CardListContainer>
 
-      {!loading && !error && quizzes.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {quizzes.map((quiz) => (
-            <QuizCard key={quiz.id} quiz={quiz} onDelete={handleDeleteQuiz} />
-          ))}
-        </div>
-      )}
-
-      {!loading && !error && totalElements > maxTotalElements && totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          maxVisiblePages={5}
-        />
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        maxVisiblePages={5}
+        loading={loading}
+        error={!!error}
+      />
     </>
-  )
+  );
 }

@@ -18,6 +18,8 @@ import {
   useAttempts,
   type QuizAttempt,
 } from "@/contexts/attemptsContext";
+import { CardListContainer } from "@/components/CardListContainer";
+import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
 
 interface ApiResponse {
   totalElements: number;
@@ -197,12 +199,11 @@ function AttemptsComponent() {
       />
 
       <ErrorCard
-        error={error || ""}
+        error={error}
         title="Error Loading Attempts"
         onRetry={() =>
           fetchAttempts(currentPage, selectedSort, startDate, endDate)
         }
-        retryButtonText="Try Again"
       />
 
       {loading && (
@@ -228,40 +229,31 @@ function AttemptsComponent() {
         </div>
       )}
 
-      {!loading && !error && attempts.length === 0 && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Target className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No attempts found</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              {hasActiveFilters
-                ? "No attempts match your search criteria. Try different terms or clear your filters."
-                : "No quiz attempts available. Take your first quiz to get started."}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <SearchNotFoundResourcesCard 
+        isEmpty={!loading && !error && attempts.length === 0}
+        resourceType="attempts"
+        hasActiveFilters={!!hasActiveFilters}
+        noItemsAdvice="Take your first quiz to get started."
+        icon={Target}
+      />
 
-      {!loading && !error && attempts.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {attempts.map((attempt) => (
-            <AttemptCard key={attempt.id} attempt={attempt} />
-          ))}
-        </div>
-      )}
+      <CardListContainer
+        empty={attempts.length === 0}
+        loading={loading}
+        error={!!error}
+      >
+        {attempts.map((attempt) => (
+          <AttemptCard key={attempt.id} attempt={attempt} />
+        ))}
+      </CardListContainer>
 
-      {!loading &&
-        !error &&
-        totalElements > maxTotalElements &&
-        totalPages > 1 && (
-          <div className="flex justify-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        loading={loading}
+        error={!!error}
+      />
     </div>
   );
 }

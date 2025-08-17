@@ -6,6 +6,8 @@ interface PaginationProps {
   totalPages: number
   onPageChange: (page: number) => void
   maxVisiblePages?: number
+  loading?: boolean
+  error?: boolean
 }
 
 export function Pagination({
@@ -13,8 +15,10 @@ export function Pagination({
   totalPages,
   onPageChange,
   maxVisiblePages = 5,
+  loading = false,
+  error = false,
 }: PaginationProps) {
-  if (totalPages <= 1) return null
+  if (totalPages <= 1 || loading || error) return null
 
   const getPageNumbers = () => {
     const pages = []

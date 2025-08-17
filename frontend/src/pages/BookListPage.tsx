@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Plus, Filter, BookOpen, Book } from "lucide-react";
+import { Search, Plus, Filter, BookOpen, Book, BookDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,8 @@ import { SearchSectionSkeleton } from "../components/SearchSectionSkeleton";
 import { useAuth } from "@/contexts/authContext";
 import { SectionHeader } from "../components/SectionHeader";
 import { useNavigate } from "react-router-dom";
+import { CardListContainer } from "@/components/CardListContainer";
+import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
 
 interface Book {
   id: string;
@@ -248,51 +250,45 @@ export default function BookListPage() {
       </>
 
       <ErrorCard
-        error={error || ""}
+        error={error}
         title="Error Loading Books"
         onRetry={() => fetchBooks(currentPage, searchTerm, selectedGenre)}
-        retryButtonText="Try Again"
       />
 
       <SearchSectionSkeleton isLoading={loading} />
 
-      {!loading && !error && books.length === 0 && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No books found</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedGenre !== "all"
-                ? "No books match your search criteria. Try different terms or create a new book."
-                : "No books available. Create your first book to get started."}
-            </p>
-            <Button onClick={handleCreateBook}>
-              <Plus className="mr-2 h-4 w-4" />
-              {totalElements === 0 ? "Create First Book" : "Create New Book"}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      <SearchNotFoundResourcesCard
+        isEmpty={!loading && !error && books.length === 0}
+        resourceType="attempts"
+        hasActiveFilters={!!searchTerm || selectedGenre !== "all"}
+        noItemsAdvice="Create your first book to get started."
+        icon={BookDown}
+        callToAction={
+          <Button onClick={handleCreateBook}>
+            <Plus className="mr-2 h-4 w-4" />
+            {totalElements === 0 ? "Create First Book" : "Create New Book"}
+          </Button>
+        }
+      />
 
-      {!loading && !error && books.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
-      )}
+      <CardListContainer
+        empty={books.length === 0}
+        loading={loading}
+        error={!!error}
+      >
+        {books.map((book) => (
+          <BookCard key={book.id} book={book} />
+        ))}
+      </CardListContainer>
 
-      {!loading &&
-        !error &&
-        totalElements > maxTotalElements &&
-        totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            maxVisiblePages={5}
-          />
-        )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        maxVisiblePages={5}
+        loading={loading}
+        error={!!error}
+      />
     </>
   );
 }
