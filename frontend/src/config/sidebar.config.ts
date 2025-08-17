@@ -1,4 +1,4 @@
-import { BookOpen, Brain, Home, Settings, Plus, FileText } from "lucide-react";
+import { BookOpen, Brain, Home, Plus, FileText, Goal } from "lucide-react";
 import type { SidebarItemsData } from "@/contexts/sidebarContext";
 
 export const defaultSidebar: SidebarItemsData = [
@@ -6,16 +6,28 @@ export const defaultSidebar: SidebarItemsData = [
     title: "Main",
     items: [
       { title: "Dashboard", url: "/", icon: Home },
-      { title: "My Books", url: "/books", icon: BookOpen },
-      { title: "My Quizzes", url: "/quizzes", icon: Brain },
     ],
   },
   {
-    title: "Management",
+    title: "Books",
     items: [
-      { title: "Settings", url: "/settings", icon: Settings },
+      { title: "My Books", url: "/books", icon: BookOpen },
+      { title: "Add Book", url: "/books/create", icon: Plus },
     ],
   },
+  {
+    title: "Quizzes",
+    items: [
+      { title: "My Quizzes", url: "/quizzes", icon: Brain },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
+    ],
+  },
+  // {
+  //   title: "Management",
+  //   items: [
+  //     { title: "Settings", url: "/settings", icon: Settings },
+  //   ],
+  // },
 ];
 
 export const booksSidebar: SidebarItemsData = [
@@ -31,6 +43,13 @@ export const booksSidebar: SidebarItemsData = [
     items: [
       { title: "My Books", url: "/books", icon: BookOpen },
       { title: "Add Book", url: "/books/create", icon: Plus },
+    ],
+  },
+  {
+    title: "Quizzes",
+    items: [
+      { title: "My Quizzes", url: "/quizzes", icon: Brain },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
     ],
   },
 ];
@@ -52,6 +71,13 @@ export const selectedBookSidebar = (
     items: [
       { title: "My Books", url: "/books", icon: BookOpen },
       { title: "Add Book", url: "/books/create", icon: Plus },
+    ],
+  },
+  {
+    title: "Quizzes",
+    items: [
+      { title: "My Quizzes", url: "/quizzes", icon: Brain },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
     ],
   },
   {

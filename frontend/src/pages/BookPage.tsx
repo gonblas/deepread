@@ -9,7 +9,6 @@ import { getGenreLabel, getGenreColor, type BookGenre } from "@/lib/genres";
 import { EditBookDialog } from "../components/books/EditBookDialog";
 import { useParams, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { DeleteBookDialog } from "../components/books/DeleteBookDialog";
 import { useAuth } from "@/contexts/authContext";
 import { ChapterListSection } from "../components/books/ChapterListSection";
 import { DeleteElementDialog } from "@/components/DeleteElementDialog";
@@ -159,11 +158,11 @@ export default function BookPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+            <div className="flex gap-4 my-auto">
               <div className="text-center p-3 bg-background/50 rounded-lg border">
-                <div className="text-2xl font-bold text-primary">
+                <span className="text-2xl font-bold text-primary">
                   {chapters.length}
-                </div>
+                </span>
                 <div className="text-xs text-muted-foreground">
                   Total Chapters
                 </div>
