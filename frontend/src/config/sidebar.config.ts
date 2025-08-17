@@ -1,4 +1,4 @@
-import { BookOpen, Brain, Home, Plus, FileText, Goal } from "lucide-react";
+import { BookOpen, Brain, Home, Plus, FileText, Target } from "lucide-react";
 import type { SidebarItemsData } from "@/contexts/sidebarContext";
 
 export const defaultSidebar: SidebarItemsData = [
@@ -19,7 +19,7 @@ export const defaultSidebar: SidebarItemsData = [
     title: "Quizzes",
     items: [
       { title: "My Quizzes", url: "/quizzes", icon: Brain },
-      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Target },
     ],
   },
   // {
@@ -49,7 +49,7 @@ export const booksSidebar: SidebarItemsData = [
     title: "Quizzes",
     items: [
       { title: "My Quizzes", url: "/quizzes", icon: Brain },
-      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Target },
     ],
   },
 ];
@@ -77,7 +77,7 @@ export const selectedBookSidebar = (
     title: "Quizzes",
     items: [
       { title: "My Quizzes", url: "/quizzes", icon: Brain },
-      { title: "My Attempts", url: "/quizzes/attempts", icon: Goal },
+      { title: "My Attempts", url: "/quizzes/attempts", icon: Target },
     ],
   },
   {

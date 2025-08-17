@@ -1,12 +1,13 @@
 "use client"
 
 // import { formatDistanceToNow } from "date-fns"
-import { Calendar, Clock, Target, ChevronRight, Trophy } from "lucide-react"
+import { Calendar, Clock, ChevronRight, Trophy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { QuizAttempt } from "@/contexts/attemptsContext"
 import { Link } from "react-router-dom"
+import { formatDistanceToNow } from "date-fns"
 
 interface AttemptCardProps {
   attempt: QuizAttempt
@@ -47,19 +48,11 @@ export function AttemptCard({ attempt }: AttemptCardProps) {
           )}
         </div>
 
-        <CardTitle
-          className="text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors"
-          title={attempt.quiz?.title || `Quiz ${attempt.quiz_id.slice(0, 8)}`}
-        >
-          {attempt.quiz?.title || `Quiz ${attempt.quiz_id.slice(0, 8)}`}
-        </CardTitle>
-
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-col items-start gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3 flex-shrink-0" />
             <span title={submittedDate.toLocaleString()}>
-              {/* {formatDistanceToNow(submittedDate, { addSuffix: true })} */}
-              nashei
+              {formatDistanceToNow(submittedDate, { addSuffix: true })}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -82,7 +75,6 @@ export function AttemptCard({ attempt }: AttemptCardProps) {
         <div className="mt-4 pt-4 border-t flex-shrink-0">
           <Button asChild className="w-full text-xs">
             <Link to={`/quizzes/attempts/${attempt.id}`}>
-              <Target className="size-4 mr-1" />
               View Results
               <ChevronRight className="size-4 ml-1" />
             </Link>

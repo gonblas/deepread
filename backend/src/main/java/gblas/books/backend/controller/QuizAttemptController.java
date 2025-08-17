@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -35,8 +36,9 @@ public class QuizAttemptController {
             }
     )
     @GetMapping("/api/attempts")
-    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
-        return quizAttemptService.getQuizAttemptsFromUser(user, pageable);
+    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable, @RequestParam(required = false) LocalDateTime submittedFrom, @RequestParam(required = false) LocalDateTime submittedTo
+    ) {
+        return quizAttemptService.getQuizAttemptsFromUser(user, pageable, submittedFrom, submittedTo);
     }
 
     @Operation(

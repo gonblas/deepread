@@ -38,8 +38,8 @@ public class QuizAttemptService {
     private final AnswerRepository answerRepository;
     private final QuizVersionService quizVersionService;
 
-    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
-        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUser(user, pageable);
+    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable, LocalDateTime submittedFrom, LocalDateTime submittedTo) {
+        Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUserAndSubmittedAtBetween(user, submittedFrom, submittedTo, pageable);
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
 

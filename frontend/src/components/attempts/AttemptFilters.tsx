@@ -47,7 +47,7 @@ export function AttemptsFilters({
       <CardContent className="pt-6">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="w-full lg:w-64 space-y-2">
-            <Label htmlFor="sort" className="text-sm font-medium">
+            <Label htmlFor="sort">
               Sort by
             </Label>
             <Select value={selectedSort} onValueChange={(value: SortOption) => onSortChange(value)} disabled={loading}>
