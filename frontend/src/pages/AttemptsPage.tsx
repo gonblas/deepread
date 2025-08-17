@@ -16,24 +16,20 @@ import {
 import { CardListContainer } from "@/components/CardListContainer";
 import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
 import { SearchBox } from "@/components/search/SearchBox";
-import { Calendar, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label";
+import { ArrowUpDown } from "lucide-react";
 import { SearchSectionSkeleton } from "@/components/SearchSectionSkeleton";
+import { useForm } from "@/hooks/useForm";
+import SelectField from "@/components/form/SelectField";
+import DateField from "@/components/form/DateField";
 
-export type SortOption = "date-desc" | "date-asc" | "score-desc" | "score-asc"
+export type SortOption = "date-desc" | "date-asc" | "score-desc" | "score-asc";
 
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: "date-desc", label: "Newest First" },
   { value: "date-asc", label: "Oldest First" },
   { value: "score-desc", label: "Highest Score First" },
   { value: "score-asc", label: "Lowest Score First" },
-]
+];
 
 interface ApiResponse {
   totalElements: number;
@@ -65,13 +61,17 @@ interface ApiResponse {
 }
 
 function AttemptsComponent() {
-  const [selectedSort, setSelectedSort] = useState<SortOption>("date-desc");
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const { values, handleChange, errors, resetForm } = useForm({
+    sort: "date-desc",
+    startDate: undefined,
+    endDate: undefined,
+  });
+
   const [currentPage, setCurrentPage] = useState(0);
-  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { sortMap } = useAttempts();
@@ -79,10 +79,12 @@ function AttemptsComponent() {
   const { logout } = useAuth();
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const maxTotalElements = 12;
+  const hasActiveFilters =
+    values.sort !== "date-desc" || !!values.startDate || !!values.endDate;
 
   const fetchAttempts = async (
     page = 0,
-    sort = selectedSort,
+    sort = values.sort,
     startDateFilter?: Date,
     endDateFilter?: Date
   ) => {
@@ -153,14 +155,14 @@ function AttemptsComponent() {
 
   useEffect(() => {
     setCurrentPage(0);
-  }, [selectedSort, startDate, endDate]);
+  }, [values.sort, values.startDate, values.endDate]);
 
   useEffect(() => {
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      fetchAttempts(currentPage, selectedSort, startDate, endDate);
+      fetchAttempts(currentPage, values.sort, values.startDate, values.endDate);
     }, 300);
 
     return () => {
@@ -168,7 +170,7 @@ function AttemptsComponent() {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [currentPage, selectedSort, startDate, endDate]);
+  }, [currentPage, values.sort, values.startDate, values.endDate]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
@@ -177,13 +179,9 @@ function AttemptsComponent() {
   };
 
   const clearFilters = () => {
-    setSelectedSort("date-desc");
-    setStartDate(undefined);
-    setEndDate(undefined);
+    resetForm();
     setCurrentPage(0);
   };
-
-  const hasActiveFilters = selectedSort !== "date-desc" || startDate || endDate;
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -195,86 +193,60 @@ function AttemptsComponent() {
       />
 
       <SearchBox
-        hasActiveFilters={selectedSort !== "date-desc" || !!startDate || !!endDate}
+        hasActiveFilters={hasActiveFilters}
         onClearFilters={clearFilters}
         loading={loading}
         totalElements={totalElements}
         resourcesType="quizzes"
         icon={Target}
       >
-        <div className="w-full lg:w-64 space-y-2">
-            <Label htmlFor="sort">
-              Sort by
-            </Label>
-            <Select value={selectedSort} onValueChange={(value: SortOption) => setSelectedSort(value)} disabled={loading}>
-              <SelectTrigger>
-                <ArrowUpDown className="mr-2 h-4 w-4" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {sortOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <SelectField
+          label="Sort by"
+          id="sort"
+          name="sort"
+          value={values.sort}
+          onValueChange={(value) =>
+            handleChange({ target: { name: "sort", value } } as any)
+          }
+          required
+          error={errors.sort}
+          options={sortOptions}
+          icon={ArrowUpDown}
+        />
 
-          <div className="flex-1 space-y-2">
-            <Label>Start Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn("w-full justify-start text-left font-normal", !startDate && "text-muted-foreground")}
-                  disabled={loading}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  disabled={(date) => date > new Date() || (endDate ? date > endDate : false)}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        <DateField
+          label="Start Date"
+          id="startDate"
+          name="startDate"
+          value={values.startDate}
+          onValueChange={(date) =>
+            handleChange({ target: { name: "startDate", value: date } } as any)
+          }
+          error={errors.startDate}
+          required
+          maxDate={values.endDate}
+        />
 
-          <div className="flex-1 space-y-2">
-            <Label>End Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn("w-full justify-start text-left font-normal", !endDate && "text-muted-foreground")}
-                  disabled={loading}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  disabled={(date) => date > new Date() || (!!startDate && date < startDate)}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        <DateField
+          label="End Date"
+          id="endDate"
+          name="endDate"
+          value={values.endDate}
+          onValueChange={(date) =>
+            handleChange({ target: { name: "endDate", value: date } } as any)
+          }
+          error={errors.endDate}
+          required
+          minDate={values.startDate}
+          maxDate={new Date()}
+        />
       </SearchBox>
 
       <ErrorCard
         error={error}
         title="Error Loading Attempts"
         onRetry={() =>
-          fetchAttempts(currentPage, selectedSort, startDate, endDate)
+          fetchAttempts(currentPage, values.sort, values.startDate, values.endDate)
         }
       />
 
@@ -283,7 +255,7 @@ function AttemptsComponent() {
       <SearchNotFoundResourcesCard
         isEmpty={!loading && !error && attempts.length === 0}
         resourceType="attempts"
-        hasActiveFilters={!!hasActiveFilters}
+        hasActiveFilters={hasActiveFilters}
         noItemsAdvice="Take your first quiz to get started."
         icon={Target}
       />

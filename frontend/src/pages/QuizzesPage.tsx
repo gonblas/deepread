@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Brain } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { QuizCard } from "@/components/quizzes/QuizCard";
 import { ErrorCard } from "@/components/ErrorCard";
 import { Pagination } from "@/components/Pagination";
@@ -15,6 +13,9 @@ import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { CardListContainer } from "@/components/CardListContainer";
 import { SearchBox } from "@/components/search/SearchBox";
+import InputField from "@/components/form/InputField";
+import { useForm } from "@/hooks/useForm";
+import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
 
 interface Chapter {
   id: string;
@@ -64,18 +65,20 @@ interface ApiResponse {
 }
 
 export default function QuizzesPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedChapter, setSelectedChapter] = useState<string>("all");
+  const { values, handleChange, errors, resetForm } = useForm({
+      search: "",
+    });
   const [currentPage, setCurrentPage] = useState(0);
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { logout } = useAuth();
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const maxTotalElements = 12;
+  const hasActiveFilters = !!values.search;
 
   const fetchQuizzes = async (page = 0, search = "") => {
     setLoading(true);
@@ -132,14 +135,14 @@ export default function QuizzesPage() {
 
   useEffect(() => {
     setCurrentPage(0);
-  }, [searchTerm, selectedChapter]);
+  }, [values.search]);
 
   useEffect(() => {
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      fetchQuizzes(currentPage, searchTerm);
+      fetchQuizzes(currentPage, values.search);
     }, 500);
 
     return () => {
@@ -147,7 +150,7 @@ export default function QuizzesPage() {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [currentPage, searchTerm, selectedChapter]);
+  }, [currentPage, values.search]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
@@ -156,8 +159,7 @@ export default function QuizzesPage() {
   };
 
   const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedChapter("all");
+    resetForm();
     setCurrentPage(0);
   };
 
@@ -186,52 +188,43 @@ export default function QuizzesPage() {
       />
 
       <SearchBox
-        hasActiveFilters={!!searchTerm || selectedChapter !== "all"}
+        hasActiveFilters={hasActiveFilters}
         onClearFilters={clearFilters}
         loading={loading}
         totalElements={totalElements}
         resourcesType="quizzes"
         icon={Brain}
       >
-        <div className="flex-1 space-y-2">
-          <Label htmlFor="search" className="text-sm font-medium">
-            Search quizzes
-          </Label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              id="search"
-              placeholder="Search by chapter title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              disabled={loading}
-            />
-          </div>
-        </div>
+        <InputField
+          label="Search quizzes"
+          id="search"
+          name="search"
+          type="search"
+          placeholder="Search by chapter title..."
+          value={values.search}
+          onChange={handleChange}
+          error={errors.search}
+          disabled={loading}
+          className="w-full"
+          icon={Search}
+        />
       </SearchBox>
 
       <ErrorCard
         error={error}
         title="Error Loading Quizzes"
-        onRetry={() => fetchQuizzes(currentPage, searchTerm)}
+        onRetry={() => fetchQuizzes(currentPage, values.search)}
       />
 
       <SearchSectionSkeleton isLoading={loading} />
 
-      {!loading && !error && quizzes.length === 0 && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Brain className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No quizzes found</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedChapter !== "all"
-                ? "No quizzes match your search criteria. Try different terms or create a new quiz from a chapter."
-                : "No quizzes available. Create your first quiz from a chapter to get started."}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <SearchNotFoundResourcesCard
+        isEmpty={!loading && !error && quizzes.length === 0}
+        resourceType="attempts"
+        hasActiveFilters={hasActiveFilters}
+        noItemsAdvice="Create your first quiz from a chapter to get started."
+        icon={Brain}
+      />
 
       <CardListContainer
         empty={quizzes.length === 0}

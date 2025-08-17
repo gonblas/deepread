@@ -3,17 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Plus, Filter, Book, BookDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { BOOK_GENRES, getGenreLabel } from "@/lib/genres";
 import { BookCard } from "@/components/books/BookCard";
-import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres";
+import { type BookGenre } from "@/lib/genres";
 import Cookies from "js-cookie";
 import { ErrorCard } from "../components/ErrorCard";
 import { Pagination } from "../components/Pagination";
@@ -72,9 +64,9 @@ export default function BookListPage() {
   });
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [books, setBooks] = useState<Book[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { logout } = useAuth();
@@ -82,6 +74,7 @@ export default function BookListPage() {
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const maxTotalElements = 12;
+  const hasActiveFilters = !!values.search || values.genres !== "all";
   const fetchBooks = async (page = 0, search = "", genre = "all") => {
     setLoading(true);
     setError(null);
@@ -190,7 +183,7 @@ export default function BookListPage() {
       </SectionHeader>
 
       <SearchBox
-        hasActiveFilters={!!values.search || !!values.genres}
+        hasActiveFilters={hasActiveFilters}
         onClearFilters={clearFilters}
         loading={loading}
         totalElements={totalElements}
@@ -242,7 +235,7 @@ export default function BookListPage() {
       <SearchNotFoundResourcesCard
         isEmpty={!loading && !error && books.length === 0}
         resourceType="attempts"
-        hasActiveFilters={!!values.search || values.genres !== "all"}
+        hasActiveFilters={hasActiveFilters}
         noItemsAdvice="Create your first book to get started."
         icon={BookDown}
         callToAction={
