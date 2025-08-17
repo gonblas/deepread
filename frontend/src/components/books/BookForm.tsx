@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useForm } from "@/hooks/useForm";
-import FormField from "@/components/form/FormField";
+import InputField from "@/components/form/InputField";
 
 import { BOOK_GENRES, getGenreLabel } from "@/lib/genres";
 import SelectField from "../form/SelectField";
@@ -104,7 +104,7 @@ export function BookForm({ formTitle, className, sendFunction, initialValue, ...
           <form className="grid gap-6" onSubmit={handleSubmit}>
             <div className="grid gap-8">
               <div className="grid gap-4 grid-rows-1 lg:grid-cols-[75%_23.5%] w-full">
-                <FormField
+                <InputField
                   label="Title"
                   id="title"
                   name="title"

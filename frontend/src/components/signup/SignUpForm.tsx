@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/authContext";
 import { useForm } from "@/hooks/useForm";
-import FormField from "@/components/form/FormField";
+import InputField from "@/components/form/InputField";
 
 export function SignUpForm({
   className,
@@ -66,7 +66,7 @@ export function SignUpForm({
           </p>
         </div>
         <div className="grid gap-4">
-          <FormField
+          <InputField
             label="Email"
             id="email"
             name="email"
@@ -76,7 +76,7 @@ export function SignUpForm({
             onChange={handleChange}
             error={errors.email}
           />
-          <FormField
+          <InputField
             label="Password"
             id="password"
             name="password"
@@ -93,7 +93,7 @@ export function SignUpForm({
               </a>
             }
           />
-          <FormField
+          <InputField
             label="Username"
             id="username"
             name="username"

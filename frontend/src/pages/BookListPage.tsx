@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Plus, Filter, BookOpen, Book, BookDown } from "lucide-react";
+import { Search, Plus, Filter, Book, BookDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BOOK_GENRES, getGenreLabel } from "@/lib/genres";
 import { BookCard } from "@/components/books/BookCard";
 import { getAllGenresWithLabels, type BookGenre } from "@/lib/genres";
 import Cookies from "js-cookie";
@@ -25,6 +24,9 @@ import { useNavigate } from "react-router-dom";
 import { CardListContainer } from "@/components/CardListContainer";
 import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
 import { SearchBox } from "@/components/search/SearchBox";
+import { useForm } from "@/hooks/useForm";
+import InputField from "@/components/form/InputField";
+import SelectField from "@/components/form/SelectField";
 
 interface Book {
   id: string;
@@ -64,15 +66,17 @@ interface ApiResponse {
 }
 
 export default function BookListPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState<string>("all");
+  const { values, handleChange, errors, resetForm } = useForm({
+    search: "",
+    genres: "",
+  });
+
   const [currentPage, setCurrentPage] = useState(0);
   const [books, setBooks] = useState<Book[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const genresWithLabels = getAllGenresWithLabels();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -137,14 +141,14 @@ export default function BookListPage() {
 
   useEffect(() => {
     setCurrentPage(0);
-  }, [searchTerm, selectedGenre]);
+  }, [values.search, values.genres]);
 
   useEffect(() => {
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      fetchBooks(currentPage, searchTerm, selectedGenre);
+      fetchBooks(currentPage, values.search, values.genres);
     }, 500);
 
     return () => {
@@ -152,7 +156,7 @@ export default function BookListPage() {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [currentPage, searchTerm, selectedGenre]);
+  }, [currentPage, values.search, values.genres]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
@@ -165,8 +169,7 @@ export default function BookListPage() {
   };
 
   const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedGenre("all");
+    resetForm();
     setCurrentPage(0);
   };
 
@@ -187,59 +190,51 @@ export default function BookListPage() {
       </SectionHeader>
 
       <SearchBox
-        hasActiveFilters={!!searchTerm || selectedGenre !== "all"}
+        hasActiveFilters={!!values.search || !!values.genres}
         onClearFilters={clearFilters}
         loading={loading}
         totalElements={totalElements}
         resourcesType="books"
         icon={Book}
       >
-        <div className="flex-1 space-y-2">
-          <Label htmlFor="search" className="text-sm font-medium">
-            Search books
-          </Label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              id="search"
-              placeholder="Search by title or author..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              disabled={loading}
-            />
-          </div>
-        </div>
-
-        <div className="w-full lg:w-64 space-y-2">
-          <Label htmlFor="genre" className="text-sm font-medium">
-            Filter by genre
-          </Label>
-          <Select
-            value={selectedGenre}
-            onValueChange={setSelectedGenre}
+        <div className="grid gap-4 grid-rows-1 lg:grid-cols-[75%_23.5%] w-full">
+          <InputField
+            label="Search books"
+            id="search"
+            name="search"
+            type="search"
+            placeholder="Search by title or author..."
+            value={values.search}
+            onChange={handleChange}
+            error={errors.search}
             disabled={loading}
-          >
-            <SelectTrigger>
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="All genres" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All genres</SelectItem>
-              {genresWithLabels.map((genre) => (
-                <SelectItem key={genre.value} value={genre.value}>
-                  {genre.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            className="w-full"
+            icon={Search}
+          />
+
+          <SelectField
+            label="Filter by genre"
+            id="genre"
+            name="genre"
+            value={values.genres}
+            onValueChange={(value) =>
+              handleChange({ target: { name: "genres", value } } as any)
+            }
+            required
+            error={errors.genres}
+            options={BOOK_GENRES.map((genre) => ({
+              value: genre,
+              label: getGenreLabel(genre),
+            }))}
+            icon={Filter}
+          />
         </div>
       </SearchBox>
 
       <ErrorCard
         error={error}
         title="Error Loading Books"
-        onRetry={() => fetchBooks(currentPage, searchTerm, selectedGenre)}
+        onRetry={() => fetchBooks(currentPage, values.search, values.genres)}
       />
 
       <SearchSectionSkeleton isLoading={loading} />
@@ -247,7 +242,7 @@ export default function BookListPage() {
       <SearchNotFoundResourcesCard
         isEmpty={!loading && !error && books.length === 0}
         resourceType="attempts"
-        hasActiveFilters={!!searchTerm || selectedGenre !== "all"}
+        hasActiveFilters={!!values.search || values.genres !== "all"}
         noItemsAdvice="Create your first book to get started."
         icon={BookDown}
         callToAction={

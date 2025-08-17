@@ -24,7 +24,7 @@ export default function FormFieldStructure({
         </Label>
         {labelSuffix}
       </div>
-      {children}
+      <div className="relative">{children}</div>
       <div className="h-4">
         {error && <p className="text-xs text-red-500">{error}</p>}
       </div>
