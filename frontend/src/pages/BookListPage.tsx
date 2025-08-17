@@ -24,6 +24,7 @@ import { SectionHeader } from "../components/SectionHeader";
 import { useNavigate } from "react-router-dom";
 import { CardListContainer } from "@/components/CardListContainer";
 import { SearchNotFoundResourcesCard } from "@/components/SearchNotFoundResourcesCard";
+import { SearchBox } from "@/components/search/SearchBox";
 
 interface Book {
   id: string;
@@ -171,83 +172,69 @@ export default function BookListPage() {
 
   return (
     <>
-      <>
-        <SectionHeader
-          title="Book Library"
-          loading={loading}
-          error={error}
-          description="Explore our collection of available books"
-        >
-          <Button size="lg" className="shrink-0" onClick={handleCreateBook}>
-            <span className="mr-1 size-4 flex items-center">
-              <Plus className="mr-1 size-6" />
-            </span>
-            Create Book
-          </Button>
-        </SectionHeader>
+      <SectionHeader
+        title="Book Library"
+        loading={loading}
+        error={error}
+        description="Explore our collection of available books"
+      >
+        <Button size="lg" className="shrink-0" onClick={handleCreateBook}>
+          <span className="mr-1 size-4 flex items-center">
+            <Plus className="mr-1 size-6" />
+          </span>
+          Create Book
+        </Button>
+      </SectionHeader>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="search" className="text-sm font-medium">
-                  Search books
-                </Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    id="search"
-                    placeholder="Search by title or author..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                    disabled={loading}
-                  />
-                </div>
-              </div>
+      <SearchBox
+        hasActiveFilters={!!searchTerm || selectedGenre !== "all"}
+        onClearFilters={clearFilters}
+        loading={loading}
+        totalElements={totalElements}
+        resourcesType="books"
+        icon={Book}
+      >
+        <div className="flex-1 space-y-2">
+          <Label htmlFor="search" className="text-sm font-medium">
+            Search books
+          </Label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              id="search"
+              placeholder="Search by title or author..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+              disabled={loading}
+            />
+          </div>
+        </div>
 
-              <div className="w-full lg:w-64 space-y-2">
-                <Label htmlFor="genre" className="text-sm font-medium">
-                  Filter by genre
-                </Label>
-                <Select
-                  value={selectedGenre}
-                  onValueChange={setSelectedGenre}
-                  disabled={loading}
-                >
-                  <SelectTrigger>
-                    <Filter className="mr-2 h-4 w-4" />
-                    <SelectValue placeholder="All genres" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All genres</SelectItem>
-                    {genresWithLabels.map((genre) => (
-                      <SelectItem key={genre.value} value={genre.value}>
-                        {genre.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-4 pt-4 border-t">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <BookOpen className="h-4 w-4" />
-                  {loading ? "Loading..." : `${totalElements} books found`}
-                </span>
-              </div>
-
-              {(searchTerm || selectedGenre !== "all") && !loading && (
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
-                  Clear filters
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </>
+        <div className="w-full lg:w-64 space-y-2">
+          <Label htmlFor="genre" className="text-sm font-medium">
+            Filter by genre
+          </Label>
+          <Select
+            value={selectedGenre}
+            onValueChange={setSelectedGenre}
+            disabled={loading}
+          >
+            <SelectTrigger>
+              <Filter className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="All genres" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All genres</SelectItem>
+              {genresWithLabels.map((genre) => (
+                <SelectItem key={genre.value} value={genre.value}>
+                  {genre.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </SearchBox>
 
       <ErrorCard
         error={error}

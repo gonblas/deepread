@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, Brain } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +14,7 @@ import { useAuth } from "@/contexts/authContext";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { CardListContainer } from "@/components/CardListContainer";
+import { SearchBox } from "@/components/search/SearchBox";
 
 interface Chapter {
   id: string;
@@ -185,43 +185,31 @@ export default function QuizzesPage() {
         description="Manage and review your educational quizzes"
       />
 
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="search" className="text-sm font-medium">
-                Search quizzes
-              </Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  id="search"
-                  placeholder="Search by chapter title..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                  disabled={loading}
-                />
-              </div>
-            </div>
+      <SearchBox
+        hasActiveFilters={!!searchTerm || selectedChapter !== "all"}
+        onClearFilters={clearFilters}
+        loading={loading}
+        totalElements={totalElements}
+        resourcesType="quizzes"
+        icon={Brain}
+      >
+        <div className="flex-1 space-y-2">
+          <Label htmlFor="search" className="text-sm font-medium">
+            Search quizzes
+          </Label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              id="search"
+              placeholder="Search by chapter title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+              disabled={loading}
+            />
           </div>
-
-          <div className="flex items-center justify-between mt-4 pt-4 border-t">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Brain className="h-4 w-4" />
-                {loading ? "Loading..." : `${totalElements} quizzes found`}
-              </span>
-            </div>
-
-            {(searchTerm || selectedChapter !== "all") && !loading && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear filters
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SearchBox>
 
       <ErrorCard
         error={error}
@@ -244,6 +232,7 @@ export default function QuizzesPage() {
           </CardContent>
         </Card>
       )}
+
       <CardListContainer
         empty={quizzes.length === 0}
         loading={loading}
