@@ -5,7 +5,7 @@ import { QuizProvider, useQuiz } from "@/contexts/quizContext";
 import { QuizCreator } from "@/components/quizzes/QuizCreator";
 import { BackButton } from "@/components/ui/back-button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function EditQuizContent() {
   // const navigate = useNavigate();
@@ -24,7 +24,6 @@ function EditQuizContent() {
     try {
       if(quizId) {
         await updateQuiz(quizId, quiz);
-        //navigate("/quizzes");
       }
     } catch (error) {
       console.error("Failed to update quiz:", error);
