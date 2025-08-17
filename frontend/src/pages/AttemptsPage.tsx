@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { format } from "date-fns"
 import Cookies from "js-cookie"
 import { ErrorCard } from "@/components/ErrorCard"
-import { Pagination } from "@/components/ui/pagination"
+import { Pagination } from "../components/Pagination";
 import { SectionHeader } from "@/components/SectionHeader"
 import { useAuth } from "@/contexts/authContext"
 import { AttemptCard } from "@/components/attempts/AttemptCard"

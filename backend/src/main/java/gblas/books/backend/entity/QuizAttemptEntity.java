@@ -37,7 +37,6 @@ public class QuizAttemptEntity {
     private LocalDateTime submittedAt;
 
     @Column(name = "correct_count")
-    @Transient
     private Integer correctCount;
 
     @PostLoad
