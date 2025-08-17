@@ -74,7 +74,7 @@ export default function BookListPage() {
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const maxTotalElements = 12;
-  const hasActiveFilters = !!values.search || values.genres !== "all";
+  const hasActiveFilters = !!values.search || !!values.genres;
   const fetchBooks = async (page = 0, search = "", genre = "all") => {
     setLoading(true);
     setError(null);
@@ -85,7 +85,7 @@ export default function BookListPage() {
         page: page.toString(),
       });
 
-      if (genre !== "all") {
+      if (genre.length > 0) {
         params.append("genres", genre);
       }
 
@@ -234,7 +234,7 @@ export default function BookListPage() {
 
       <SearchNotFoundResourcesCard
         isEmpty={!loading && !error && books.length === 0}
-        resourceType="attempts"
+        resourceType="books"
         hasActiveFilters={hasActiveFilters}
         noItemsAdvice="Create your first book to get started."
         icon={BookDown}
