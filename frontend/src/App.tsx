@@ -92,9 +92,7 @@ function AppRoutes() {
         path="/"
         element={
           <ProtectedRoute>
-            <StatisticsProvider>
-              <HomePage />
-            </StatisticsProvider>
+            <HomePage />
           </ProtectedRoute>
         }
       />

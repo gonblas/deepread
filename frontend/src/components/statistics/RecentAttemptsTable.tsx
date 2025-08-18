@@ -2,30 +2,18 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { RecentAttempt } from "@/contexts/recentAttemptsContext";
+import { formatDistanceToNow } from "date-fns"
 
-function timeAgo(dateString: string) {
-  const now = new Date();
-  const date = new Date(dateString);
-  const diffMs = now.getTime() - date.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHour / 24);
-
-  if (diffDay > 0) return `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
-  if (diffHour > 0) return `${diffHour} hour${diffHour > 1 ? "s" : ""} ago`;
-  if (diffMin > 0) return `${diffMin} minute${diffMin > 1 ? "s" : ""} ago`;
-  return "a few seconds ago";
-}
-
-export function RecentAttemptsTable({ recentAttempts }: { recentAttempts: Array<{
-  id: string;
-  bookTitle: string;
-  chapterNumber: number;
-  score: number;
-  date: string;
-}> }
+export function RecentAttemptsTable({ recentAttempts, loading, error }: { recentAttempts: Array<RecentAttempt>, loading: boolean, error: string | null }
 ) {
+  if(loading) {
+    return <div className="p-4">Loading recent attempts...</div>
+  }
+  if(error) {
+    return <div className="p-4 text-red-500">Error loading recent attempts: {error}</div>
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -49,10 +37,17 @@ export function RecentAttemptsTable({ recentAttempts }: { recentAttempts: Array<
                 <TableCell>{attempt.chapterNumber}</TableCell>
                 <TableCell>{attempt.score}</TableCell>
                 <TableCell className="text-muted-foreground">
-                  {timeAgo(attempt.date)}
+                  {formatDistanceToNow(attempt.submittedAt)}
                 </TableCell>
               </TableRow>
             ))}
+            {recentAttempts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="font-bold text-md text-center py-20">
+                  No recent attempts found. 
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

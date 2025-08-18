@@ -2,6 +2,7 @@ package gblas.books.backend.controller;
 
 import gblas.books.backend.dto.QuizAttemptRequest;
 import gblas.books.backend.dto.QuizAttemptResponse;
+import gblas.books.backend.dto.RecentQuizAttemptResponse;
 import gblas.books.backend.entity.UserEntity;
 import gblas.books.backend.service.QuizAttemptService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,20 @@ public class QuizAttemptController {
         return quizAttemptService.getQuizAttemptsFromUser(user, pageable, submittedFrom, submittedTo);
     }
 
+
+    @Operation(
+            summary = "Get paginated recent quiz attempts of authenticated user",
+            description = "Retrieves paginated quiz attempts associated with the authenticated user.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz attempts retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/api/attempts/recent")
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable) {
+        return quizAttemptService.getRecentQuizAttemptsFromUser(user, pageable);
+    }
+
     @Operation(
             summary = "Get quiz attempt from given id",
             description = "Retrieves quiz attempt details associated with its id.",
@@ -56,6 +71,20 @@ public class QuizAttemptController {
     }
 
     @Operation(
+            summary = "Get paginated recent quiz attempts of quiz",
+            description = "Retrieves paginated recent quiz attempts associated with quiz.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz attempts retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/api/quizzes/{quizId}/attempts/recent")
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromQuiz(@Valid @PathVariable UUID quizId, Pageable pageable) {
+        return quizAttemptService.getRecentQuizAttemptsFromQuiz(quizId, pageable);
+    }
+
+    @Operation(
             summary = "Get paginated quiz attempts for a book",
             description = "Retrieves paginated quiz attempts related to a specific book.",
             responses = {
@@ -67,6 +96,20 @@ public class QuizAttemptController {
     @GetMapping("/api/books/{bookId}/attempts")
     public Page<QuizAttemptResponse> getQuizAttemptsFromBook(@Valid @PathVariable UUID bookId, Pageable pageable) {
         return quizAttemptService.getQuizAttemptsFromBook(bookId, pageable);
+    }
+
+    @Operation(
+            summary = "Get paginated recent quiz attempts of authenticated user",
+            description = "Retrieves paginated quiz attempts associated with the authenticated user.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz attempts retrieved successfully"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - no response body", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Book not found - no response body", content = @Content)
+            }
+    )
+    @GetMapping("/api/books/{bookId}/attempts/recent")
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromUser(@Valid @PathVariable UUID bookId, Pageable pageable) {
+        return quizAttemptService.getRecentQuizAttemptsFromBook(bookId, pageable);
     }
 
     @Operation(
@@ -112,4 +155,6 @@ public class QuizAttemptController {
     public void deleteQuizAttempt(@Valid @PathVariable UUID quizAttemptId) {
         quizAttemptService.deleteQuizAttempt(quizAttemptId);
     }
+
+
 }

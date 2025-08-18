@@ -94,7 +94,7 @@ export function StatisticsProvider({
       },
     })
       .then(async (response) => {
-        if (!response.ok) {
+        if (response === null || !response.ok) {
           const text = await response.text();
           throw {
             status: response.status,
@@ -117,6 +117,12 @@ export function StatisticsProvider({
       .catch((err) => {
         if (err.status === 401) {
           logout();
+          return;
+        }
+        if (err instanceof TypeError) {
+          setError(
+            "Cannot connect to the server. Please check your internet connection or try again later."
+          );
           return;
         }
         setError(err.message || "Unknown error");
@@ -190,12 +196,10 @@ export function StatisticsProvider({
   return (
     <StatisticsContext.Provider
       value={{
-        // User stats
         loading,
         error,
         userStats,
         fetchUserStats,
-        // Quiz stats
         quizLoading,
         quizError,
         quizStats,

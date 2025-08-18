@@ -2,6 +2,7 @@ package gblas.books.backend.service;
 
 import gblas.books.backend.dto.QuizAttemptRequest;
 import gblas.books.backend.dto.QuizAttemptResponse;
+import gblas.books.backend.dto.RecentQuizAttemptResponse;
 import gblas.books.backend.entity.*;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import gblas.books.backend.entity.question.QuestionEntity;
@@ -103,5 +104,17 @@ public class QuizAttemptService {
     public QuizAttemptResponse getQuizAttemptDetailsFromId(UUID attemptId) {
         QuizAttemptEntity quizAttempt = quizAttemptRepository.findById(attemptId).orElseThrow(() -> new NotFoundException("Quiz attempt not found"));
         return QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory);
+    }
+
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromUser(UserEntity user, Pageable pageable) {
+        return quizAttemptRepository.findRecentAttemptsByUser(user, pageable);
+    }
+
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromBook(@Valid UUID bookId, Pageable pageable) {
+        return quizAttemptRepository.findRecentAttemptsByBook(bookId, pageable);
+    }
+
+    public Page<RecentQuizAttemptResponse> getRecentQuizAttemptsFromQuiz(@Valid UUID quizId, Pageable pageable) {
+        return quizAttemptRepository.findRecentAttemptsByQuiz(quizId, pageable);
     }
 }

@@ -39,6 +39,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DeleteElementDialog } from "@/components/DeleteElementDialog";
+import {
+  RecentAttemptsProvider,
+  useRecentAttempts,
+} from "@/contexts/recentAttemptsContext";
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -46,44 +50,6 @@ interface StatCardProps {
   value: string | number;
   iconBgColor: string;
 }
-
-const recentAttempts = [
-  {
-    id: "1",
-    bookTitle: "One Hundred Years of Solitude",
-    chapterNumber: 1,
-    score: 85,
-    date: "2025-08-09T09:00:00",
-  },
-  {
-    id: "2",
-    bookTitle: "Don Quixote",
-    chapterNumber: 2,
-    score: 72,
-    date: "2025-08-09T07:00:00",
-  },
-  {
-    id: "3",
-    bookTitle: "Hopscotch",
-    chapterNumber: 3,
-    score: 45,
-    date: "2025-08-08T10:00:00",
-  },
-  {
-    id: "4",
-    bookTitle: "The House of the Spirits",
-    chapterNumber: 4,
-    score: 88,
-    date: "2025-08-08T09:00:00",
-  },
-  {
-    id: "5",
-    bookTitle: "Love in the Time of Cholera",
-    chapterNumber: 2,
-    score: 91,
-    date: "2025-08-07T10:00:00",
-  },
-];
 
 function StatCard({ icon, title, value, iconBgColor }: StatCardProps) {
   return (
@@ -105,6 +71,12 @@ function QuizViewContent({ quizId }: { quizId: string }) {
   const navigate = useNavigate();
   const { quiz, loading: quizLoading, error: quizError, fetchQuiz } = useQuiz();
   const {
+    quizAttempts,
+    fetchQuizRecentAttempts,
+    loading: loadingRecentAttempts,
+    error: errorRecentAttempts,
+  } = useRecentAttempts();
+  const {
     quizStats,
     quizLoading: statsLoading,
     quizError: statsError,
@@ -113,6 +85,7 @@ function QuizViewContent({ quizId }: { quizId: string }) {
 
   useEffect(() => {
     fetchQuiz(quizId);
+    fetchQuizRecentAttempts(quizId);
   }, [quizId]);
 
   const chapterId = quiz?.chapter?.id;
@@ -265,13 +238,11 @@ function QuizViewContent({ quizId }: { quizId: string }) {
         </div>
       </SectionHeader>
 
-      {/* Quiz Basic Statistics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statsConfig.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
 
-        {/* Question Types Card */}
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -300,7 +271,11 @@ function QuizViewContent({ quizId }: { quizId: string }) {
           <h2 className="text-2xl font-bold">Quiz Performance Statistics</h2>
           <SectionCards stats={quizStats.stats} />
           <BarChartInteractive chartData={quizStats.dailyStatsTimeline} />
-          <RecentAttemptsTable recentAttempts={recentAttempts} />
+          <RecentAttemptsTable
+            recentAttempts={quizAttempts}
+            loading={loadingRecentAttempts}
+            error={errorRecentAttempts}
+          />
         </div>
       )}
     </div>
@@ -315,7 +290,9 @@ export default function QuizViewPage() {
   return (
     <QuizProvider>
       <StatisticsProvider>
-        <QuizViewContent quizId={quizId} />
+        <RecentAttemptsProvider>
+          <QuizViewContent quizId={quizId} />
+        </RecentAttemptsProvider>
       </StatisticsProvider>
     </QuizProvider>
   );

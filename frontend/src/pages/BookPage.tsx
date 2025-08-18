@@ -12,6 +12,8 @@ import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/authContext";
 import { ChapterListSection } from "../components/books/ChapterListSection";
 import { DeleteElementDialog } from "@/components/DeleteElementDialog";
+import { RecentAttemptsTable } from "@/components/statistics/RecentAttemptsTable";
+import { RecentAttemptsProvider, useRecentAttempts } from "@/contexts/recentAttemptsContext";
 
 interface Book {
   id: string;
@@ -28,7 +30,7 @@ interface Chapter {
   summary: string;
 }
 
-export default function BookPage() {
+function BookComponent() {
   const { bookId } = useParams();
   const [book, setBook] = useState<Book>({
     id: "",
@@ -37,6 +39,13 @@ export default function BookPage() {
     genre: "",
     authors: [],
   });
+
+  const {
+      bookAttempts,
+      fetchBookRecentAttempts,
+      loading: loadingRecentAttempts,
+      error: errorRecentAttempts,
+    } = useRecentAttempts();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -79,6 +88,8 @@ export default function BookPage() {
     };
 
     fetchBookDetails();
+    if (bookId)
+      fetchBookRecentAttempts(bookId);
   }, [bookId]);
 
   if (book.id === "") {
@@ -173,6 +184,16 @@ export default function BookPage() {
       </Card>
 
       <ChapterListSection bookId={bookId} chapters={chapters} />
+      <RecentAttemptsTable recentAttempts={bookAttempts} loading={loadingRecentAttempts} error={errorRecentAttempts} />
     </article>
   );
+}
+
+
+export default function BookPage() {
+  return (
+    <RecentAttemptsProvider>
+      <BookComponent />
+    </RecentAttemptsProvider>
+  )
 }
