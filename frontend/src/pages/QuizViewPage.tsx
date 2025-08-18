@@ -78,8 +78,8 @@ function QuizViewContent({ quizId }: { quizId: string }) {
   } = useRecentAttempts();
   const {
     quizStats,
-    quizLoading: statsLoading,
-    quizError: statsError,
+    loading: statsLoading,
+    error: statsError,
     fetchQuizStats,
   } = useStatistics();
 

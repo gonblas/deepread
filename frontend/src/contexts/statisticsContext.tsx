@@ -30,16 +30,23 @@ export type QuizStatsResponse = StatsWithTimeline & {
   chapterTitle?: string;
 };
 
+export type BookStatsResponse = StatsWithTimeline & {
+  bookId: string;
+  bookTitle?: string;
+};
+
 interface StatisticsContextValue {
   loading: boolean;
   error: string | null;
+
   userStats: StatsWithTimeline;
   fetchUserStats: () => void;
 
-  quizLoading: boolean;
-  quizError: string | null;
   quizStats: QuizStatsResponse | null;
   fetchQuizStats: (chapterId: string) => void;
+
+  bookStats: BookStatsResponse | null;
+  fetchBookStats: (bookId: string) => void;
 }
 
 const StatisticsContext = createContext<StatisticsContextValue | undefined>(
@@ -70,12 +77,11 @@ export function StatisticsProvider({
   const [userStats, setUserStats] = useState<StatsWithTimeline>(
     emptyStatsWithTimeline
   );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const [quizStats, setQuizStats] = useState<QuizStatsResponse | null>(null);
-  const [quizLoading, setQuizLoading] = useState(false);
-  const [quizError, setQuizError] = useState<string | null>(null);
+  const [bookStats, setBookStats] = useState<BookStatsResponse | null>(null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchUserStats = () => {
     setLoading(true);
@@ -97,7 +103,7 @@ export function StatisticsProvider({
         if (response === null || !response.ok) {
           const text = await response.text();
           throw {
-            status: response.status,
+            status: response?.status,
             message: text || "Failed to fetch stats",
           };
         }
@@ -111,7 +117,6 @@ export function StatisticsProvider({
           stats: data.stats,
           dailyStatsTimeline: data.stats.dailyStatsTimeline || [],
         };
-
         setUserStats(mappedStats);
       })
       .catch((err) => {
@@ -133,11 +138,11 @@ export function StatisticsProvider({
   };
 
   const fetchQuizStats = (chapterId: string) => {
-    setQuizLoading(true);
-    setQuizError(null);
+    setLoading(true);
+    setError(null);
 
     if (isLoading) {
-      setQuizLoading(false);
+      setLoading(false);
       return;
     }
 
@@ -177,20 +182,84 @@ export function StatisticsProvider({
           stats: data.stats,
           dailyStatsTimeline: data.stats.dailyStatsTimeline || [],
         };
-
-        setQuizStats(mappedStats);
+        setQuizStats({
+          chapterId,
+          chapterTitle: data.chapterTitle ?? "",
+          ...mappedStats,
+        });
       })
       .catch((err) => {
         if (err.status === 401) {
           logout();
           return;
         }
-        setQuizError(err.message || "Unknown error");
+        setError(err.message || "Unknown error");
       })
       .finally(() => {
-        setQuizLoading(false);
+        setLoading(false);
       });
-    setQuizLoading(false);
+  };
+
+  const fetchBookStats = (bookId: string) => {
+    setLoading(true);
+    setError(null);
+
+    if (isLoading) {
+      setLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/statistics/books/${bookId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const text = await response.text();
+          throw {
+            status: response.status,
+            message: text || "Failed to fetch book stats",
+          };
+        }
+        if (response.status === 204) {
+          return {
+            bookId,
+            ...emptyStatsWithTimeline,
+          };
+        }
+        const text = await response.text();
+        if (!text) {
+          return {
+            bookId,
+            ...emptyStatsWithTimeline,
+          };
+        }
+        return JSON.parse(text);
+      })
+      .then((data) => {
+        const mappedStats: StatsWithTimeline = {
+          stats: data.stats,
+          dailyStatsTimeline: data.stats.dailyStatsTimeline || [],
+        };
+        setBookStats({
+          bookId,
+          bookTitle: data.bookTitle ?? "",
+          ...mappedStats,
+        });
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          logout();
+          return;
+        }
+        setError(err.message || "Unknown error");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -200,10 +269,10 @@ export function StatisticsProvider({
         error,
         userStats,
         fetchUserStats,
-        quizLoading,
-        quizError,
         quizStats,
         fetchQuizStats,
+        bookStats,
+        fetchBookStats,
       }}
     >
       {children}

@@ -56,7 +56,6 @@ export const selectedBookSidebar = (
     title: "Main",
     items: [
       { title: "Dashboard", url: "/", icon: Home },
-      { title: "My Quizzes", url: "/quizzes", icon: Brain },
     ],
   },
   {

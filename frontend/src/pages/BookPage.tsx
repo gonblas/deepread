@@ -13,7 +13,17 @@ import { useAuth } from "@/contexts/authContext";
 import { ChapterListSection } from "../components/books/ChapterListSection";
 import { DeleteElementDialog } from "@/components/DeleteElementDialog";
 import { RecentAttemptsTable } from "@/components/statistics/RecentAttemptsTable";
-import { RecentAttemptsProvider, useRecentAttempts } from "@/contexts/recentAttemptsContext";
+import {
+  RecentAttemptsProvider,
+  useRecentAttempts,
+} from "@/contexts/recentAttemptsContext";
+import { SectionCards } from "@/components/statistics/SectionCards";
+import { BarChartInteractive } from "@/components/statistics/BarChartInteractive";
+import {
+  StatisticsProvider,
+  useStatistics,
+} from "@/contexts/statisticsContext";
+import { SectionHeader } from "@/components/SectionHeader";
 
 interface Book {
   id: string;
@@ -41,11 +51,19 @@ function BookComponent() {
   });
 
   const {
-      bookAttempts,
-      fetchBookRecentAttempts,
-      loading: loadingRecentAttempts,
-      error: errorRecentAttempts,
-    } = useRecentAttempts();
+    bookAttempts,
+    fetchBookRecentAttempts,
+    loading: loadingRecentAttempts,
+    error: errorRecentAttempts,
+  } = useRecentAttempts();
+
+  const {
+    bookStats,
+    loading: statsLoading,
+    error: statsError,
+    fetchBookStats,
+  } = useStatistics();
+
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -88,8 +106,10 @@ function BookComponent() {
     };
 
     fetchBookDetails();
-    if (bookId)
+    if (bookId) {
+      fetchBookStats(bookId);
       fetchBookRecentAttempts(bookId);
+    }
   }, [bookId]);
 
   if (book.id === "") {
@@ -182,18 +202,34 @@ function BookComponent() {
           </div>
         </div>
       </Card>
-
       <ChapterListSection bookId={bookId} chapters={chapters} />
-      <RecentAttemptsTable recentAttempts={bookAttempts} loading={loadingRecentAttempts} error={errorRecentAttempts} />
+      {!statsLoading && !statsError && (
+        <div className="flex flex-col space-y-6 my-12">
+          <SectionHeader
+            title="Book Statistics"
+            description="Overview of your book statistics and recent activity"
+            loading={statsLoading}
+            error={statsError}
+          />
+          <SectionCards stats={bookStats.stats} />
+          <BarChartInteractive chartData={bookStats.dailyStatsTimeline} />
+        </div>
+      )}
+      <RecentAttemptsTable
+        recentAttempts={bookAttempts}
+        loading={loadingRecentAttempts}
+        error={errorRecentAttempts}
+      />
     </article>
   );
 }
 
-
 export default function BookPage() {
   return (
-    <RecentAttemptsProvider>
-      <BookComponent />
-    </RecentAttemptsProvider>
-  )
+    <StatisticsProvider>
+      <RecentAttemptsProvider>
+        <BookComponent />
+      </RecentAttemptsProvider>
+    </StatisticsProvider>
+  );
 }
