@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import type { QuizAttempt } from "@/contexts/attemptsContext"
 import { Link } from "react-router-dom"
 import { formatDistanceToNow } from "date-fns"
-import { CardBadge } from "../CardBadge"
+import { CardBadge } from "../card/CardBadge"
 
 interface AttemptCardProps {
   attempt: QuizAttempt

@@ -11,7 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getGenreLabel, getGenreColor, type BookGenre } from "@/lib/genres";
 import { EditBookDialog } from "./EditBookDialog";
-import { CardBadge } from "../CardBadge";
+import { CardBadge } from "../card/CardBadge";
+import { AuthorsList } from "./AuthorsList";
 
 export interface Book {
   id: string;
@@ -50,19 +51,7 @@ export function BookCard({ book }: BookCardProps) {
           {book.title}
         </CardTitle>
 
-        {book.authors.length > 0 ? (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Users className="w-3 h-3 flex-shrink-0" />
-            <span className="line-clamp-1" title={book.authors.join(", ")}>
-              {book.authors.join(", ")}
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Users className="w-3 h-3 flex-shrink-0" />
-            <span className="italic">No author specified</span>
-          </div>
-        )}
+        <AuthorsList authors={book.authors} />
       </CardHeader>
 
       <CardContent className="pt-0 flex flex-col flex-grow">

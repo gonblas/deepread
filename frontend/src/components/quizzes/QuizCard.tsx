@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { BookOpen, HelpCircle, Edit, Brain } from "lucide-react"
-import { CardBadge } from "../CardBadge"
+import { CardBadge } from "../card/CardBadge"
 
 interface Chapter {
   id: string

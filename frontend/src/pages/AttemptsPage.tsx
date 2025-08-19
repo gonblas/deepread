@@ -104,14 +104,14 @@ function AttemptsComponent() {
       if (startDateFilter) {
         params.append(
           "submittedFrom",
-          startDateFilter.toISOString().slice(0, 19)
+          startDateFilter.toISOString()
         );
       }
 
       if (endDateFilter) {
         const endOfDay = new Date(endDateFilter);
         endOfDay.setHours(23, 59, 59, 0);
-        params.append("submittedTo", endOfDay.toISOString().slice(0, 19));
+        params.append("submittedTo", endOfDay.toISOString());
       }
 
       const response = await fetch(

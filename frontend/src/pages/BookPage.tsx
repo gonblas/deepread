@@ -24,6 +24,7 @@ import {
   useStatistics,
 } from "@/contexts/statisticsContext";
 import { SectionHeader } from "@/components/SectionHeader";
+import { AuthorsList } from "@/components/books/AuthorsList";
 
 interface Book {
   id: string;
@@ -165,23 +166,7 @@ function BookComponent() {
               </div>
 
               <div className="flex items-center gap-2 mb-4">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <div className="flex flex-wrap gap-2">
-                  {book.authors.length > 0 ? (
-                    book.authors.map((author, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{author}</span>
-                        {index < book.authors.length - 1 && (
-                          <span className="text-muted-foreground">•</span>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <span className="text-sm text-muted-foreground italic">
-                      No authors specified
-                    </span>
-                  )}
-                </div>
+                <AuthorsList authors={book.authors} />
               </div>
 
               <p className="prose max-w-none text-muted-foreground leading-relaxed">
