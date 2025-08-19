@@ -1,11 +1,13 @@
 package gblas.books.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +33,12 @@ public class QuizAttemptEntity {
     private List<AnswerEntity> answers = new ArrayList<>();
 
     @Column(name = "started_at", nullable = false)
-    private LocalDateTime startedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Instant startedAt;
 
     @Column(name = "submitted_at", nullable = false)
-    private LocalDateTime submittedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Instant submittedAt;
 
     @Column(name = "correct_count")
     private Integer correctCount;

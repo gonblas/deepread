@@ -87,7 +87,6 @@ export const RecentAttemptsProvider = ({ children }: { children: ReactNode }) =>
       });
       if (!res.ok) throw new Error("Failed to fetch book recent attempts");
       const data = await res.json();
-      console.log(data);
       setQuizAttempts(data.content ?? data);
     } catch (err: any) {
       setError(err.message);

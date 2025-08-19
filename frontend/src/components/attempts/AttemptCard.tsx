@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import type { QuizAttempt } from "@/contexts/attemptsContext"
 import { Link } from "react-router-dom"
 import { formatDistanceToNow } from "date-fns"
+import { CardBadge } from "../CardBadge"
 
 interface AttemptCardProps {
   attempt: QuizAttempt
@@ -23,7 +24,6 @@ export function AttemptCard({ attempt }: AttemptCardProps) {
     return "destructive"
   }
 
-  // Extract chapter number from chapter title
   const getChapterNumber = (chapterTitle?: string) => {
     if (!chapterTitle) return null
     const match = chapterTitle.match(/Chapter (\d+)/)
@@ -36,10 +36,11 @@ export function AttemptCard({ attempt }: AttemptCardProps) {
     <Card className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md h-full flex flex-col">
       <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between gap-2 mb-3">
-          <Badge variant={getScoreBadgeVariant(percentage)} className="text-xs font-medium">
-            <Trophy className="w-3 h-3 mr-1" />
-            {percentage}%
-          </Badge>
+          <CardBadge
+              icon={Trophy}
+              text={`${percentage}%`}
+              variant={getScoreBadgeVariant(percentage)}
+            />
           {chapterNumber && (
             <Badge variant="outline" className="text-xs">
               Chapter {chapterNumber}

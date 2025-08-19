@@ -67,7 +67,6 @@ export function BookForm({ formTitle, className, sendFunction, initialValue, ...
       genre: values.genre,
       authors: values.authors.filter((author) => author.trim() !== ""),
     });
-    console.log("Book saved:", isCorrect);
     if (isCorrect) {
       resetForm();
     } else {

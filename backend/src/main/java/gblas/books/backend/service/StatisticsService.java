@@ -113,7 +113,7 @@ public class StatisticsService {
 
         double averageTimeSeconds = attempts.stream()
                 .filter(a -> a.getStartedAt() != null && a.getSubmittedAt() != null)
-                .mapToLong(a -> a.getSubmittedAt().toEpochSecond(ZoneOffset.UTC) - a.getStartedAt().toEpochSecond(ZoneOffset.UTC))
+                .mapToLong(a -> a.getSubmittedAt().getEpochSecond() - a.getStartedAt().getEpochSecond())
                 .average()
                 .orElse(0);
 

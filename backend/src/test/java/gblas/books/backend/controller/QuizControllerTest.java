@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +106,8 @@ class QuizControllerTest {
         quizRepository.save(quiz);
 
         QuizAttemptEntity attempt = new QuizAttemptEntity();
-        attempt.setStartedAt(LocalDateTime.now());
-        attempt.setSubmittedAt(LocalDateTime.now());
+        attempt.setStartedAt(Instant.now());
+        attempt.setSubmittedAt(Instant.now());
         attempt.setQuizVersion(firstVersion);
         quizAttemptRepository.save(attempt);
 

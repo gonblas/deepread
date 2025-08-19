@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { BookOpen, HelpCircle, Edit, Brain } from "lucide-react"
+import { CardBadge } from "../CardBadge"
 
 interface Chapter {
   id: string
@@ -57,10 +58,11 @@ export function QuizCard({ quiz, onDelete }: QuizCardProps) {
       <Card className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md h-full flex flex-col">
         <CardHeader className="pb-3 flex-shrink-0">
           <div className="flex items-start justify-between gap-2 mb-3">
-            <Badge variant="secondary" className="text-xs font-medium bg-blue-100 text-blue-800">
-              <BookOpen className="w-3 h-3 mr-1" />
-              Chapter {quiz.chapter.number}
-            </Badge>
+            <CardBadge
+              icon={BookOpen}
+              text={`Chapter ${quiz.chapter.number}`}
+              className="bg-blue-100 text-blue-800"
+            />
           </div>
 
           <CardTitle

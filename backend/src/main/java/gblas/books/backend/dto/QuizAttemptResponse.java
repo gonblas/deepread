@@ -1,10 +1,12 @@
 package gblas.books.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gblas.books.backend.dto.answer.AnswerResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +17,6 @@ public record QuizAttemptResponse(
         @Valid
         List<@Valid AnswerResponse> answers,
         @NotBlank Integer correctCount,
-        @NotBlank String startedAt,
-        @NotBlank String submittedAt
+        @JsonFormat(shape = JsonFormat.Shape.STRING) @NotBlank Instant startedAt,
+        @JsonFormat(shape = JsonFormat.Shape.STRING) @NotBlank Instant submittedAt
 ) { }

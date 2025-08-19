@@ -19,7 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -106,8 +108,8 @@ class QuizAttemptControllerTest {
         quizRepository.save(quiz);
 
         attempt = new QuizAttemptEntity();
-        attempt.setStartedAt(LocalDateTime.now());
-        attempt.setSubmittedAt(LocalDateTime.now());
+        attempt.setStartedAt(Instant.now());
+        attempt.setSubmittedAt(Instant.now());
         attempt.setQuizVersion(firstVersion);
         quizAttemptRepository.save(attempt);
 
@@ -367,7 +369,7 @@ class QuizAttemptControllerTest {
 
     @Test
     void createQuizAttempt_withInvalidStartedAt_shouldReturnBadRequest() throws Exception {
-        String invalidStartedAt = LocalDateTime.now().plusYears(1).toString();
+        String invalidStartedAt = Instant.now().plus(1, ChronoUnit.YEARS).toString();
         String requestBody = """
         {
             "startedAt": "%s",

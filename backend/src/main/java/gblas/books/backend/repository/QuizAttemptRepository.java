@@ -5,7 +5,6 @@ import gblas.books.backend.entity.BookEntity;
 import gblas.books.backend.entity.QuizAttemptEntity;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.UserEntity;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +12,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Repository
@@ -44,8 +43,8 @@ public interface QuizAttemptRepository extends CrudRepository<QuizAttemptEntity,
     """)
     Page<QuizAttemptEntity> findByUserAndSubmittedAtBetween(
             @Param("user") UserEntity user,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
+            @Param("start") Instant start,
+            @Param("end") Instant end,
             Pageable pageable
     );
 

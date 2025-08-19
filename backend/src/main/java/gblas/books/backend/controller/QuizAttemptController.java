@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class QuizAttemptController {
             }
     )
     @GetMapping("/api/attempts")
-    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable, @RequestParam(required = false) LocalDateTime submittedFrom, @RequestParam(required = false) LocalDateTime submittedTo
+    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(@AuthenticationPrincipal UserEntity user, Pageable pageable, @RequestParam(required = false) Instant submittedFrom, @RequestParam(required = false) Instant submittedTo
     ) {
         return quizAttemptService.getQuizAttemptsFromUser(user, pageable, submittedFrom, submittedTo);
     }

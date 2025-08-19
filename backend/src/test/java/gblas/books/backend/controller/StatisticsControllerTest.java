@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,7 @@ class StatisticsControllerTest {
         quizRepository.save(quiz);
 
         QuizAttemptEntity attempt = new QuizAttemptEntity();
-        LocalDateTime time = LocalDateTime.now();
+        Instant time = Instant.now();
         attempt.setStartedAt(time);
         attempt.setSubmittedAt(time.plusSeconds(60));
         attempt.setQuizVersion(firstVersion);

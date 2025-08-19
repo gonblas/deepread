@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public class QuizAttemptService {
     private final AnswerRepository answerRepository;
     private final QuizVersionService quizVersionService;
 
-    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable, LocalDateTime submittedFrom, LocalDateTime submittedTo) {
+    public Page<QuizAttemptResponse> getQuizAttemptsFromUser(UserEntity user, Pageable pageable, Instant submittedFrom, Instant submittedTo) {
         Page<QuizAttemptEntity> attempts_page = quizAttemptRepository.findByUserAndSubmittedAtBetween(user, submittedFrom, submittedTo, pageable);
         return attempts_page.map(quizAttempt -> QuizAttemptMapper.INSTANCE.toDto(quizAttempt, answerMapperFactory, questionMapperFactory));
     }
@@ -79,7 +79,7 @@ public class QuizAttemptService {
     protected QuizAttemptResponse getQuizResponse(QuizAttemptRequest quizAttemptRequest, QuizVersionEntity quizVersionEntity) {
         QuizAttemptEntity quizAttempt = new QuizAttemptEntity();
         quizAttempt.setStartedAt(quizAttemptRequest.startedAt());
-        quizAttempt.setSubmittedAt(LocalDateTime.now());
+        quizAttempt.setSubmittedAt(Instant.now());
         quizAttempt.setQuizVersion(quizVersionEntity);
         List<QuestionEntity> possibleQuestions = quizVersionEntity.getQuestions();
         quizAttemptRepository.save(quizAttempt);
