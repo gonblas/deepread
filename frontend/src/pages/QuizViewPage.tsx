@@ -91,7 +91,7 @@ function QuizViewContent({ quizId }: { quizId: string }) {
   const chapterId = quiz?.chapter?.id;
   useEffect(() => {
     if (chapterId) fetchQuizStats(chapterId);
-  }, [chapterId, quizStats]);
+  }, [quiz]);
 
   const handleTakeQuiz = () => {
     navigate(`/quizzes/${quizId}/take`);

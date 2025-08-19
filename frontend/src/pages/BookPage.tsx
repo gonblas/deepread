@@ -203,7 +203,7 @@ function BookComponent() {
         </div>
       </Card>
       <ChapterListSection bookId={bookId} chapters={chapters} />
-      {!statsLoading && !statsError && (
+      {!statsLoading && !statsError && bookStats && (
         <div className="flex flex-col space-y-6 my-12">
           <SectionHeader
             title="Book Statistics"
