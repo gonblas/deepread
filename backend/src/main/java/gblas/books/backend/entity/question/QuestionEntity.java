@@ -3,6 +3,7 @@ package gblas.books.backend.entity.question;
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.entity.QuizEntity;
 import gblas.books.backend.entity.QuizVersionEntity;
+import gblas.books.backend.entity.answer.AnswerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,6 +52,7 @@ public abstract class QuestionEntity {
     }
 
     public abstract Boolean validate(AnswerRequest request);
+    public abstract Boolean validate(AnswerEntity request);
 }
 
 

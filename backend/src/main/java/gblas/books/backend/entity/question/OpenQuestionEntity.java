@@ -2,6 +2,8 @@ package gblas.books.backend.entity.question;
 
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.Open.OpenAnswerRequest;
+import gblas.books.backend.entity.answer.AnswerEntity;
+import gblas.books.backend.entity.answer.OpenAnswerEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -28,5 +30,13 @@ public class OpenQuestionEntity extends QuestionEntity {
             return openAnswerRequest.answerText().equals(expectedAnswer);
         }
         throw new IllegalArgumentException("Answer must be of type OpenAnswerRequest");
+    }
+
+    @Override
+    public Boolean validate(AnswerEntity request) {
+        if(request instanceof OpenAnswerEntity openAnswerEntity) {
+            return openAnswerEntity.getAnswerText().equals(expectedAnswer);
+        }
+        throw new IllegalArgumentException("Answer must be of type OpenAnswerEntity");
     }
 }

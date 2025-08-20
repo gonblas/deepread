@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "multiple_choice_answers")
@@ -27,5 +28,5 @@ public class MultipleChoiceAnswerEntity extends AnswerEntity {
             joinColumns = @JoinColumn(name = "answer_id"),
             inverseJoinColumns = @JoinColumn(name = "option_id")
     )
-    private List<OptionEntity> optionsSelected;
+    private List<OptionEntity> optionsSelected =  new ArrayList<>();
 }

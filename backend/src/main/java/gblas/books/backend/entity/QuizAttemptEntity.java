@@ -45,7 +45,7 @@ public class QuizAttemptEntity {
 
     @PostLoad
     public void setCorrectCountFromAnswers() {
-        if (answers == null) {
+        if (answers.isEmpty()) {
             correctCount = 0;
             return;
         }

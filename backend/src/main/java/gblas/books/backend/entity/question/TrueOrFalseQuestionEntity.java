@@ -2,6 +2,8 @@ package gblas.books.backend.entity.question;
 
 import gblas.books.backend.dto.answer.AnswerRequest;
 import gblas.books.backend.dto.answer.TrueOrFalse.TrueOrFalseAnswerRequest;
+import gblas.books.backend.entity.answer.AnswerEntity;
+import gblas.books.backend.entity.answer.TrueOrFalseAnswerEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -31,5 +33,13 @@ public class TrueOrFalseQuestionEntity extends QuestionEntity {
             return trueOrFalseAnswerRequest.answer() == isAnswerTrue;
         }
         throw new IllegalArgumentException("Answer must be of type TrueOrFalseAnswerRequest");
+    }
+
+    @Override
+    public Boolean validate(AnswerEntity request) {
+        if(request instanceof TrueOrFalseAnswerEntity trueOrFalseAnswerEntity) {
+            return trueOrFalseAnswerEntity.getAnswer() == isAnswerTrue;
+        }
+        throw new IllegalArgumentException("Answer must be of type TrueOrFalseAnswerEntity");
     }
 }
