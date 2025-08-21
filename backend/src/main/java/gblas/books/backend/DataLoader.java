@@ -331,7 +331,7 @@ public class DataLoader implements ApplicationRunner {
         // Add to quiz
         version1.getQuestions().add(mcq1); version1.getQuestions().add(tf1); version1.getQuestions().add(open1);
         quiz1.getQuestions().add(mcq1); quiz1.getQuestions().add(tf1); quiz1.getQuestions().add(open1);
-
+        quizRepository.save(quiz1);
         // ----------------- Book 2: The Pragmatic Programmer, Chapter 1 -----------------
         QuizEntity quiz2 = new QuizEntity();
         quiz2.setChapter(chapter2_1);
@@ -366,7 +366,7 @@ public class DataLoader implements ApplicationRunner {
         // Add to quiz
         version2.getQuestions().add(mcq2); version2.getQuestions().add(tf2); version2.getQuestions().add(open2);
         quiz2.getQuestions().add(mcq2); quiz2.getQuestions().add(tf2); quiz2.getQuestions().add(open2);
-
+        quizRepository.save(quiz2);
         // ----------------- Book 3: Design Patterns, Chapter 1 -----------------
         QuizEntity quiz3 = new QuizEntity();
         quiz3.setChapter(chapter3_1);
@@ -400,7 +400,7 @@ public class DataLoader implements ApplicationRunner {
 
         version3.getQuestions().add(mcq3); version3.getQuestions().add(tf3); version3.getQuestions().add(open3);
         quiz3.getQuestions().add(mcq3); quiz3.getQuestions().add(tf3); quiz3.getQuestions().add(open3);
-
+        quizRepository.save(quiz3);
         // ----------------- Book 4: Effective Java, Chapter 1 -----------------
         QuizEntity quiz4 = new QuizEntity();
         quiz4.setChapter(chapter4_1);
@@ -434,7 +434,7 @@ public class DataLoader implements ApplicationRunner {
 
         version4.getQuestions().add(mcq4); version4.getQuestions().add(tf4); version4.getQuestions().add(open4);
         quiz4.getQuestions().add(mcq4); quiz4.getQuestions().add(tf4); quiz4.getQuestions().add(open4);
-
+        quizRepository.save(quiz4);
         // ----------------- Book 5: Capital in the Twenty-First Century, Chapter 1 -----------------
         QuizEntity quiz5 = new QuizEntity();
         quiz5.setChapter(chapter5_1);
@@ -468,7 +468,7 @@ public class DataLoader implements ApplicationRunner {
 
         version5.getQuestions().add(mcq5); version5.getQuestions().add(tf5); version5.getQuestions().add(open5);
         quiz5.getQuestions().add(mcq5); quiz5.getQuestions().add(tf5); quiz5.getQuestions().add(open5);
-
+        quizRepository.save(quiz5);
         // ----------------- Book 6: Freakonomics, Chapter 1 -----------------
         QuizEntity quiz6 = new QuizEntity();
         quiz6.setChapter(chapter6_1);
@@ -502,7 +502,7 @@ public class DataLoader implements ApplicationRunner {
 
         version6.getQuestions().add(mcq6); version6.getQuestions().add(tf6); version6.getQuestions().add(open6);
         quiz6.getQuestions().add(mcq6); quiz6.getQuestions().add(tf6); quiz6.getQuestions().add(open6);
-
+        quizRepository.save(quiz6);
 
         Random random = new Random();
 

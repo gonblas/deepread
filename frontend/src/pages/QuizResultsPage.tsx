@@ -333,10 +333,6 @@ export default function QuizResultsPage() {
             <span className="text-muted-foreground">Completed:</span>
             <span>{new Date(result.submittedAt).toLocaleString()}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Attempt ID:</span>
-            <span className="font-mono text-sm">{result.id}</span>
-          </div>
         </CardContent>
       </Card>
 
