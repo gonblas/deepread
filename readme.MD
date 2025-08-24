@@ -14,13 +14,11 @@ That’s how **DeepRead** came to life — a tool designed to make learning acti
 
 ## Technologies Used
 
-- Java Spring Boot for backend development: JPA.
-- Postgresql: for relational database.
-- ReactJS + TailwindCSS: User interface for chapter edition, book pagination and dashboard visualization.
-- Docker: Containers for the application and the database.
-- 
-- 
-
+- **Java Spring Boot:** for backend development: JPA, JUnit5, JWT.
+- **PostgreSQL:** for relational database.
+- **ReactJS + TailwindCSS:** User interface for chapter edition, book pagination and dashboard visualization.
+- **Docker:** Containers for the application and the database.
+  
 ---
 
 ## Requirements
@@ -61,12 +59,12 @@ ___
 
 ### 🏠 Home Page - General Dashboard
 
-<img src="screenshots/home-page.png" alt="Home Dashboard" width="700"/>
+<img src="screenshots/home-page.png" alt="Home Dashboard" width="100%"/>
 
 ---
 
 ### 📚 Books Page - Search as You Type
-<img src="screenshots/book-section.png" alt="Books Search" width="700"/>
+<img src="screenshots/book-section.png" alt="Books Search" width="100%"/>
 
 
 ___
