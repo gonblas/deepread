@@ -19,9 +19,14 @@ public interface BookRepository extends CrudRepository<BookEntity, UUID> {
 
     @Query("""
         SELECT b FROM BookEntity b
+        LEFT JOIN b.authors a
         WHERE b.owner = :owner
         AND (:genres IS NULL OR b.genre IN :genres)
-        AND (LOWER(b.title) LIKE LOWER(CONCAT('%',:search,'%')) OR :search IS NULL)
+        AND (
+            LOWER(b.title) LIKE LOWER(CONCAT('%',:search,'%'))
+            OR LOWER(a) LIKE LOWER(CONCAT('%',:search,'%'))
+            OR :search IS NULL
+        )
     """)
     Page<BookEntity> findByOwnerAndOptionalGenreAndTitle(
             @Param("owner") UserEntity owner,
