@@ -7,6 +7,7 @@ services:
       - db
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+
   frontend:
     build: frontend
     ports:
@@ -14,7 +15,7 @@ services:
 
   db:
     container_name: pgdb
-    image: postgres
+    image: postgres:18
     restart: always
     ports:
       - "5432:5432"
@@ -23,7 +24,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql  
 
 volumes:
   pgdata:
