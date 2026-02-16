@@ -57,15 +57,23 @@ ___
 
 ## Screenshots
 
-### 🏠 Home Page - General Dashboard
+### Home Page - General Dashboard
 
 <img src="screenshots/home-page.png" alt="Home Dashboard" width="100%"/>
 
 ---
 
-### 📚 Books Page - Search as You Type
+### Books Page - Search as You Type
 <img src="screenshots/book-section.png" alt="Books Search" width="100%"/>
 
+
+---
+
+### Quiz Page - Dashboard
+<img src="screenshots/quiz-dashboard.png" alt="Quiz Dashboard" width="100%"/>
+
+### Taking a quiz
+<img src="screenshots/quiz-take.png" alt="Quiz Dashboard" width="100%"/>
 
 ___
 
